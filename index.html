@@ -1,43 +1,11 @@
 <!DOCTYPE html>
 <html>
-<head>
-  <meta charset="UTF-8">
-  <title>PKB App</title>
-  <!-- import CSS -->
-  <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-default/index.css">
-  <style media="screen">
-    .el-col {
-      border-style: solid;
-      height: 100%;
-    }
-    .header {
-      height: 20vh;
-    }
-    .main-section {
-      height: 80vh;
-    }
-  </style>
-</head>
-<body>
-  <div id="app">
-    <el-row class="header">
-      <el-col :span="24">history/breadcrumbs for subjects; recents</el-col>
-    </el-row>
-    <el-row class="main-section">
-      <el-col :span="4">parent</el-col>
-      <el-col :span="16">main editor</el-col>
-      <el-col :span="4">children</el-col>
-    </el-row>
-  </div>
-</body>
-  <!-- import Vue before Element -->
-  <script src="https://unpkg.com/vue/dist/vue.js"></script>
-  <!-- import JavaScript -->
-  <script src="https://unpkg.com/element-ui/lib/index.js"></script>
-  <script>
-    new Vue({
-      el: '#app',
-      data: '',
-    })
-  </script>
+  <head>
+    <meta charset="utf-8">
+    <title>pkb-webapp</title>
+  </head>
+  <body>
+    <div id="app"></div>
+    <!-- built files will be auto injected -->
+  </body>
 </html>

@@ -36,7 +36,7 @@ export default {
       notes: {
         note1: {
           title: 'Example Title',
-          text: 'some example text for a note'
+          text: 'some much longer example text for a note to see how scrolling works in the web app fjdklsfjsldkfjldksjf  jslkdfj dsfjkld fjslkdjs;lkfjsl   djklsjdf;lsjflksjfha fhsdjkf ahlkjf hskd  fhjdksla skdfdskjdgfjhdsf ghdj fsdhf sd f df hdskjfsdhkdjfhslkfh s dfhjdkslfksdjf skf ds fhsklf dkjhfskdhf sdfsdhjfklsfksdlfslj df shjkfhs f'
         },
         note2: {
           title: 'Example Title',

@@ -1,8 +1,8 @@
 <template lang="html">
   <div class="note-list">
     <el-card v-for="note in notes" :class="{horizontal: isHorizontal}">
-      <div slot="header">
-        {{ note.title }}
+      <div>
+        <h3>{{ note.title }}</h3>
       </div>
       <div v-show="!isHorizontal">
         {{ note.text }}
@@ -25,6 +25,10 @@ export default {
 </script>
 
 <style lang="css">
+  .note-list {
+    overflow-y: scroll;
+    height: 100%;
+  }
   .horizontal {
     width: 180px;
     display: inline-flex;

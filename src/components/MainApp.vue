@@ -4,21 +4,12 @@
       <el-col :span="24">
         history/breadcrumbs for subjects; recents
         <NoteList :notes="notes" is-horizontal="true"></NoteList>
-        <NoteList :notes="notes" is-horizontal="true"></NoteList>
       </el-col>
     </el-row>
     <el-row class="main-section">
-      <el-col :span="4">
-        parent
-        <NoteList :notes="notes"></NoteList>
-      </el-col>
-      <el-col :span="16">
-        main editor
-        <TextEditor/>
-      </el-col>
-      <el-col :span="4">
-        children
-        <NoteList :notes="notes"></NoteList>
+      <el-col :span="24">
+        grid view
+        <NoteGrid :notes="notes"></NoteGrid>
       </el-col>
     </el-row>
   </div>
@@ -28,30 +19,32 @@
 <script>
 import TextEditor from './TextEditor.vue'
 import NoteList from './NoteList.vue'
+import NoteGrid from './NoteGrid.vue'
 
 export default {
   name: 'MainApp',
+
   data () {
     return {
-      notes: {
-        note1: {
-          title: 'Example Title',
-          text: 'some example text for a note'
-        },
-        note2: {
-          title: 'Example Title',
-          text: 'some example text for a note'
-        },
-        note3: {
-          title: 'Example Title',
-          text: 'some example text for a note'
-        }
-      }
+      notes: {}
     }
   },
-  components: {
-    TextEditor,
-    NoteList
+
+  components: {TextEditor, NoteList, NoteGrid},
+
+  methods: {
+    generateTestData () {
+      let testNotes = {}
+      for (let i = 0; i < 5; i++) {
+        testNotes[i] = {title: 'Text Title', text: 'some example text for a note'}
+      }
+      return testNotes
+    }
+  },
+
+  mounted () {
+    // do something after mounting vue instance
+    this.notes = this.generateTestData()
   }
 }
 </script>

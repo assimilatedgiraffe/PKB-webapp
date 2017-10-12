@@ -20,13 +20,22 @@
 import TextEditor from './TextEditor.vue'
 import NoteList from './NoteList.vue'
 import NoteGrid from './NoteGrid.vue'
+import {db} from '../firebase'
 
 export default {
   name: 'MainApp',
 
   data () {
     return {
-      notes: {}
+      // notes: {}
+    }
+  },
+
+  firebase () {
+    return {
+      notes: {
+        source: db.ref('notes')
+      }
     }
   },
 
@@ -36,7 +45,8 @@ export default {
     generateTestData () {
       let testNotes = {}
       for (let i = 0; i < 5; i++) {
-        testNotes[i] = {title: 'Text Title', text: 'some example text for a note'}
+        // testNotes[i] = {title: 'Text Title', text: 'some example text for a note'}
+        // db.ref('notes').push({title: 'Text Title', text: 'some example text for a note'})
       }
       return testNotes
     }

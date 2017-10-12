@@ -1,8 +1,8 @@
 <template lang="html">
   <div>
-    <el-col :span="colSpan" v-for="col in numberOfCols">
+    <el-col :span="colSpan" v-for="col in numberOfCols" :key="col.id">
       <div class="note-list">
-        <el-card v-for="note in notes">
+        <el-card v-for="note in notes" :key="note.id">
           <div>
             <TextEditor :note="note"></TextEditor>
           </div>

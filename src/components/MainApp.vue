@@ -34,8 +34,7 @@ export default {
   firebase () {
     return {
       notes: {
-        source: db.ref('notes'),
-        asObject: true
+        source: db.ref('notes')
       }
     }
   },

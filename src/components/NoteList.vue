@@ -1,6 +1,6 @@
 <template lang="html">
   <div class="note-list">
-    <el-card v-for="note in notes" :class="{horizontal: isHorizontal}">
+    <el-card v-for="note in notes" :key="note.id" :class="{horizontal: isHorizontal}">
       <div>
         <h3>{{ note.title }}</h3>
       </div>

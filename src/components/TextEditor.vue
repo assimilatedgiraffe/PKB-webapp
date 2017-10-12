@@ -8,16 +8,19 @@
 
 <script>
 import InlineEditor from '@ckeditor/ckeditor5-build-inline'
+import {db} from '../firebase'
 
 export default {
   data () {
     return {
-      editor: {}
+      editor: {},
+      noteDBkey: db.ref('notes').child(this.note['.key'])
     }
   },
 
   computed: {
-    text: function () { return this.note.text }
+    text: function () { return this.note.text },
+    key: function () { return this.note['.key'] }
   },
 
   props: {
@@ -27,7 +30,7 @@ export default {
 
   methods: {
     onBlur () {
-      this.note.text = this.editor.getData()
+      this.noteDBkey.child('text').set(this.editor.getData())
     }
   },
 

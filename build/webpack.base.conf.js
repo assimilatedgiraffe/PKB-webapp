@@ -28,16 +28,24 @@ module.exports = {
   },
   module: {
     rules: [
-      {
-        test: /\.(js|vue)$/,
-        loader: 'eslint-loader',
-        enforce: 'pre',
-        include: [resolve('src'), resolve('test')],
-        options: {
-          formatter: require('eslint-friendly-formatter')
-        }
-      },
-      {
+      // {
+      //   test: /\.(js|vue)$/,
+      //   loader: 'eslint-loader',
+      //   enforce: 'pre',
+      //   include: [resolve('src'), resolve('test')],
+      //   options: {
+      //     formatter: require('eslint-friendly-formatter')
+      //   }
+      // {
+      //   test: /\.coffee$/,
+      //   loader: 'coffee-loader',
+      //       options: {
+      //         transpile: {
+      //           presets: ['env']
+      //         }
+      //       }
+      // },
+          {
         test: /\.vue$/,
         loader: 'vue-loader',
         options: vueLoaderConfig
@@ -70,6 +78,11 @@ module.exports = {
           limit: 10000,
           name: utils.assetsPath('fonts/[name].[hash:7].[ext]')
         }
+      },
+  {
+        test: /\.coffee$/,
+        loader: 'coffee-loader',
+        exclude: /node_modules/
       }
     ]
   }

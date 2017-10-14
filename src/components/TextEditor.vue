@@ -13,16 +13,15 @@ import {db} from '../firebase'
 export default {
   data: -> {
     editor: {}
-    NoteDBkey: db.ref('notes').child(this.note['.key'])
   }
 
   computed: {
     text: -> this.note.text
-    key: -> this.note['.key']
+    NoteDBkey: -> db.ref('notes').child(this.note['.key'])
   }
 
   props: {
-    note: {type: Object, default: -> {text: ''}}
+    note: {type: Object, default: -> {text: ""}}
     isReadOnly: {default: false}
   }
 
@@ -40,8 +39,9 @@ export default {
       this.editor.setData(this.note.text)
       this.editor.set('isReadOnly', this.isReadOnly)
 
-    InlineEditor.create(this.$refs.editorDiv, { toolbar: [] # TODO: remove toolbar
-    }).then(initEditor).catch((error) -> console.error(error))
+    InlineEditor.create(this.$refs.editorDiv, { toolbar: [] }) # TODO: remove toolbar
+    .then(initEditor)
+    .catch((error) -> console.error(error))
 
 }
 </script>

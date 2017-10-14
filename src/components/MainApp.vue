@@ -16,46 +16,39 @@
 </template>
 
 
-<script>
+<script lang="coffee">
+
+import { db } from '../firebase.js'
 import TextEditor from './TextEditor.vue'
-import NoteList from './NoteList.vue'
-import NoteGrid from './NoteGrid.vue'
-import {db} from '../firebase'
+import NoteList from './NoteList'
+import NoteGrid from './NoteGrid'
 
 export default {
-  name: 'MainApp',
+  name: 'MainApp'
 
-  data () {
-    return {
-      // notes: {}
+  data: -> {
+    # notes: {}
     }
-  },
 
-  firebase () {
-    return {
-      notes: {
-        source: db.ref('notes')
-      }
+  firebase: {
+      notes: { source: db.ref('notes') }
     }
-  },
 
-  components: {TextEditor, NoteList, NoteGrid},
+  components: { NoteList, NoteGrid }
 
   methods: {
-    generateTestData () {
-      let testNotes = {}
-      for (let i = 0; i < 5; i++) {
-        // testNotes[i] = {title: 'Text Title', text: 'some example text for a note'}
-        // db.ref('notes').push({title: 'Text Title', text: 'some example text for a note'})
-      }
-      return testNotes
-    }
-  },
-
-  mounted () {
-    // do something after mounting vue instance
-    this.notes = this.generateTestData()
+    # generateTestData () {
+    #   let testNotes = {}
+    #   for (let i = 0; i < 5; i++) {
+    #     // testNotes[i] = {title: 'Text Title', text: 'some example text for a note'}
+    #     // db.ref('notes').push({title: 'Text Title', text: 'some example text for a note'})
+    #   }
+    #   return testNotes
+    # }
   }
+
+  mounted: ->
+    # this.notes = this.generateTestData()
 }
 </script>
 

@@ -12,21 +12,18 @@
   </div>
 </template>
 
-<script>
+<script lang="coffee">
 import TextEditor from './TextEditor.vue'
 
 export default {
-  data () {
-    return {
-      numberOfCols: 3
-    }
-  },
-  props: ['notes'],
-  components: {TextEditor},
+  data: -> {numberOfCols: 3}
+  props: ['notes']
+  components: {TextEditor}
   computed: {
-    colSpan: function () { return 24 / this.numberOfCols }
+    colSpan: -> 24 / this.numberOfCols
   }
 }
+
 </script>
 
 <style lang="css">

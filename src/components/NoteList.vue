@@ -11,15 +11,9 @@
   </div>
 </template>
 
-<script>
+<script lang="coffee">
 export default {
-  data () {
-    return {
-      testNotes: [
-        'one', 'two', 'three'
-      ]
-    }
-  },
+  data: -> { testNotes: [ 'one', 'two', 'three' ] }
   props: ['notes', 'isHorizontal']
 }
 </script>

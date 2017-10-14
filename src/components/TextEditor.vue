@@ -6,49 +6,42 @@
   </div>
 </template>
 
-<script>
+<script lang="coffee">
 import InlineEditor from '@ckeditor/ckeditor5-build-inline'
 import {db} from '../firebase'
 
 export default {
-  data () {
-    return {
-      editor: {},
-      noteDBkey: db.ref('notes').child(this.note['.key'])
-    }
-  },
+  data: -> {
+    editor: {}
+    NoteDBkey: db.ref('notes').child(this.note['.key'])
+  }
 
   computed: {
-    text: function () { return this.note.text },
-    key: function () { return this.note['.key'] }
-  },
+    text: -> this.note.text
+    key: -> this.note['.key']
+  }
 
   props: {
-    note: {type: Object, default: () => { return {text: ''} }},
+    note: {type: Object, default: -> {text: ''}}
     isReadOnly: {default: false}
-  },
+  }
 
   methods: {
-    onBlur () {
-      this.noteDBkey.child('text').set(this.editor.getData())
-    }
-  },
+    onBlur: -> this.noteDBkey.child('text').set(this.editor.getData())
+  }
 
   watch: {
-    text: function () { this.editor.setData(this.text) }
-  },
+    text: -> this.editor.setData(this.text)
+  }
 
-  mounted () {
-    InlineEditor.create(this.$refs.editorDiv, {
-      toolbar: [] // TODO: remove toolbar
-    }).then(returnedEditor => {
+  mounted: ->
+    initEditor = (returnedEditor) =>
       this.editor = returnedEditor
       this.editor.setData(this.note.text)
       this.editor.set('isReadOnly', this.isReadOnly)
-    }).catch(error => {
-      console.error(error)
-    })
-  }
+
+    InlineEditor.create(this.$refs.editorDiv, { toolbar: [] # TODO: remove toolbar
+    }).then(initEditor).catch((error) -> console.error(error))
 
 }
 </script>

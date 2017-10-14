@@ -2,11 +2,9 @@
   <div>
     <el-col :span="colSpan" v-for="col in cols" :key="col.id">
       <div class="note-list" >
-        <el-card v-for="note in col" :key="note.id">
-          <div>
+          <div v-for="note in col" :key="note.id">
             <TextEditor :note="note"></TextEditor>
           </div>
-        </el-card>
       </div>
     </el-col>
   </div>

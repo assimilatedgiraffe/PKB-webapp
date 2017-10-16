@@ -52,7 +52,7 @@ export default {
 
   created: ->
     this.$store.dispatch('loadDatabase')
-    this.$store.dispatch('watchDatabase')
+    # this.$store.dispatch('watchDatabase')
 
   mounted: ->
     # this.notes = this.generateTestData()

@@ -35,14 +35,15 @@ export default {
       if this.isLoading
         #Still loading notes from firebase
         # this.cols[0][0].isSelected = true
-        return [[[ {text: "Loading..."} ]],[],[]]
+        # return [[[ {text: "Loading..."} ]],[],[]]
+        return [[],[],[]]
       #  wrap note(data model) in noteEditor(view model)
       else
         wrap = (note) -> {
           note
           isSelected: false
         }
-        console.log root
+        # console.log root
         zero = root.children.map wrap
       # one = zero[this.selectedIndex[0]].children?
       # two = one[this.selectedIndex[1]].children?

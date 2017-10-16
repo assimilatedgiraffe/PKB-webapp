@@ -7,7 +7,7 @@ import 'element-ui/lib/theme-default/index.css'
 import VueFire from 'vuefire'
 import App from './App'
 import router from './router'
-import {store} from './store'
+import {store} from './store/index.coffee'
 
 Vue.config.productionTip = false
 Vue.use(ElementUI)

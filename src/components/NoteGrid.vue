@@ -24,26 +24,30 @@ export default {
     selectedCol: 0
     # selectedNote: {}
   }
-  props: ['notes']
+  # props: ['notes']
   components: {TextEditor}
   computed: {
+    notes: -> this.$store.getters.notes
+    isLoading: -> this.$store.getters.isLoading
     colSpan: -> 24 / this.numberOfCols
     cols: ->
-      root = this.notes[0]
-      if not root
+      root = this.$store.getters.notes
+      if this.isLoading
         #Still loading notes from firebase
         # this.cols[0][0].isSelected = true
-        return [[],[],[]]
+        return [[[ {text: "Loading..."} ]],[],[]]
       #  wrap note(data model) in noteEditor(view model)
-      wrap = (note) -> {
-        note
-        isSelected: false
-      }
-      zero = root.children.map wrap
+      else
+        wrap = (note) -> {
+          note
+          isSelected: false
+        }
+        console.log root
+        zero = root.children.map wrap
       # one = zero[this.selectedIndex[0]].children?
       # two = one[this.selectedIndex[1]].children?
       # return [[{text:""}], [{text:""}], [{text:""}]]
-      return [zero,zero,zero]
+        return [zero,zero,zero]
   }
   methods: {
     # onNoteClick: (i,j) ->
@@ -92,7 +96,7 @@ export default {
     #     this.cols[this.selectedCol][this.selectedNote].isSelected = true
     # console.log keyboardMap()
     # that = this
-    console.log this.keyboardMap
+    # console.log this.keyboardMap
     that = this
     window.addEventListener("keyup", that.keyboardMap)
 }

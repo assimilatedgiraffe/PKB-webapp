@@ -2,11 +2,11 @@
   <div v-hotkey="keymap" >
     <el-col  :span="colSpan" v-for="(col, i) in cols" :key="col.id" @keyup="keyboardMap"  >
       <div class="note-list" >
-          <div v-for="(note,j) in col"
+          <div v-for="(note,key) in col"
             :key="note.id">
             <TextEditor
               :note="note"
-              :noteKey="note.key">
+              :noteKey="key">
               <!-- @click.native="onNoteClick(i,j)"> -->
             </TextEditor>
           </div>
@@ -21,7 +21,7 @@ import TextEditor from './TextEditor.vue'
 export default {
   data: -> {
     numberOfCols: 3
-    # selectedNote: 0
+    selectedNoteIndex: 0
     # selectedCol: 0
     # selectedNote: {}
   }
@@ -30,6 +30,7 @@ export default {
   computed: {
     notes: -> this.$store.getters.notes
     isLoading: -> this.$store.getters.isLoading
+    selectedSiblings: -> this.$store.getters.selectedSiblings if not this.isLoading
     colSpan: -> 24 / this.numberOfCols
     cols: ->
       # root = this.$store.getters.notes
@@ -50,14 +51,21 @@ export default {
       # two = one[this.selectedIndex[1]].children?
       # return [[{text:""}], [{text:""}], [{text:""}]]
         return [zero,zero,zero]
-    keymap: -> {
-      'j': ->
+    keymap: ->
+      {
+      'j': =>
         console.log "down"
-      'k': ->
+        if this.selectedSiblings.length > this.selectedNoteIndex + 1
+          this.selectedNoteIndex += 1
+          this.$store.commit('setSelectedNote', this.selectedSiblings[this.selectedNoteIndex])
+      'k': =>
         console.log "up"
-      'h': ->
+        if this.selectedNoteIndex > 0
+          this.selectedNoteIndex -= 1
+          this.$store.commit('setSelectedNote', this.selectedSiblings[this.selectedNoteIndex])
+      'h': =>
         console.log "left"
-      'l': ->
+      'l': =>
         console.log "right"
     }
   }

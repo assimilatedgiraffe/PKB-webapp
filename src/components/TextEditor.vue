@@ -28,7 +28,7 @@ export default {
     isSelected: ->
       # console.log this.noteKey
       # console.log this.$store.getters.selectedNote
-      this.note.key == this.$store.getters.selectedNote
+      this.noteKey == this.$store.getters.selectedNote
     # NoteDBkey: -> db.ref('notes').child(this.noteEditor.note['.key'])
     # isSelected: -> this.noteEditor.isSelected
   }

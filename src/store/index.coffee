@@ -28,7 +28,7 @@ export store = new Vuex.Store(
   actions:  # async like DB accessing
     loadDatabase: ({commit, state}) ->
       commit("setLoading", true)
-      firebase.database.ref('rootNode').once("value")
+      firebase.database.ref('notes/rootNode').once("value")
         .then (data) ->
           commit("setRootNode", data.val())
           firebase.database.ref('notes').once("value")
@@ -59,9 +59,12 @@ export store = new Vuex.Store(
       console.log "generateTestData"
       for x in [1..3]
         do ->
-          firebase.database.ref('notes').push({text: "test note " + x})
+          firebase.database.ref('notes').push({
+            text: "test note " + x
+            parent: "rootNode"
+          })
             .then (data) ->
-              firebase.database.ref('rootNode/children')
+              firebase.database.ref('notes/rootNode/children')
                 .push(data.key)
             .catch (error) ->
               console.log(error)
@@ -70,6 +73,10 @@ export store = new Vuex.Store(
     notes: (state) -> state.notes
     isLoading: (state) -> state.isLoading
     selectedNote: (state) -> state.selectedNote
-    # selectedSiblings: (state) -> state.notes[state.selectedNote.parent].children
+    selectedSiblings: (state) ->
+      if not state.isLoading
+        parent = state.notes[state.selectedNote].parent
+        console.log parent
+        return Object.values(state.notes[parent].children)
     # rootNode: (state) -> state.rootNode
 )

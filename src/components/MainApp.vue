@@ -40,22 +40,14 @@ export default {
   components: { NoteList, NoteGrid }
 
   methods: {
-    # generateTestData () {
-    #   let testNotes = {}
-    #   for (let i = 0; i < 5; i++) {
-    #     // testNotes[i] = {title: 'Text Title', text: 'some example text for a note'}
-    #     // db.ref('notes').push({title: 'Text Title', text: 'some example text for a note'})
-    #   }
-    #   return testNotes
-    # }
   }
 
   created: ->
     this.$store.dispatch('loadDatabase')
-    # this.$store.dispatch('watchDatabase')
+    this.$store.dispatch('watchDatabase')
 
   mounted: ->
-    # this.notes = this.generateTestData()
+    # this.$store.dispatch('generateTestData')
 }
 </script>
 

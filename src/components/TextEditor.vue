@@ -19,19 +19,24 @@ import InlineEditor from '@ckeditor/ckeditor5-build-inline'
 export default {
   data: -> {
     editor: {}
-    isSelected: false
+    # isSelected: false
   }
 
   computed: {
-    note: -> this.noteEditor.note
+    # note: -> this.noteEditor.note
     text: -> this.note.text
+    isSelected: ->
+      console.log this.noteKey
+      console.log this.$store.getters.selectedNote
+      this.note.key == this.$store.getters.selectedNote
     # NoteDBkey: -> db.ref('notes').child(this.noteEditor.note['.key'])
     # isSelected: -> this.noteEditor.isSelected
   }
 
   props: {
-    noteEditor: {type: Object, default: -> {note: {text: ""}}}
+    note: {type: Object, default: -> {text: ""}}
     isReadOnly: {default: false}
+    noteKey: {default: ""}
   }
 
   methods: {
@@ -47,7 +52,7 @@ export default {
 
   watch: {
     text: -> this.editor.setData(this.text)
-    noteEditor: -> this.isSelected = this.noteEditor.isSelected
+    # noteEditor: -> this.isSelected = this.noteEditor.isSelected
   }
 
   mounted: ->

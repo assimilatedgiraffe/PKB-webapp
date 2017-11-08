@@ -1,5 +1,5 @@
 <template lang="html">
-  <div >
+  <div v-hotkey="keymap" >
     <el-col  :span="colSpan" v-for="(col, i) in cols" :key="col.id" @keyup="keyboardMap"  >
       <div class="note-list" >
           <div v-for="(note,j) in col"
@@ -50,6 +50,16 @@ export default {
       # two = one[this.selectedIndex[1]].children?
       # return [[{text:""}], [{text:""}], [{text:""}]]
         return [zero,zero,zero]
+    keymap: -> {
+      'j': ->
+        console.log "down"
+      'k': ->
+        console.log "up"
+      'h': ->
+        console.log "left"
+      'l': ->
+        console.log "right"
+    }
   }
   methods: {
     # onNoteClick: (i,j) ->

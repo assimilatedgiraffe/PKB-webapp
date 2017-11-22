@@ -21,16 +21,19 @@ import TextEditor from './TextEditor.vue'
 export default {
   data: -> {
     numberOfCols: 3
-    selectedNoteIndex: 0
+    selectedNoteIndexs: [0] #stack from beginning of array using unshift()/shift()
     # selectedCol: 0
     # selectedNote: {}
   }
   # props: ['notes']
   components: {TextEditor}
+# TODO: store helper function
   computed: {
     notes: -> this.$store.getters.notes
     isLoading: -> this.$store.getters.isLoading
+    selectedElders: -> this.$store.getters.selectedElders
     selectedSiblings: -> this.$store.getters.selectedSiblings if not this.isLoading
+    selectedChildren: -> this.$store.getters.selectedChildren
     colSpan: -> 24 / this.numberOfCols
     cols: ->
       # root = this.$store.getters.notes
@@ -46,27 +49,41 @@ export default {
         #   isSelected: false
         # }
         # console.log root
-        zero = this.notes# root.children.map wrap
-      # one = zero[this.selectedIndex[0]].children?
+        zero = this.$store.getters.refListToNotes(this.selectedElders)
+        one = this.$store.getters.refListToNotes(this.selectedSiblings)
+        two = this.$store.getters.refListToNotes(this.selectedChildren)
+        # two = {}
+        # selectedChildren = this.notes[this.$store.getters.selectedNote].children
+        # if selectedChildren?
+        #   for index, noteRef of selectedChildren
+        #     do (noteRef) =>
+        #       two[noteRef] = this.notes[noteRef]
       # two = one[this.selectedIndex[1]].children?
       # return [[{text:""}], [{text:""}], [{text:""}]]
-        return [zero,zero,zero]
+        return [zero,one,two]
     keymap: ->
       {
       'j': =>
         console.log "down"
-        if this.selectedSiblings.length > this.selectedNoteIndex + 1
-          this.selectedNoteIndex += 1
-          this.$store.commit('setSelectedNote', this.selectedSiblings[this.selectedNoteIndex])
+        if this.selectedSiblings.length > this.selectedNoteIndexs[0] + 1
+          this.selectedNoteIndexs[0] += 1
+          this.$store.commit('setSelectedNote', this.selectedSiblings[this.selectedNoteIndexs[0]])
       'k': =>
         console.log "up"
-        if this.selectedNoteIndex > 0
-          this.selectedNoteIndex -= 1
-          this.$store.commit('setSelectedNote', this.selectedSiblings[this.selectedNoteIndex])
+        if this.selectedNoteIndexs[0] > 0
+          this.selectedNoteIndexs[0] -= 1
+          this.$store.commit('setSelectedNote', this.selectedSiblings[this.selectedNoteIndexs[0]])
       'h': =>
         console.log "left"
+        selectedParent = this.notes[this.$store.getters.selectedNote].parent
+        this.selectedNoteIndexs.shift()
+        this.$store.commit('setSelectedNote', selectedParent)
       'l': =>
         console.log "right"
+        selectedChildren = this.notes[this.$store.getters.selectedNote].children
+        this.selectedNoteIndexs.unshift(0)
+        this.$store.commit('setSelectedNote', Object.values(selectedChildren)[0])
+
     }
   }
   methods: {

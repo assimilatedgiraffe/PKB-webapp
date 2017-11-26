@@ -35,7 +35,7 @@ export default {
 
   props: {
     note: {type: Object, default: -> {text: ""}}
-    isReadOnly: {default: false}
+    isReadOnly: {default: true}
     noteKey: {default: ""}
   }
 
@@ -43,11 +43,11 @@ export default {
     onBlur: ->
       console.log "blurred"
       # this.isSelected = false
-      this.noteDBkey.child('text').set(this.editor.getData())
+      # this.noteDBkey.child('text').set(this.editor.getData())
     onFocus: ->
       console.log "focused"
       # this.isReadOnly = false
-      this.isSelected = true
+      # this.isSelected = true
   }
 
   watch: {

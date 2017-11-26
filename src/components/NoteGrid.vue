@@ -1,6 +1,6 @@
 <template lang="html">
-  <div v-hotkey="keymap" >
-    <el-col  :span="colSpan" v-for="(col, i) in cols" :key="col.id" @keyup="keyboardMap"  >
+  <div tabindex="0" @keyup="keyboardMap">
+    <el-col  :span="colSpan" v-for="(col, i) in cols" :key="col.id" >
       <div class="note-list" >
           <div v-for="(note,key) in col"
             :key="note.id">
@@ -22,6 +22,7 @@ export default {
   data: -> {
     numberOfCols: 3
     selectedNoteIndexs: [0] #stack from beginning of array using unshift()/shift()
+    editMode: false
     # selectedCol: 0
     # selectedNote: {}
   }
@@ -61,30 +62,49 @@ export default {
       # two = one[this.selectedIndex[1]].children?
       # return [[{text:""}], [{text:""}], [{text:""}]]
         return [zero,one,two]
-    keymap: ->
-      {
-      'j': =>
-        console.log "down"
-        if this.selectedSiblings.length > this.selectedNoteIndexs[0] + 1
-          this.selectedNoteIndexs[0] += 1
-          this.$store.commit('setSelectedNote', this.selectedSiblings[this.selectedNoteIndexs[0]])
-      'k': =>
-        console.log "up"
-        if this.selectedNoteIndexs[0] > 0
-          this.selectedNoteIndexs[0] -= 1
-          this.$store.commit('setSelectedNote', this.selectedSiblings[this.selectedNoteIndexs[0]])
-      'h': =>
-        console.log "left"
-        selectedParent = this.notes[this.$store.getters.selectedNote].parent
-        this.selectedNoteIndexs.shift()
-        this.$store.commit('setSelectedNote', selectedParent)
-      'l': =>
-        console.log "right"
-        selectedChildren = this.notes[this.$store.getters.selectedNote].children
-        this.selectedNoteIndexs.unshift(0)
-        this.$store.commit('setSelectedNote', Object.values(selectedChildren)[0])
-
-    }
+    # keymap: (e) ->
+    #   console.log e.key
+    #   console.log this
+    #   if this.editMode
+    #     {
+    #     'esc': =>
+    #       console.log "esc"
+    #       selectedVue = this.$children[1].$children[this.selectedNoteIndexs[0]]
+    #       selectedVue.editor.set('isReadOnly', true)
+    #       selectedVue.editor.element.blur()
+    #       this.editMode = false
+    #
+    #     }
+    #   else
+    #     {
+    #     'j': =>
+    #       console.log "down"
+    #       if this.selectedSiblings.length > this.selectedNoteIndexs[0] + 1
+    #         this.selectedNoteIndexs[0] += 1
+    #         this.$store.commit('setSelectedNote', this.selectedSiblings[this.selectedNoteIndexs[0]])
+    #     'k': =>
+    #       console.log "up"
+    #       if this.selectedNoteIndexs[0] > 0
+    #         this.selectedNoteIndexs[0] -= 1
+    #         this.$store.commit('setSelectedNote', this.selectedSiblings[this.selectedNoteIndexs[0]])
+    #     'h': =>
+    #       console.log "left"
+    #       selectedParent = this.notes[this.$store.getters.selectedNote].parent
+    #       this.selectedNoteIndexs.shift()
+    #       this.$store.commit('setSelectedNote', selectedParent)
+    #     'l': =>
+    #       console.log "right"
+    #       selectedChildren = this.notes[this.$store.getters.selectedNote].children
+    #       this.selectedNoteIndexs.unshift(0)
+    #       this.$store.commit('setSelectedNote', Object.values(selectedChildren)[0])
+    #     'enter': =>
+    #       console.log "enter"
+    #       selectedVue = this.$children[1].$children[this.selectedNoteIndexs[0]]
+    #       selectedVue.editor.set('isReadOnly', false)
+    #       selectedVue.editor.element.focus()
+    #       this.editMode = true
+    #       # this.$el.blur()
+    # }
   }
   methods: {
     # onNoteClick: (i,j) ->
@@ -93,6 +113,46 @@ export default {
 
     keyboardMap: (e) ->
       # console.log e.key
+      # console.log this
+      if this.editMode
+        switch e.key
+          when "Escape"
+            console.log "Escape"
+            selectedVue = this.$children[1].$children[this.selectedNoteIndexs[0]]
+            selectedVue.editor.set('isReadOnly', true)
+            selectedVue.editor.element.blur()
+            this.$el.focus()
+            this.editMode = false
+      else
+        switch e.key
+          when "j"
+            console.log "down"
+            if this.selectedSiblings.length > this.selectedNoteIndexs[0] + 1
+              this.selectedNoteIndexs[0] += 1
+              this.$store.commit('setSelectedNote', this.selectedSiblings[this.selectedNoteIndexs[0]])
+          when 'k'
+            console.log "up"
+            if this.selectedNoteIndexs[0] > 0
+              this.selectedNoteIndexs[0] -= 1
+              this.$store.commit('setSelectedNote', this.selectedSiblings[this.selectedNoteIndexs[0]])
+          when 'h'
+            console.log "left"
+            selectedParent = this.notes[this.$store.getters.selectedNote].parent
+            if selectedParent != "rootNode"
+              this.selectedNoteIndexs.shift()
+              this.$store.commit('setSelectedNote', selectedParent)
+          when 'l'
+            console.log "right"
+            selectedChildren = this.notes[this.$store.getters.selectedNote].children
+            if selectedChildren?
+              this.selectedNoteIndexs.unshift(0)
+              this.$store.commit('setSelectedNote', Object.values(selectedChildren)[0])
+          when "Enter"
+            console.log "Enter"
+            selectedVue = this.$children[1].$children[this.selectedNoteIndexs[0]]
+            selectedVue.editor.set('isReadOnly', false)
+            selectedVue.editor.element.focus()
+            this.editMode = true
       # col = this.cols[this.selectedCol]
       # console.log this.selectedNote
       # switch e.key
@@ -135,8 +195,9 @@ export default {
     # console.log keyboardMap()
     # that = this
     # console.log this.keyboardMap
-    that = this
-    window.addEventListener("keyup", that.keyboardMap)
+    # that = this
+    # window.addEventListener("keyup", that.keyboardMap)
+    this.$el.focus()
 }
 </script>
 

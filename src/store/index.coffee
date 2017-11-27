@@ -17,6 +17,7 @@ export store = new Vuex.Store(
     selectedNote: {}
     isLoading: true
     userID: ""
+    fbRef: {}
 
 
   mutations:
@@ -24,7 +25,9 @@ export store = new Vuex.Store(
     setLoading: (state, payload) -> state.isLoading = payload
     setSelectedNote: (state, payload) -> state.selectedNote = payload
     setRootNode: (state, payload) -> state.rootNode = payload
-    setUserID: (state, payload) -> state.userID = payload
+    setUserID: (state, payload) ->
+      state.userID = payload
+      state.fbRef = firebase.database.ref('users/'+payload+'/notes')
     #TODO: setNoteText should be action not mutation
     setNoteText: (state, payload) ->
       console.log payload
@@ -62,21 +65,29 @@ export store = new Vuex.Store(
 
     createNote: ({commit, getters, state}, payload) ->
       # text, parent, [etc]
-      console.log payload
       firebase.database.ref('users/'+state.userID+'/notes').push(payload)
         .then (data) ->
-          firebase.database.ref('users/'+state.userID+'/notes/' + payload.parent + '/children')
-            .push(data.key)
+          siblings = state.notes[payload.parent].children
+          siblings.push(data.key)
+          state.fbRef.child(payload.parent).child('children').set(siblings)
         .catch (error) ->
           console.log(error)
 
-
+    deleteNote: ({state}, payload) ->
+      parentRef = state.notes[payload].parent
+      state.fbRef.child(payload).remove()
+        .then () ->
+          siblings = state.notes[parentRef].children.filter (e) -> e != payload
+          state.fbRef.child(parentRef).child('children').set(siblings)
+        .catch (error) ->
+          console.log(error)
 
     generateTestData: ({commit, getters, state}) ->
       console.log "generateTestData"
       generateChildren = (parent, depth) ->
         if depth == 0
           return
+        childRefs = []
         for x in [1..3]
           do ->
             firebase.database.ref('users/'+state.userID+'/notes').push({
@@ -84,11 +95,12 @@ export store = new Vuex.Store(
               parent: parent
               })
               .then (data) ->
-                firebase.database.ref('users/'+state.userID+'/notes/' + parent + '/children')
-                  .push(data.key)
+                childRefs.push(data.key)
                 generateChildren(data.key, depth - 1)
               .catch (error) ->
                 console.log(error)
+        sendChildRefs = -> state.fbRef.child(parent).child('children').set(childRefs)
+        setTimeout(sendChildRefs, 2000)
       generateChildren("rootNode", 3)
   getters:
     notes: (state) -> state.notes

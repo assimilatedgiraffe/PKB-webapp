@@ -16,7 +16,7 @@ export store = new Vuex.Store(
     ###
     selectedNote: {}
     isLoading: true
-    test: "ghjgh"
+    userID: ""
 
 
   mutations:
@@ -24,17 +24,19 @@ export store = new Vuex.Store(
     setLoading: (state, payload) -> state.isLoading = payload
     setSelectedNote: (state, payload) -> state.selectedNote = payload
     setRootNode: (state, payload) -> state.rootNode = payload
+    setUserID: (state, payload) -> state.userID = payload
+    #TODO: setNoteText should be action not mutation
     setNoteText: (state, payload) ->
       console.log payload
-      firebase.database.ref('notes/' + payload.noteRef + '/text').set(payload.text)
+      firebase.database.ref('users/'+state.userID+'/notes/'+payload.noteRef+'/text').set(payload.text)
 
   actions:  # async like DB accessing
     loadDatabase: ({commit, state}) ->
       commit("setLoading", true)
-      firebase.database.ref('notes/rootNode').once("value")
+      firebase.database.ref('users/'+state.userID+'/notes/rootNode').once("value")
         .then (data) ->
           commit("setRootNode", data.val())
-          firebase.database.ref('notes').once("value")
+          firebase.database.ref('users/'+state.userID+'/notes').once("value")
             .then (data) ->
               commit("setNotes", data.val())
               # console.log state.rootNode
@@ -45,35 +47,44 @@ export store = new Vuex.Store(
               console.log(error)
               commit("setLoading", true)
 
-    watchDatabase: (context) ->
-      firebase.database.ref('notes').on("value", (snapshot) ->
-        context.commit("setNotes", snapshot.val()))
+    watchDatabase: ({commit, state}) ->
+      firebase.database.ref('users/'+state.userID+'/notes').on("value", (snapshot) ->
+        commit("setNotes", snapshot.val()))
 
-    createNote: ({commit, getters}, payload) ->
+    signIn: ({commit, dispatch}, payload) ->
+      firebase.auth.signInWithEmailAndPassword(payload.email, payload.password)
+        .then (user) ->
+          commit('setUserID', user.uid)
+          dispatch('loadDatabase')
+          dispatch('watchDatabase')
+          # dispatch('generateTestData')
+        .catch (error) -> console.log error
+
+    createNote: ({commit, getters, state}, payload) ->
       # text, parent, [etc]
       console.log payload
-      firebase.database.ref('notes').push(payload)
+      firebase.database.ref('users/'+state.userID+'/notes').push(payload)
         .then (data) ->
-          firebase.database.ref('notes/' + payload.parent + '/children')
+          firebase.database.ref('users/'+state.userID+'/notes/' + payload.parent + '/children')
             .push(data.key)
         .catch (error) ->
           console.log(error)
 
 
 
-    generateTestData: ({commit, getters}) ->
+    generateTestData: ({commit, getters, state}) ->
       console.log "generateTestData"
       generateChildren = (parent, depth) ->
         if depth == 0
           return
         for x in [1..3]
           do ->
-            firebase.database.ref('notes').push({
+            firebase.database.ref('users/'+state.userID+'/notes').push({
               text: "test note " + depth + " - " + x
               parent: parent
               })
               .then (data) ->
-                firebase.database.ref('notes/' + parent + '/children')
+                firebase.database.ref('users/'+state.userID+'/notes/' + parent + '/children')
                   .push(data.key)
                 generateChildren(data.key, depth - 1)
               .catch (error) ->

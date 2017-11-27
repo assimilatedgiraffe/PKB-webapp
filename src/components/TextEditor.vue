@@ -43,7 +43,10 @@ export default {
     onBlur: ->
       console.log "blurred"
       # this.isSelected = false
-      # this.noteDBkey.child('text').set(this.editor.getData())
+      this.$store.commit('setNoteText', {
+        noteRef: this.noteKey
+        text: this.editor.getData()
+        })
     onFocus: ->
       console.log "focused"
       # this.isReadOnly = false

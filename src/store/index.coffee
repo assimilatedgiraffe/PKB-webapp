@@ -24,6 +24,9 @@ export store = new Vuex.Store(
     setLoading: (state, payload) -> state.isLoading = payload
     setSelectedNote: (state, payload) -> state.selectedNote = payload
     setRootNode: (state, payload) -> state.rootNode = payload
+    setNoteText: (state, payload) ->
+      console.log payload
+      firebase.database.ref('notes/' + payload.noteRef + '/text').set(payload.text)
 
   actions:  # async like DB accessing
     loadDatabase: ({commit, state}) ->

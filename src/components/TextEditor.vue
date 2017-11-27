@@ -26,16 +26,16 @@ export default {
     # note: -> this.noteEditor.note
     text: -> this.note.text
     isSelected: ->
-      console.log this.noteKey
-      console.log this.$store.getters.selectedNote
-      this.note.key == this.$store.getters.selectedNote
+      # console.log this.noteKey
+      # console.log this.$store.getters.selectedNote
+      this.noteKey == this.$store.getters.selectedNote
     # NoteDBkey: -> db.ref('notes').child(this.noteEditor.note['.key'])
     # isSelected: -> this.noteEditor.isSelected
   }
 
   props: {
     note: {type: Object, default: -> {text: ""}}
-    isReadOnly: {default: false}
+    isReadOnly: {default: true}
     noteKey: {default: ""}
   }
 
@@ -43,11 +43,11 @@ export default {
     onBlur: ->
       console.log "blurred"
       # this.isSelected = false
-      this.noteDBkey.child('text').set(this.editor.getData())
+      # this.noteDBkey.child('text').set(this.editor.getData())
     onFocus: ->
       console.log "focused"
       # this.isReadOnly = false
-      this.isSelected = true
+      # this.isSelected = true
   }
 
   watch: {

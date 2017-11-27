@@ -48,9 +48,10 @@ export store = new Vuex.Store(
 
     createNote: ({commit, getters}, payload) ->
       # text, parent, [etc]
-      firebase.database.ref('notes').push(note)
+      console.log payload
+      firebase.database.ref('notes').push(payload)
         .then (data) ->
-          firebase.database.ref('notes/' + payload.parent.key + '/children')
+          firebase.database.ref('notes/' + payload.parent + '/children')
             .push(data.key)
         .catch (error) ->
           console.log(error)
@@ -65,7 +66,7 @@ export store = new Vuex.Store(
         for x in [1..3]
           do ->
             firebase.database.ref('notes').push({
-              text: "test note " + x
+              text: "test note " + depth + " - " + x
               parent: parent
               })
               .then (data) ->
@@ -74,7 +75,7 @@ export store = new Vuex.Store(
                 generateChildren(data.key, depth - 1)
               .catch (error) ->
                 console.log(error)
-      generateChildren("rootNode", 2)
+      generateChildren("rootNode", 3)
   getters:
     notes: (state) -> state.notes
     isLoading: (state) -> state.isLoading

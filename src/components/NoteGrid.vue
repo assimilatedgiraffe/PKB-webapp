@@ -126,10 +126,17 @@ export default {
       else
         switch e.key
           when "j"
+            # TODO - crash when creating more than one new note at a time (multiple presses at end of list)
             console.log "down"
             if this.selectedSiblings.length > this.selectedNoteIndexs[0] + 1
               this.selectedNoteIndexs[0] += 1
               this.$store.commit('setSelectedNote', this.selectedSiblings[this.selectedNoteIndexs[0]])
+            else #create new empty note if none exists
+              selectedParent = this.notes[this.$store.getters.selectedNote].parent
+              this.$store.dispatch('createNote', {text:"", parent:selectedParent})
+                .then =>
+                  this.selectedNoteIndexs[0] += 1
+                  this.$store.commit('setSelectedNote', this.selectedSiblings[this.selectedNoteIndexs[0]])
           when 'k'
             console.log "up"
             if this.selectedNoteIndexs[0] > 0
@@ -143,10 +150,17 @@ export default {
               this.$store.commit('setSelectedNote', selectedParent)
           when 'l'
             console.log "right"
+            #TODO: breaks on multiple quick presses
             selectedChildren = this.notes[this.$store.getters.selectedNote].children
             if selectedChildren?
               this.selectedNoteIndexs.unshift(0)
               this.$store.commit('setSelectedNote', Object.values(selectedChildren)[0])
+            else # create new child note if none exist
+              this.$store.dispatch('createNote', {text:"", parent:this.$store.getters.selectedNote})
+                .then =>
+                  selectedChildren = this.notes[this.$store.getters.selectedNote].children
+                  this.selectedNoteIndexs.unshift(0)
+                  this.$store.commit('setSelectedNote', Object.values(selectedChildren)[0])
           when "Enter"
             console.log "Enter"
             selectedVue = this.$children[1].$children[this.selectedNoteIndexs[0]]

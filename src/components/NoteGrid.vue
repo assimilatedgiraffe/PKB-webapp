@@ -35,6 +35,7 @@ export default {
     selectedElders: -> this.$store.getters.selectedElders
     selectedSiblings: -> this.$store.getters.selectedSiblings if not this.isLoading
     selectedChildren: -> this.$store.getters.selectedChildren
+    selectedNote: -> this.$store.getters.selectedNote
     colSpan: -> 24 / this.numberOfCols
     cols: ->
       # root = this.$store.getters.notes
@@ -112,7 +113,7 @@ export default {
     #   this.selectedNote = j
 
     keyboardMap: (e) ->
-      console.log e.key
+      console.log e.key, e.altKey
       # console.log this
       if this.editMode
         switch e.key
@@ -124,6 +125,30 @@ export default {
             selectedVue.editor.element.blur()
             this.$el.focus()
             this.editMode = false
+
+      else if e.altKey
+        siblings = this.selectedSiblings
+        dex = this.selectedNoteIndexs[0]
+        switch e.key
+        # move selected note
+          when 'j'
+            console.log "move down"
+            if siblings.length > dex + 1
+              siblings.splice(dex + 1, 0, siblings.splice(dex, 1)[0])
+              this.$store.dispatch('setNoteChildren', {
+                noteRef: this.notes[this.selectedNote].parent
+                children: siblings
+                }).then =>
+                  this.selectedNoteIndexs[0] += 1
+          when 'k'
+            console.log "move up"
+            if dex > 0
+              siblings.splice(dex - 1, 0, siblings.splice(dex, 1)[0])
+              this.$store.dispatch('setNoteChildren', {
+                noteRef: this.notes[this.selectedNote].parent
+                children: siblings
+                }).then =>
+                  this.selectedNoteIndexs[0] -= 1
       else
         switch e.key
         # vim style navigaion
@@ -184,6 +209,9 @@ export default {
                 this.selectedNoteIndexs.shift()
                 this.$store.commit('setSelectedNote', selectedParent)
                 this.$store.dispatch('deleteNote', noteToDelete)
+
+
+
       # col = this.cols[this.selectedCol]
       # console.log this.selectedNote
       # switch e.key

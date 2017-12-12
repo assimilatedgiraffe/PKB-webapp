@@ -20,7 +20,7 @@ export store = new Vuex.Store(
     fbRef: {}
 
 
-  mutations:
+  mutations: # $store.commit('setX', {param:value})
     setNotes: (state, payload) -> state.notes = payload
     setLoading: (state, payload) -> state.isLoading = payload
     setSelectedNote: (state, payload) -> state.selectedNote = payload
@@ -28,12 +28,8 @@ export store = new Vuex.Store(
     setUserID: (state, payload) ->
       state.userID = payload
       state.fbRef = firebase.database.ref('users/'+payload+'/notes')
-    #TODO: setNoteText should be action not mutation
-    setNoteText: (state, payload) ->
-      console.log payload
-      firebase.database.ref('users/'+state.userID+'/notes/'+payload.noteRef+'/text').set(payload.text)
 
-  actions:  # async like DB accessing
+  actions:  # async like DB accessing - $store.dispatch('action', {param:value})
     loadDatabase: ({commit, state}) ->
       commit("setLoading", true)
       firebase.database.ref('users/'+state.userID+'/notes/rootNode').once("value")
@@ -68,6 +64,7 @@ export store = new Vuex.Store(
       firebase.database.ref('users/'+state.userID+'/notes').push(payload)
         .then (data) ->
           siblings = state.notes[payload.parent].children
+          siblings ?= []
           siblings.push(data.key)
           state.fbRef.child(payload.parent).child('children').set(siblings)
         .catch (error) ->
@@ -81,6 +78,14 @@ export store = new Vuex.Store(
           state.fbRef.child(parentRef).child('children').set(siblings)
         .catch (error) ->
           console.log(error)
+
+    setNoteText: ({state}, payload) ->
+      # console.log payload
+      state.fbRef.child(payload.noteRef).child('text').set(payload.text)
+
+    setNoteChildren: ({state}, payload) ->
+      console.log payload
+      state.fbRef.child(payload.noteRef).child('children').set(payload.children)
 
     generateTestData: ({commit, getters, state}) ->
       console.log "generateTestData"
@@ -106,6 +111,7 @@ export store = new Vuex.Store(
     notes: (state) -> state.notes
     isLoading: (state) -> state.isLoading
     selectedNote: (state) -> state.selectedNote
+    # return dict of {ref: note object} from list of refs
     refListToNotes: (state) -> (payload) ->
       # console.log payload
       notes = {}
@@ -113,6 +119,7 @@ export store = new Vuex.Store(
         do (noteRef) =>
           notes[noteRef] = state.notes[noteRef]
       return notes
+    # get elders of currently selected note
     selectedElders: (state) ->
       if state.isLoading
         return []
@@ -124,6 +131,7 @@ export store = new Vuex.Store(
           grandParentRef = state.notes[parentRef].parent
           elders = state.notes[grandParentRef].children
           return Object.values(elders)
+    # get siblings of currently selected note
     selectedSiblings: (state) ->
       if (not state.isLoading) and state.notes[state.selectedNote]?
         parent = state.notes[state.selectedNote].parent
@@ -132,6 +140,7 @@ export store = new Vuex.Store(
         #   do (noteRef) =>
         #     siblings[noteRef] = state.notes[noteRef]
         return Object.values(state.notes[parent].children)
+    # get children of currently selected note
     selectedChildren: (state, getters) ->
       children = state.notes[state.selectedNote]?.children
       if state.isLoading or not children?

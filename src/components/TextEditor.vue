@@ -43,7 +43,7 @@ export default {
     onBlur: ->
       console.log "blurred"
       # this.isSelected = false
-      this.$store.commit('setNoteText', {
+      this.$store.dispatch('setNoteText', {
         noteRef: this.noteKey
         text: this.editor.getData()
         })

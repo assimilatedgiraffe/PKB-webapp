@@ -35,6 +35,7 @@ export default {
     selectedElders: -> this.$store.getters.selectedElders
     selectedSiblings: -> this.$store.getters.selectedSiblings if not this.isLoading
     selectedChildren: -> this.$store.getters.selectedChildren
+    selectedNote: -> this.$store.getters.selectedNote
     colSpan: -> 24 / this.numberOfCols
     cols: ->
       # root = this.$store.getters.notes
@@ -112,10 +113,11 @@ export default {
     #   this.selectedNote = j
 
     keyboardMap: (e) ->
-      # console.log e.key
+      console.log e.key, e.altKey
       # console.log this
       if this.editMode
         switch e.key
+        # leave edit mode when done editing note
           when "Escape"
             console.log "Escape"
             selectedVue = this.$children[1].$children[this.selectedNoteIndexs[0]]
@@ -123,8 +125,78 @@ export default {
             selectedVue.editor.element.blur()
             this.$el.focus()
             this.editMode = false
+
+      else if e.altKey
+        siblings = this.selectedSiblings
+        dex = this.selectedNoteIndexs[0]
+        switch e.key
+        # move selected note
+          when 'j'
+            console.log "move down"
+            if siblings.length > dex + 1
+              siblings.splice(dex + 1, 0, siblings.splice(dex, 1)[0])
+              this.$store.dispatch('setNoteChildren', {
+                noteRef: this.notes[this.selectedNote].parent
+                children: siblings
+                }).then =>
+                  this.selectedNoteIndexs[0] += 1
+          when 'k'
+            console.log "move up"
+            if dex > 0
+              siblings.splice(dex - 1, 0, siblings.splice(dex, 1)[0])
+              this.$store.dispatch('setNoteChildren', {
+                noteRef: this.notes[this.selectedNote].parent
+                children: siblings
+                }).then =>
+                  this.selectedNoteIndexs[0] -= 1
+          when 'h'
+            console.log "move left"
+            parentRef = this.notes[this.selectedNote].parent
+            if parentRef != "rootNode"
+              elders = this.selectedElders
+              elders.push(siblings.splice(dex, 1)[0])
+              console.log siblings, elders
+              this.$store.dispatch('setNoteChildren', {
+                noteRef: parentRef
+                children: siblings
+                }).then =>
+                  this.$store.dispatch('setNoteChildren', {
+                    noteRef: this.notes[parentRef].parent
+                    children: elders
+                    }).then =>
+                      this.$store.dispatch('setNoteParent', {
+                        noteRef: this.selectedNote
+                        parentRef: this.notes[parentRef].parent
+                        }).then =>
+                          # this.$store.commit('setSelectedNote', this.selectedNote)
+                          this.selectedNoteIndexs.shift()
+                          this.selectedNoteIndexs[0] = this.selectedSiblings.length - 1
+          when 'l'
+            console.log "move right"
+            # make child of note above
+            if dex > 0
+              newParentRef = siblings[dex - 1]
+              newParent = this.notes[newParentRef]
+              console.log newParent.children, siblings
+              newParent.children.push(siblings.splice(dex, 1)[0])
+              console.log newParent.children, siblings
+              this.$store.dispatch('setNoteChildren', {
+                noteRef: newParentRef
+                children: newParent.children
+                }).then =>
+                  this.$store.dispatch('setNoteChildren', {
+                    noteRef: this.notes[this.selectedNote].parent
+                    children: siblings
+                    }).then =>
+                      this.$store.dispatch('setNoteParent', {
+                        noteRef: this.selectedNote
+                        parentRef: newParentRef
+                        }).then =>
+                          this.selectedNoteIndexs[0] -= 1
+                          this.selectedNoteIndexs.unshift(this.selectedSiblings.length - 1)
       else
         switch e.key
+        # vim style navigaion
           when "j"
             # TODO - crash when creating more than one new note at a time (multiple presses at end of list)
             console.log "down"
@@ -161,12 +233,30 @@ export default {
                   selectedChildren = this.notes[this.$store.getters.selectedNote].children
                   this.selectedNoteIndexs.unshift(0)
                   this.$store.commit('setSelectedNote', Object.values(selectedChildren)[0])
+
+          # editing and deleting
           when "Enter"
             console.log "Enter"
             selectedVue = this.$children[1].$children[this.selectedNoteIndexs[0]]
             selectedVue.editor.set('isReadOnly', false)
             selectedVue.editor.element.focus()
             this.editMode = true
+          when "Delete"
+            console.log "Delete"
+            noteToDelete = this.$store.getters.selectedNote
+            if this.selectedNoteIndexs[0] > 0
+              this.selectedNoteIndexs[0] -= 1
+              this.$store.commit('setSelectedNote', this.selectedSiblings[this.selectedNoteIndexs[0]])
+              this.$store.dispatch('deleteNote', noteToDelete)
+            else
+              selectedParent = this.notes[this.$store.getters.selectedNote].parent
+              if selectedParent != "rootNode"
+                this.selectedNoteIndexs.shift()
+                this.$store.commit('setSelectedNote', selectedParent)
+                this.$store.dispatch('deleteNote', noteToDelete)
+
+
+
       # col = this.cols[this.selectedCol]
       # console.log this.selectedNote
       # switch e.key

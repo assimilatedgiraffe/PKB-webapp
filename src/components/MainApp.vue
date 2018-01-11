@@ -22,6 +22,7 @@
 import TextEditor from './TextEditor.vue'
 import NoteList from './NoteList'
 import NoteGrid from './NoteGrid'
+import testAuth from './testAuth'
 
 export default {
   name: 'MainApp'
@@ -43,8 +44,9 @@ export default {
   }
 
   created: ->
-    this.$store.dispatch('loadDatabase')
-    this.$store.dispatch('watchDatabase')
+    this.$store.dispatch('signIn', testAuth)
+    # this.$store.dispatch('loadDatabase')
+    # this.$store.dispatch('watchDatabase')
 
   mounted: ->
     # this.$store.dispatch('generateTestData')

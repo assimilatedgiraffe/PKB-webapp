@@ -1,0 +1,21 @@
+@startuml
+(user)
+
+package "MainApp"{
+  [NoteGrid]
+  package "TextEditor" {
+    [ckeditor5]
+  }
+}
+
+database "vuex store"{
+  [UI vars]
+}
+
+cloud "firebase"{
+  [notes and users]
+}
+
+user --> NoteGrid : default mode
+user --> TextEditor : edit mode
+@enduml

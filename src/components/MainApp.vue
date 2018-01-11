@@ -1,5 +1,17 @@
 <template lang="html">
   <div id="main-app">
+    <el-dialog
+      title="Login"
+      :visible.sync="loginVisible">
+      <Login></Login>
+    </el-dialog>
+    <el-row>
+      <el-col :span="24">
+        <el-menu mode="horizontal">
+          <el-menu-item index="1"> Logout </el-menu-item>
+        </el-menu>
+      </el-col>
+    </el-row>
     <el-row class="header">
       <el-col :span="24">
         history/breadcrumbs for subjects; recents
@@ -20,8 +32,10 @@
 
 # import { db } from '../firebase.js'
 import TextEditor from './TextEditor.vue'
-import NoteList from './NoteList'
-import NoteGrid from './NoteGrid'
+import NoteList from './NoteList.vue'
+import NoteGrid from './NoteGrid.vue'
+import Login from './Login.vue'
+
 import testAuth from './testAuth'
 
 export default {
@@ -29,6 +43,7 @@ export default {
 
   data: -> {
     # notes: {}
+    loginVisible: true
     }
 
   computed:
@@ -38,7 +53,7 @@ export default {
   #     # notes: { source: db.ref('notes') }
   #   }
 
-  components: { NoteList, NoteGrid }
+  components: { NoteList, NoteGrid, Login }
 
   methods: {
   }

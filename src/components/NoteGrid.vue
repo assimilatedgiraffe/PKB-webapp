@@ -149,6 +149,51 @@ export default {
                 children: siblings
                 }).then =>
                   this.selectedNoteIndexs[0] -= 1
+          when 'h'
+            console.log "move left"
+            parentRef = this.notes[this.selectedNote].parent
+            if parentRef != "rootNode"
+              elders = this.selectedElders
+              elders.push(siblings.splice(dex, 1)[0])
+              console.log siblings, elders
+              this.$store.dispatch('setNoteChildren', {
+                noteRef: parentRef
+                children: siblings
+                }).then =>
+                  this.$store.dispatch('setNoteChildren', {
+                    noteRef: this.notes[parentRef].parent
+                    children: elders
+                    }).then =>
+                      this.$store.dispatch('setNoteParent', {
+                        noteRef: this.selectedNote
+                        parentRef: this.notes[parentRef].parent
+                        }).then =>
+                          # this.$store.commit('setSelectedNote', this.selectedNote)
+                          this.selectedNoteIndexs.shift()
+                          this.selectedNoteIndexs[0] = this.selectedSiblings.length - 1
+          when 'l'
+            console.log "move right"
+            # make child of note above
+            if dex > 0
+              newParentRef = siblings[dex - 1]
+              newParent = this.notes[newParentRef]
+              console.log newParent.children, siblings
+              newParent.children.push(siblings.splice(dex, 1)[0])
+              console.log newParent.children, siblings
+              this.$store.dispatch('setNoteChildren', {
+                noteRef: newParentRef
+                children: newParent.children
+                }).then =>
+                  this.$store.dispatch('setNoteChildren', {
+                    noteRef: this.notes[this.selectedNote].parent
+                    children: siblings
+                    }).then =>
+                      this.$store.dispatch('setNoteParent', {
+                        noteRef: this.selectedNote
+                        parentRef: newParentRef
+                        }).then =>
+                          this.selectedNoteIndexs[0] -= 1
+                          this.selectedNoteIndexs.unshift(this.selectedSiblings.length - 1)
       else
         switch e.key
         # vim style navigaion

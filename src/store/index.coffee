@@ -84,8 +84,15 @@ export store = new Vuex.Store(
       state.fbRef.child(payload.noteRef).child('text').set(payload.text)
 
     setNoteChildren: ({state}, payload) ->
-      console.log payload
-      state.fbRef.child(payload.noteRef).child('children').set(payload.children)
+      # console.log payload
+      if payload == []
+        state.fbRef.child(payload.noteRef).child('children').remove()
+      else
+        state.fbRef.child(payload.noteRef).child('children').set(payload.children)
+
+    setNoteParent: ({state}, payload) ->
+      # console.log payload
+      state.fbRef.child(payload.noteRef).child('parent').set(payload.parentRef)
 
     generateTestData: ({commit, getters, state}) ->
       console.log "generateTestData"
@@ -114,6 +121,7 @@ export store = new Vuex.Store(
     # return dict of {ref: note object} from list of refs
     refListToNotes: (state) -> (payload) ->
       # console.log payload
+      return {} if !payload
       notes = {}
       for noteRef in payload
         do (noteRef) =>
@@ -139,7 +147,7 @@ export store = new Vuex.Store(
         # for noteRef in
         #   do (noteRef) =>
         #     siblings[noteRef] = state.notes[noteRef]
-        return Object.values(state.notes[parent].children)
+        return state.notes[parent].children
     # get children of currently selected note
     selectedChildren: (state, getters) ->
       children = state.notes[state.selectedNote]?.children

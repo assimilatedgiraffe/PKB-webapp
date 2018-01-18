@@ -2,7 +2,7 @@
   <div id="main-app">
     <el-dialog
       title="Login"
-      :visible.sync="loginVisible">
+      :visible="loginVisible">
       <Login></Login>
     </el-dialog>
     <el-row>
@@ -41,12 +41,10 @@ import testAuth from './testAuth'
 export default {
   name: 'MainApp'
 
-  data: -> {
-    # notes: {}
-    loginVisible: true
-    }
+  # data: ->
 
   computed:
+    loginVisible: -> not this.$store.getters.user?
     notes: ->
 
   # firebase: {
@@ -59,7 +57,7 @@ export default {
   }
 
   created: ->
-    this.$store.dispatch('signIn', testAuth)
+    # this.$store.dispatch('signIn', testAuth)
     # this.$store.dispatch('loadDatabase')
     # this.$store.dispatch('watchDatabase')
 

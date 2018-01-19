@@ -16,6 +16,7 @@ export store = new Vuex.Store(
     ###
     selectedNote: {}
     isLoading: true
+    user: null
     userID: ""
     fbRef: {}
 
@@ -25,11 +26,12 @@ export store = new Vuex.Store(
     setLoading: (state, payload) -> state.isLoading = payload
     setSelectedNote: (state, payload) -> state.selectedNote = payload
     setRootNode: (state, payload) -> state.rootNode = payload
-    setUserID: (state, payload) ->
-      state.userID = payload
-      state.fbRef = firebase.database.ref('users/'+payload+'/notes')
+    setUser: (state, user) ->
+      state.user = user
+      state.userID = user.uid
+      state.fbRef = firebase.database.ref('users/'+user.uid+'/notes')
 
-  actions:  # async like DB accessing - $store.dispatch('action', {param:value})
+  actions:  # async like DB access Toki Pona, ing - $store.dispatch('action', {param:value})
     loadDatabase: ({commit, state}) ->
       commit("setLoading", true)
       firebase.database.ref('users/'+state.userID+'/notes/rootNode').once("value")
@@ -50,14 +52,37 @@ export store = new Vuex.Store(
       firebase.database.ref('users/'+state.userID+'/notes').on("value", (snapshot) ->
         commit("setNotes", snapshot.val()))
 
-    signIn: ({commit, dispatch}, payload) ->
-      firebase.auth.signInWithEmailAndPassword(payload.email, payload.password)
-        .then (user) ->
-          commit('setUserID', user.uid)
+    signIn: ({commit, state, dispatch}, user) ->
+      # firebase.auth.signInWithEmailAndPassword(payload.email, payload.password)
+      # .then (user) ->
+      console.log user
+      commit('setUser', user)
+      #check if anonymous (demo mode)
+      if user.isAnonymous == true
+        console.log "demo mode"
+        firebase.database.ref('demoNotes').once('value')
+        .then (data) ->
+          state.fbRef.set(data.val())
+
+      #check if new user
+      state.fbRef.child("rootNode").once("value").then (data) ->
+        if not data.val()?
+          console.log "new user" # no rootNode means new user
+          state.fbRef.push({
+            parent: "rootNode"
+            text: "Wecome to your Personal Knoledge Base"
+            }).then (data) ->
+              state.fbRef.child("rootNode").child("children").set([data.key])
+              dispatch('loadDatabase')
+              dispatch('watchDatabase')
+        else
           dispatch('loadDatabase')
           dispatch('watchDatabase')
-          # dispatch('generateTestData')
-        .catch (error) -> console.log error
+              # dispatch('generateTestData')
+              # .catch (error) -> console.log error
+
+    signOut: ({commit, state, dispatch}) ->
+      commit('setUser', null)
 
     createNote: ({commit, getters, state}, payload) ->
       # text, parent, [etc]
@@ -116,6 +141,7 @@ export store = new Vuex.Store(
       generateChildren("rootNode", 3)
   getters:
     notes: (state) -> state.notes
+    user: (state) -> state.user
     isLoading: (state) -> state.isLoading
     selectedNote: (state) -> state.selectedNote
     # return dict of {ref: note object} from list of refs

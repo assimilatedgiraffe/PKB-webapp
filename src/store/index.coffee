@@ -57,6 +57,12 @@ export store = new Vuex.Store(
       # .then (user) ->
       console.log user
       commit('setUser', user)
+      #check if anonymous (demo mode)
+      if user.isAnonymous == true
+        console.log "demo mode"
+        firebase.database.ref('demoNotes').once('value')
+        .then (data) ->
+          state.fbRef.set(data.val())
 
       #check if new user
       state.fbRef.child("rootNode").once("value").then (data) ->
@@ -74,6 +80,9 @@ export store = new Vuex.Store(
           dispatch('watchDatabase')
               # dispatch('generateTestData')
               # .catch (error) -> console.log error
+
+    signOut: ({commit, state, dispatch}) ->
+      commit('setUser', null)
 
     createNote: ({commit, getters, state}, payload) ->
       # text, parent, [etc]

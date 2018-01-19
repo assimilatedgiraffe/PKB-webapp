@@ -6,7 +6,7 @@
     </el-row>
     <el-row>
       <el-col :span="12">Just Looking? </el-col>
-      <el-col :span="12"><el-button type="primary">Demo mode</el-button></el-col>
+      <el-col :span="12"><el-button type="primary" @click="startDemo">Demo mode</el-button></el-col>
     </el-row>
   </div>
 </template>
@@ -35,6 +35,14 @@ export default {
 
       .catch (error) ->
         #  Handle Errors here.
+        console.log error
+
+    startDemo: ->
+      console.log "startDemo"
+      firebase.auth().signInAnonymously().catch (error) ->
+        # Handle Errors here.
+        errorCode = error.code
+        errorMessage = error.message
         console.log error
 
   # created: ->

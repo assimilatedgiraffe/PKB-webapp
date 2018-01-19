@@ -8,7 +8,7 @@
     <el-row>
       <el-col :span="24">
         <el-menu mode="horizontal">
-          <el-menu-item index="1"> Logout </el-menu-item>
+          <el-menu-item @click="logOut" index="1"> Logout </el-menu-item>
         </el-menu>
       </el-col>
     </el-row>
@@ -37,6 +37,7 @@ import NoteGrid from './NoteGrid.vue'
 import Login from './Login.vue'
 
 import testAuth from './testAuth'
+import firebase from 'firebase'
 
 export default {
   name: 'MainApp'
@@ -53,13 +54,21 @@ export default {
 
   components: { NoteList, NoteGrid, Login }
 
-  methods: {
-  }
+  methods:
+    logOut: ->
+      console.log "logOut"
+      firebase.auth().signOut()
 
   created: ->
     # this.$store.dispatch('signIn', testAuth)
     # this.$store.dispatch('loadDatabase')
     # this.$store.dispatch('watchDatabase')
+    firebase.auth().onAuthStateChanged((user) =>
+      if user
+        this.$store.dispatch('signIn', user)
+      else
+        this.$store.dispatch('signOut')
+    )
 
   mounted: ->
     # this.$store.dispatch('generateTestData')

@@ -18,27 +18,14 @@ export default {
       #check if anonymous (demo mode)
       if user.isAnonymous == true
         console.log "demo mode"
-        firebase.database.ref('demoNotes').once('value')
-        .then (data) ->
-          rootState.fbRef.set(data.val())
-
-      #check if new user
-      rootState.fbRef.child("rootNode").once("value").then (data) ->
-        if not data.val()?
-          console.log "new user" # no rootNode means new user
-          rootState.fbRef.push({
-            parent: "rootNode"
-            text: "Wecome to your Personal Knoledge Base"
-            }).then (data) ->
-              rootState.fbRef.child("rootNode").child("children").set([data.key])
-              dispatch('loadDatabase')
-              dispatch('watchDatabase')
-        else
-          dispatch('loadDatabase')
-          dispatch('watchDatabase')
-              # dispatch('generateTestData')
-              # .catch (error) -> console.log error
+        dispatch('loadDemoNotes').then(dispatch('watchDatabase'))
+      else
+        dispatch('loadDatabase')
 
     signOut: ({commit, state, dispatch}) ->
       commit('setUser', null)
+
+  getters:
+    user: (state) -> state.user
+
 }

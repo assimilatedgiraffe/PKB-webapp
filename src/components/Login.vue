@@ -25,25 +25,15 @@ export default {
     logIn: ->
       console.log "logIn"
       provider = new firebase.auth.GoogleAuthProvider()
-      firebase.auth().signInWithPopup(provider).then (result) =>
-        # This gives you a Google Access Token. You can use it to access the Google API.
-        token = result.credential.accessToken
-        # The signed-in user info.
-        user = result.user;
-
-        this.$store.dispatch('signIn', user)
-
-      .catch (error) ->
-        #  Handle Errors here.
+      firebase.auth().signInWithPopup(provider).catch (error) =>
         console.log error
+        this.$notify.error({ title: 'Sign in Error', message: error.message })
 
     startDemo: ->
       console.log "startDemo"
-      firebase.auth().signInAnonymously().catch (error) ->
-        # Handle Errors here.
-        errorCode = error.code
-        errorMessage = error.message
+      firebase.auth().signInAnonymously().catch (error) =>
         console.log error
+        this.$notify.error({ title: 'Sign in Error', message: error.message })
 
   # created: ->
   # mounted: ->

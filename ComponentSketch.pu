@@ -8,14 +8,27 @@ package "MainApp"{
   }
 }
 
-database "vuex store"{
-  [UI vars]
+database "vuexStore"{
+  [UIVars]
+  [user(auth)]
+  [fb]
+  [notes]
 }
 
 cloud "firebase"{
   [notes and users]
 }
 
+
+'outbound
 user --> NoteGrid : default mode
+NoteGrid --> fb : note move
+NoteGrid <--> UIVars : navigation
 user --> TextEditor : edit mode
+TextEditor --> fb : note edit
+fb --> firebase : note move/edit
+
+'inbound
+firebase --> notes : note change
+notes --> NoteGrid : note change
 @enduml

@@ -8,20 +8,20 @@
     <el-row>
       <el-col :span="24">
         <el-menu mode="horizontal">
-          <el-menu-item @click="logOut" index="1"> Logout </el-menu-item>
+          <el-menu-item @click="logOut" index="1"> Log out </el-menu-item>
         </el-menu>
       </el-col>
     </el-row>
-    <el-row class="header">
+    <!-- <el-row class="header">
       <el-col :span="24">
         history/breadcrumbs for subjects; recents
         <NoteList :notes="notes" is-horizontal="true"></NoteList>
       </el-col>
-    </el-row>
+    </el-row> -->
     <el-row class="main-section">
       <el-col :span="24">
         grid view
-        <NoteGrid :notes="notes"></NoteGrid>
+        <NoteGrid></NoteGrid>
       </el-col>
     </el-row>
   </div>
@@ -30,13 +30,11 @@
 
 <script lang="coffee">
 
-# import { db } from '../firebase.js'
 import TextEditor from './TextEditor.vue'
 import NoteList from './NoteList.vue'
 import NoteGrid from './NoteGrid.vue'
 import Login from './Login.vue'
 
-import testAuth from './testAuth'
 import firebase from 'firebase'
 
 export default {
@@ -46,11 +44,7 @@ export default {
 
   computed:
     loginVisible: -> not this.$store.getters.user?
-    notes: ->
-
-  # firebase: {
-  #     # notes: { source: db.ref('notes') }
-  #   }
+    # notes: ->
 
   components: { NoteList, NoteGrid, Login }
 
@@ -60,7 +54,6 @@ export default {
       firebase.auth().signOut()
 
   created: ->
-    # this.$store.dispatch('signIn', testAuth)
     # this.$store.dispatch('loadDatabase')
     # this.$store.dispatch('watchDatabase')
     firebase.auth().onAuthStateChanged((user) =>

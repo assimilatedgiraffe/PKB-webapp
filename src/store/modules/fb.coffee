@@ -35,12 +35,22 @@ export default {
         console.log(error)
         commit("setLoading", true)
 
-    watchDatabase: ({commit, state, dispatch}) ->
+    watchDatabase: ({commit, getters, state, dispatch}) ->
       state.fbRef.once('value').then (data) ->
         commit('setNotes', data.val())
         dispatch('loadUI')
       state.fbRef.on("value", (snapshot) ->
-        commit("setNotes", snapshot.val()))
+        commit("setNotes", snapshot.val())
+        # watch for delete from this or other clients
+        if not getters.selectedNote?
+          console.log "no note selected"
+          if getters.isLoading
+            return
+          else if getters.dex[0] > 0
+            commit('moveUp')
+          else if state.selectedParentRef != "rootNode"
+            commit('setSelectedParentRef', getters.selectedParent.parent)
+            commit('moveLeft'))
 
     createNote: ({commit, getters, state}, newNote) ->
       # newNote = {text, parent, [etc]}

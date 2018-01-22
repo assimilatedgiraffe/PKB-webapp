@@ -206,18 +206,8 @@ export default {
             this.editMode = true
           when "Delete"
             console.log "Delete"
-            #TODO: move delete logic to notes - watch delete from other clients
-            noteToDelete = this.$store.getters.selectedNote
-            if this.selectedNoteIndexs[0] > 0
-              this.selectedNoteIndexs[0] -= 1
-              this.$store.commit('setSelectedNote', this.selectedSiblings[this.selectedNoteIndexs[0]])
-              this.$store.dispatch('deleteNote', noteToDelete)
-            else
-              selectedParent = this.notes[this.$store.getters.selectedNote].parent
-              if selectedParent != "rootNode"
-                this.selectedNoteIndexs.shift()
-                this.$store.commit('setSelectedNote', selectedParent)
-                this.$store.dispatch('deleteNote', noteToDelete)
+            noteToDelete = this.$store.getters.selectedNoteRef
+            this.$store.dispatch('deleteNote', noteToDelete)
 
 
 

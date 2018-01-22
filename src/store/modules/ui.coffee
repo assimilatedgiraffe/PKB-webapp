@@ -10,7 +10,6 @@ export default {
     setLoading: (state, payload) -> state.isLoading = payload
     setBusy: (state, payload) -> state.isBusy = payload
     setSelectedParentRef: (state, payload) -> state.selectedParentRef = payload
-    # setSelectedNoteRef: (state, payload) -> state.selectedNoteRef = payload
     #!! need to use splice on array so vue can detect change !!
     moveDown: (state) -> state.dex.splice(0, 1, state.dex[0] + 1)
     moveUp: (state) -> state.dex.splice(0, 1, state.dex[0] - 1)
@@ -34,9 +33,9 @@ export default {
           else #create new empty note if none exists
             commit('setBusy', true)
             dispatch('createNote', {text:"", parent:getters.selectedNote.parent})
-              .then =>
-                commit('moveDown')
-                commit('setBusy', false)
+            .then =>
+              commit('moveDown')
+              commit('setBusy', false)
         when 'k'
           console.log "up"
           if state.dex[0] > 0
@@ -54,13 +53,14 @@ export default {
           else # create new child note if none exist
             commit('setBusy', true)
             dispatch('createNote', {text:"", parent:getters.selectedNoteRef})
-              .then =>
-                commit("setSelectedParentRef", getters.selectedNoteRef)
-                commit('moveRight')
-                commit('setBusy', false)
+            .then =>
+              commit("setSelectedParentRef", getters.selectedNoteRef)
+              commit('moveRight')
+              commit('setBusy', false)
 
   getters:
     isLoading: (state) -> state.isLoading
+    dex: (state) -> state.dex
     selectedNote: (state, getters) -> getters.note(getters.selectedSiblings[state.dex[0]])
     selectedNoteRef: (state, getters) -> getters.selectedSiblings[state.dex[0]]
     selectedSiblings: (state, getters) ->

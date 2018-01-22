@@ -5,25 +5,28 @@
       :visible="loginVisible">
       <Login></Login>
     </el-dialog>
-    <el-row>
-      <el-col :span="24">
+    <!-- menu -->
+    <el-header>
+      <el-row type="flex" class="header" justify="end">
         <el-menu mode="horizontal">
           <el-menu-item @click="logOut" index="1"> Log out </el-menu-item>
         </el-menu>
-      </el-col>
-    </el-row>
+      </el-row>
+    </el-header>
     <!-- <el-row class="header">
       <el-col :span="24">
         history/breadcrumbs for subjects; recents
         <NoteList :notes="notes" is-horizontal="true"></NoteList>
       </el-col>
     </el-row> -->
+    <el-main>
     <el-row class="main-section">
       <el-col :span="24">
         <!-- grid view -->
         <NoteGrid></NoteGrid>
       </el-col>
     </el-row>
+    </el-main>
   </div>
 </template>
 
@@ -74,10 +77,15 @@ export default {
   height: 100%;
 }
 .header {
-  height: 20vh;
+  background-color: #eef1f6;
+  margin-bottom: 10px;
 }
 .main-section {
   height: 80vh;
+}
+
+body {
+  background-color: lightgrey;
 }
 
 /*wireframe css*/

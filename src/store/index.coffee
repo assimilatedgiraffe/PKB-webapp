@@ -19,19 +19,12 @@ export store = new Vuex.Store(
   }
 
   # state:
-    ###
-    text: ''
-    parent: ref
-    children: [...refs]
-    ###
 
 
+  # mutations: # $store.commit('setX', {param:value})
 
   # actions:  # async like DB access Toki Pona, ing - $store.dispatch('action', {param:value})
-  #
-  #
-  #
-  # getters:
 
-  
+
+
 )

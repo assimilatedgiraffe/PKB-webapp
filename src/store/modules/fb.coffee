@@ -17,7 +17,7 @@ export default {
     loadNewUserNotes: ({state}) ->
       state.fbRef.push({
         parent: "rootNode"
-        text: "Wecome to your Personal Knoledge Base"
+        text: "Wecome to your Personal Knowledge Base"
         }).then (data) ->
           state.fbRef.child("rootNode").child("children").set([data.key])
 
@@ -44,14 +44,18 @@ export default {
 
     createNote: ({commit, getters, state}, newNote) ->
       # newNote = {text, parent, [etc]}
+      console.log newNote
+      # commit('setBusy', true)
       state.fbRef.push(newNote)
         .then (data) ->
           siblings = getters.siblings(newNote)
           siblings ?= []
           siblings.push(data.key)
           state.fbRef.child(newNote.parent).child('children').set(siblings)
+          # .then(commit('setBusy', false))
         .catch (error) ->
           console.log(error)
+          # commit('setBusy', false)
 
     deleteNote: ({state, getters, dispatch}, noteRef) ->
       note = getters.note(noteRef)

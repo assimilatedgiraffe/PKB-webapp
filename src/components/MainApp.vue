@@ -20,7 +20,7 @@
     </el-row> -->
     <el-row class="main-section">
       <el-col :span="24">
-        grid view
+        <!-- grid view -->
         <NoteGrid></NoteGrid>
       </el-col>
     </el-row>
@@ -81,8 +81,8 @@ export default {
 }
 
 /*wireframe css*/
-.el-col {
+/*.el-col {
   border-style: solid;
-}
+}*/
 
 </style>

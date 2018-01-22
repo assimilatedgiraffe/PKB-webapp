@@ -92,9 +92,29 @@ export default {
       else
         state.fbRef.child(payload.noteRef).child('children').set(payload.children)
 
-    setNoteParent: ({state}, payload) ->
+    setNoteParent: ({state, getters, dispatch}, payload) ->
       console.log payload
-      state.fbRef.child(payload.noteRef).child('parent').set(payload.parentRef)
+      currentParentRef = getters.note(payload.noteRef).parent
+      oldSiblings = getters.note(currentParentRef).children
+
+      newParentRef = payload.parentRef
+      newParent = getters.note(newParentRef)
+      newParent.children ?= []
+
+      console.log newParent.children, oldSiblings
+      oldSiblings = oldSiblings.filter((e) -> e != payload.noteRef)
+      newParent.children.push(payload.noteRef)
+      console.log newParent.children, oldSiblings
+
+      dispatch('setNoteChildren', {
+        noteRef: currentParentRef
+        children: oldSiblings})
+      .then => dispatch('setNoteChildren', {
+        noteRef: newParentRef
+        children: newParent.children})
+      .then =>
+        state.fbRef.child(payload.noteRef).child('parent').set(payload.parentRef)
+      # .then => commit('setBusy', false)
 
     shiftNote: ({commit, state, getters, dispatch}, key) ->
       if getters.isBusy
@@ -129,23 +149,11 @@ export default {
             parentRef = getters.selectedNote.parent
             if parentRef != "rootNode"
               grandParentRef = getters.selectedParent.parent
-              elders = getters.selectedElders
               selected = getters.selectedNoteRef
-              console.log siblings, elders
-              elders.push(siblings.splice(dex, 1)[0])
-              console.log siblings, elders
-              dispatch('setNoteChildren', {
-                noteRef: parentRef
-                children: siblings })
-              .then => dispatch('setNoteChildren', {
-                noteRef: grandParentRef
-                children: elders })
-              .then => dispatch('setNoteParent', {
+              dispatch('setNoteParent', {
                 noteRef: selected
                 parentRef: grandParentRef })
               .then =>
-                  # this.$store.commit('setSelectedNote', this.selectedNote)
-                  # this.selectedNoteIndexs.shift()
                   commit('setSelectedParentRef', grandParentRef)
                   commit('moveLeft')
                   commit('setBusy', false)
@@ -155,20 +163,8 @@ export default {
             # make child of note above
             if dex > 0
               newParentRef = siblings[dex - 1]
-              newParent = getters.note(newParentRef)
-              newParent.children ?= []
-              console.log newParentRef, newParent, siblings
-              noteToShift = siblings.splice(dex, 1)[0]
-              newParent.children.push(noteToShift)
-              console.log newParent.children, siblings
-              dispatch('setNoteChildren', {
-                noteRef: getters.selectedNote.parent
-                children: siblings})
-              .then => dispatch('setNoteChildren', {
-                noteRef: newParentRef
-                children: newParent.children})
-              .then => dispatch('setNoteParent', {
-                noteRef: noteToShift
+              dispatch('setNoteParent', {
+                noteRef: getters.selectedNoteRef
                 parentRef: newParentRef})
               .then =>
                 commit('setSelectedParentRef', newParentRef)

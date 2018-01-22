@@ -17,6 +17,7 @@
 
 <script lang="coffee">
 import TextEditor from './TextEditor.vue'
+import { mapGetters } from 'vuex'
 
 export default {
   data: -> {

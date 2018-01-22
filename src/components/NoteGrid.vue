@@ -21,7 +21,7 @@ import TextEditor from './TextEditor.vue'
 export default {
   data: -> {
     numberOfCols: 3
-    selectedNoteIndexs: [0] #stack from beginning of array using unshift()/shift()
+    # selectedNoteIndexs: [0] #stack from beginning of array using unshift()/shift()
     editMode: false
     # selectedCol: 0
     # selectedNote: {}
@@ -63,50 +63,7 @@ export default {
       # two = one[this.selectedIndex[1]].children?
       # return [[{text:""}], [{text:""}], [{text:""}]]
         return [zero,one,two]
-    # keymap: (e) ->
-    #   console.log e.key
-    #   console.log this
-    #   if this.editMode
-    #     {
-    #     'esc': =>
-    #       console.log "esc"
-    #       selectedVue = this.$children[1].$children[this.selectedNoteIndexs[0]]
-    #       selectedVue.editor.set('isReadOnly', true)
-    #       selectedVue.editor.element.blur()
-    #       this.editMode = false
-    #
-    #     }
-    #   else
-    #     {
-    #     'j': =>
-    #       console.log "down"
-    #       if this.selectedSiblings.length > this.selectedNoteIndexs[0] + 1
-    #         this.selectedNoteIndexs[0] += 1
-    #         this.$store.commit('setSelectedNote', this.selectedSiblings[this.selectedNoteIndexs[0]])
-    #     'k': =>
-    #       console.log "up"
-    #       if this.selectedNoteIndexs[0] > 0
-    #         this.selectedNoteIndexs[0] -= 1
-    #         this.$store.commit('setSelectedNote', this.selectedSiblings[this.selectedNoteIndexs[0]])
-    #     'h': =>
-    #       console.log "left"
-    #       selectedParent = this.notes[this.$store.getters.selectedNote].parent
-    #       this.selectedNoteIndexs.shift()
-    #       this.$store.commit('setSelectedNote', selectedParent)
-    #     'l': =>
-    #       console.log "right"
-    #       selectedChildren = this.notes[this.$store.getters.selectedNote].children
-    #       this.selectedNoteIndexs.unshift(0)
-    #       this.$store.commit('setSelectedNote', Object.values(selectedChildren)[0])
-    #     'enter': =>
-    #       console.log "enter"
-    #       selectedVue = this.$children[1].$children[this.selectedNoteIndexs[0]]
-    #       selectedVue.editor.set('isReadOnly', false)
-    #       selectedVue.editor.element.focus()
-    #       this.editMode = true
-    #       # this.$el.blur()
-    # }
-  }
+      }
   methods: {
     # onNoteClick: (i,j) ->
     #   this.selectedCol = i
@@ -120,87 +77,21 @@ export default {
         # leave edit mode when done editing note
           when "Escape"
             console.log "Escape"
-            selectedVue = this.$children[1].$children[this.selectedNoteIndexs[0]]
+            selectedVue = this.$children[1].$children[this.$store.getters.dex[0]]
             selectedVue.editor.set('isReadOnly', true)
             selectedVue.editor.element.blur()
             this.$el.focus()
             this.editMode = false
 
       else if e.altKey
-        siblings = this.selectedSiblings
-        dex = this.selectedNoteIndexs[0]
-        switch e.key
-        # move selected note
-          when 'j'
-            console.log "move down"
-            if siblings.length > dex + 1
-              siblings.splice(dex + 1, 0, siblings.splice(dex, 1)[0])
-              this.$store.dispatch('setNoteChildren', {
-                noteRef: this.notes[this.selectedNote].parent
-                children: siblings
-                }).then =>
-                  this.selectedNoteIndexs[0] += 1
-          when 'k'
-            console.log "move up"
-            if dex > 0
-              siblings.splice(dex - 1, 0, siblings.splice(dex, 1)[0])
-              this.$store.dispatch('setNoteChildren', {
-                noteRef: this.notes[this.selectedNote].parent
-                children: siblings
-                }).then =>
-                  this.selectedNoteIndexs[0] -= 1
-          when 'h'
-            console.log "move left"
-            parentRef = this.notes[this.selectedNote].parent
-            if parentRef != "rootNode"
-              elders = this.selectedElders
-              elders.push(siblings.splice(dex, 1)[0])
-              console.log siblings, elders
-              this.$store.dispatch('setNoteChildren', {
-                noteRef: parentRef
-                children: siblings
-                }).then =>
-                  this.$store.dispatch('setNoteChildren', {
-                    noteRef: this.notes[parentRef].parent
-                    children: elders
-                    }).then =>
-                      this.$store.dispatch('setNoteParent', {
-                        noteRef: this.selectedNote
-                        parentRef: this.notes[parentRef].parent
-                        }).then =>
-                          # this.$store.commit('setSelectedNote', this.selectedNote)
-                          this.selectedNoteIndexs.shift()
-                          this.selectedNoteIndexs[0] = this.selectedSiblings.length - 1
-          when 'l'
-            console.log "move right"
-            # make child of note above
-            if dex > 0
-              newParentRef = siblings[dex - 1]
-              newParent = this.notes[newParentRef]
-              console.log newParent.children, siblings
-              newParent.children.push(siblings.splice(dex, 1)[0])
-              console.log newParent.children, siblings
-              this.$store.dispatch('setNoteChildren', {
-                noteRef: newParentRef
-                children: newParent.children
-                }).then =>
-                  this.$store.dispatch('setNoteChildren', {
-                    noteRef: this.notes[this.selectedNote].parent
-                    children: siblings
-                    }).then =>
-                      this.$store.dispatch('setNoteParent', {
-                        noteRef: this.selectedNote
-                        parentRef: newParentRef
-                        }).then =>
-                          this.selectedNoteIndexs[0] -= 1
-                          this.selectedNoteIndexs.unshift(this.selectedSiblings.length - 1)
+        this.$store.dispatch('shiftNote', e.key)
       else
         this.$store.dispatch('navigate', e.key)
         switch e.key
           # editing and deleting
           when "Enter"
             console.log "Enter"
-            selectedVue = this.$children[1].$children[this.selectedNoteIndexs[0]]
+            selectedVue = this.$children[1].$children[this.$store.getters.dex[0]]
             selectedVue.editor.set('isReadOnly', false)
             selectedVue.editor.element.focus()
             this.editMode = true

@@ -21,47 +21,24 @@ import TextEditor from './TextEditor.vue'
 export default {
   data: -> {
     numberOfCols: 3
-    # selectedNoteIndexs: [0] #stack from beginning of array using unshift()/shift()
     editMode: false
-    # selectedCol: 0
-    # selectedNote: {}
   }
-  # props: ['notes']
+
   components: {TextEditor}
 # TODO: store helper function
   computed: {
-    notes: -> this.$store.getters.notes
-    isLoading: -> this.$store.getters.isLoading
-    selectedElders: -> this.$store.getters.selectedElders
-    selectedSiblings: -> this.$store.getters.selectedSiblings if not this.isLoading
-    selectedChildren: -> this.$store.getters.selectedChildren
-    selectedNote: -> this.$store.getters.selectedNote
+    ...mapGetters([
+      'notes', 'isLoading', 'selectedElders', 'selectedSiblings', 'selectedChildren', 'selectedNote'
+      ])
     colSpan: -> 24 / this.numberOfCols
     cols: ->
-      # root = this.$store.getters.notes
       if this.isLoading
         #Still loading notes from firebase
-        # this.cols[0][0].isSelected = true
-        # return [[[ {text: "Loading..."} ]],[],[]]
         return [[],[],[]]
-      #  wrap note(data model) in noteEditor(view model)
       else
-        # wrap = (note) -> {
-        #   note
-        #   isSelected: false
-        # }
-        # console.log root
         zero = this.$store.getters.refListToNotes(this.selectedElders)
         one = this.$store.getters.refListToNotes(this.selectedSiblings)
         two = this.$store.getters.refListToNotes(this.selectedChildren)
-        # two = {}
-        # selectedChildren = this.notes[this.$store.getters.selectedNote].children
-        # if selectedChildren?
-        #   for index, noteRef of selectedChildren
-        #     do (noteRef) =>
-        #       two[noteRef] = this.notes[noteRef]
-      # two = one[this.selectedIndex[1]].children?
-      # return [[{text:""}], [{text:""}], [{text:""}]]
         return [zero,one,two]
       }
   methods: {
@@ -100,52 +77,8 @@ export default {
             noteToDelete = this.$store.getters.selectedNoteRef
             this.$store.dispatch('deleteNote', noteToDelete)
 
-
-
-      # col = this.cols[this.selectedCol]
-      # console.log this.selectedNote
-      # switch e.key
-      #   when "j"
-      #     this.cols[this.selectedCol][this.selectedNote].isSelected = false
-      #     this.selectedNote += 1
-      #     this.cols[this.selectedCol][this.selectedNote].isSelected = true
-      #   when "k"
-      #     col[this.selectedNote].isSelected = false
-      #     this.selectedNote -= 1
-      #     col[this.selectedNote].isSelected = true
-      #   when "h"
-      #     this.selectedCol -= 1
-      #   when "l"
-      #     this.selectedCol += 1
-
-      # col = this.cols[this.selectedCol]
-      # i = this.selectedNote
-      # if e.key == "j"
-      #   # this.cols[selectedCol].length
-      #   console.log this
-      #   # col[i].isSelected = false
-      #   # i += 1
-      #   this.selectedNote += 1
-      #   this.cols[this.selectedCol][this.selectedNote].isSelected = true
   }
   mounted: ->
-    # keyboardMap: (e) ->
-    #   console.log e.key
-    #   # col = this.cols[this.selectedCol]
-    #   # i = this.selectedNote
-    #   if e.key == "j"
-    #     # this.cols[selectedCol].length
-    #     console.log this
-    #     # col[i].isSelected = false
-    #     # i += 1
-    #     this.cols[this.selectedCol][this.selectedNote].isSelected = false
-    #     this.selectedNote += 1
-    #     this.cols[this.selectedCol][this.selectedNote].isSelected = true
-    # console.log keyboardMap()
-    # that = this
-    # console.log this.keyboardMap
-    # that = this
-    # window.addEventListener("keyup", that.keyboardMap)
     this.$el.focus()
 }
 </script>

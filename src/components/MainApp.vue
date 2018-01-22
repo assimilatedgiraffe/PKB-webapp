@@ -6,27 +6,24 @@
       <Login></Login>
     </el-dialog>
     <!-- menu -->
-    <el-header>
       <el-row type="flex" class="header" justify="end">
         <el-menu mode="horizontal">
-          <el-menu-item @click="logOut" index="1"> Log out </el-menu-item>
+          <el-menu-item index="1" v-if="isDisconnected"> ! Offline Mode  </el-menu-item>
+          <el-menu-item @click="logOut" index="2"> Log out </el-menu-item>
         </el-menu>
       </el-row>
-    </el-header>
     <!-- <el-row class="header">
       <el-col :span="24">
         history/breadcrumbs for subjects; recents
         <NoteList :notes="notes" is-horizontal="true"></NoteList>
       </el-col>
     </el-row> -->
-    <el-main>
     <el-row class="main-section">
       <el-col :span="24">
         <!-- grid view -->
         <NoteGrid></NoteGrid>
       </el-col>
     </el-row>
-    </el-main>
   </div>
 </template>
 
@@ -47,6 +44,7 @@ export default {
 
   computed:
     loginVisible: -> not this.$store.getters.user?
+    isDisconnected: -> not this.$store.getters.isConnected
     # notes: ->
 
   components: { NoteList, NoteGrid, Login }

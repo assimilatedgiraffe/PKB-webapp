@@ -53,6 +53,13 @@ export default {
           else if state.selectedParentRef != "rootNode"
             commit('setSelectedParentRef', getters.selectedParent.parent)
             commit('moveLeft'))
+      # watch connection
+      connectedRef = firebase.database.ref(".info/connected")
+      connectedRef.on("value", (snap) ->
+        if (snap.val() == true)
+          commit("setConnected", true)
+        else
+          commit("setConnected", false))
 
     createNote: ({commit, getters, state}, newNote) ->
       # newNote = {text, parent, [etc]}

@@ -1,13 +1,14 @@
 export default {
   state:
     isLoading: true
-    # selectedNoteRef: ""
+    isConnected: true #firebase connection
     isBusy: false #waiting for firebase
     selectedParentRef: ""
     dex: [0] #selected note indexes, stack from beginning of array using unshift()/shift()
 
   mutations:
     setLoading: (state, payload) -> state.isLoading = payload
+    setConnected: (state, payload) -> state.isConnected = payload
     setBusy: (state, payload) -> state.isBusy = payload
     setSelectedParentRef: (state, payload) -> state.selectedParentRef = payload
     #!! need to use splice on array so vue can detect change !!
@@ -60,6 +61,7 @@ export default {
 
   getters:
     isLoading: (state) -> state.isLoading
+    isConnected: (state) -> state.isConnected
     dex: (state) -> state.dex
     selectedNote: (state, getters) -> getters.note(getters.selectedSiblings[state.dex[0]])
     selectedNoteRef: (state, getters) -> getters.selectedSiblings[state.dex[0]]

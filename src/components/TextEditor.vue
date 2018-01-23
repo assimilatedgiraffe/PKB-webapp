@@ -1,7 +1,7 @@
 <template lang="html">
   <div class="">
     <el-card
-      :class="{ selected: isSelected }">
+      :class="{ selected: isSelected, selectedParent: isSelectedParent}">
       <div
         ref="editorDiv"
         @focus="onFocus"
@@ -31,6 +31,7 @@ export default {
       this.note == this.$store.getters.selectedNote
     # NoteDBkey: -> db.ref('notes').child(this.noteEditor.note['.key'])
     # isSelected: -> this.noteEditor.isSelected
+    isSelectedParent: -> this.note == this.$store.getters.selectedParent
   }
 
   props: {
@@ -75,5 +76,8 @@ export default {
 <style lang="css">
   .selected {
     border: 7px solid blue;
+  }
+  .selectedParent {
+    border: 7px solid lightblue;
   }
 </style>

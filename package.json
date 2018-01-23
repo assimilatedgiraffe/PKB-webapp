@@ -16,7 +16,7 @@
   "dependencies": {
     "@ckeditor/ckeditor5-build-inline": "^1.0.0-alpha.1",
     "coffee-loader": "^0.8.0",
-    "element-ui": "^1.4.6",
+    "element-ui": "^2.0.11",
     "firebase": "^4.5.1",
     "sinon": "^4.0.1",
     "v-hotkey": "^0.2.0",
@@ -91,7 +91,7 @@
     "webpack-bundle-analyzer": "^2.9.0",
     "webpack-dev-middleware": "^1.12.0",
     "webpack-hot-middleware": "^2.18.2",
-    "webpack-merge": "^4.1.0"
+    "webpack-merge": "^4.1.1"
   },
   "engines": {
     "node": ">= 4.0.0",

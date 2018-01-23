@@ -1,13 +1,21 @@
 <template lang="html">
-  <div id="main-app">
+  <!-- <div id="main-app"> -->
+  <el-container>
     <el-dialog
       title="Login"
       :visible="loginVisible">
       <Login></Login>
     </el-dialog>
-    <!-- menu -->
+    <el-header>
+      <!-- menu -->
       <el-row type="flex" class="header" justify="end">
-
+        <el-col :span="12" class="title">
+          <h3>
+            <i class="el-icon-tickets"></i>
+            Personal Knowledge Base App Demo
+          </h3>
+        </el-col>
+        <el-col :span="12" >
         <el-menu mode="horizontal">
           <el-menu-item index="1" v-if="isDisconnected">
             <i class="el-icon-warning"></i>Offline Mode
@@ -17,20 +25,25 @@
           </el-menu-item>
           <el-menu-item @click="logOut" index="3"> Log out </el-menu-item>
         </el-menu>
+        </el-col>
       </el-row>
+    </el-header>
     <!-- <el-row class="header">
       <el-col :span="24">
         history/breadcrumbs for subjects; recents
         <NoteList :notes="notes" is-horizontal="true"></NoteList>
       </el-col>
     </el-row> -->
+    <el-main>
     <el-row class="main-section">
       <el-col :span="24">
         <!-- grid view -->
         <NoteGrid></NoteGrid>
       </el-col>
     </el-row>
-  </div>
+  </el-main>
+  <!-- <el-footer>Footer</el-footer> -->
+  </el-container>
 </template>
 
 
@@ -79,18 +92,32 @@ export default {
 
 <style lang="css">
 .el-col {
-  height: 100%;
+  /*height: 100%;*/
 }
 .header {
   background-color: #eef1f6;
-  margin-bottom: 10px;
+  /*margin-bottom: 10px;*/
 }
 .main-section {
-  height: 80vh;
+  /*height: 80vh;*/
+}
+.el-menu {
+  float: right;
+}
+.title {
+  padding-left: 10px;
+  margin: auto;
 }
 
+.el-container {
+  height: 100vh;
+}
+.el-header {
+  padding: 0;
+}
 body {
   background-color: lightgrey;
+  margin: 0;
 }
 
 /*wireframe css*/

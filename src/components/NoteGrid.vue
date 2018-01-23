@@ -79,6 +79,13 @@ export default {
             this.$store.dispatch('deleteNote', noteToDelete)
 
   }
+
+  watch:
+    selectedNote: (newId, oldId)->
+      console.log newId, oldId
+      # if newId == "selectedNote"
+      setTimeout (=> this.$store.dispatch('scrollToSelected')) , 20
+
   mounted: ->
     this.$el.focus()
 }

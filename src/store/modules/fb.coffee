@@ -17,7 +17,7 @@ export default {
     loadNewUserNotes: ({state}) ->
       state.fbRef.push({
         parent: "rootNode"
-        text: "Wecome to your Personal Knowledge Base"
+        text: "Welcome to your Personal Knowledge Base"
         }).then (data) ->
           state.fbRef.child("rootNode").child("children").set([data.key])
 

@@ -1,3 +1,6 @@
+# import VueScrollTo from 'vue-scrollto'
+import scrollIntoViewIfNeeded from 'scroll-into-view-if-needed'
+
 export default {
   state:
     isLoading: true
@@ -58,6 +61,16 @@ export default {
               commit("setSelectedParentRef", getters.selectedNoteRef)
               commit('moveRight')
               commit('setBusy', false)
+
+    scrollToSelected: ->
+      console.log "scroll to selected"
+      element = document.getElementById("selectedNote")
+      options = {
+        centerIfNeeded: true
+        duration: 300
+        easing: 'easeInOut'
+      }
+      scrollIntoViewIfNeeded(element, options)
 
   getters:
     isLoading: (state) -> state.isLoading

@@ -18,10 +18,12 @@
     "coffee-loader": "^0.8.0",
     "element-ui": "^2.0.11",
     "firebase": "^4.5.1",
+    "scroll-into-view-if-needed": "^1.4.0",
     "sinon": "^4.0.1",
     "v-hotkey": "^0.2.0",
     "vue": "^2.4.2",
     "vue-router": "^2.7.0",
+    "vue-scrollto": "^2.8.0",
     "vuefire": "^1.4.4",
     "vuex": "^3.0.0"
   },

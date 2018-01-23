@@ -34,7 +34,7 @@
         <NoteList :notes="notes" is-horizontal="true"></NoteList>
       </el-col>
     </el-row> -->
-    <el-main>
+    <el-main id="main">
     <el-row class="main-section">
       <el-col :span="24">
         <!-- grid view -->

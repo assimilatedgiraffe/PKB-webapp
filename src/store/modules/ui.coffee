@@ -3,7 +3,7 @@ import scrollIntoViewIfNeeded from 'scroll-into-view-if-needed'
 
 export default {
   state:
-    isLoading: true
+    isLoading: false
     isConnected: true #firebase connection
     isBusy: false #waiting for firebase
     selectedParentRef: ""

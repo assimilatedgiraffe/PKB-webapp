@@ -1,18 +1,14 @@
 <template lang="html">
   <!-- <div id="main-app"> -->
   <el-container>
-    <el-dialog
-      title="Login"
-      :visible="loginVisible">
-      <Login></Login>
-    </el-dialog>
+    <Login></Login>
     <el-header>
       <!-- menu -->
       <el-row type="flex" class="header" justify="end">
         <el-col :span="12" class="title">
           <h3>
             <i class="el-icon-tickets"></i>
-            Personal Knowledge Base App Demo
+            Personal Knowledge Base Webapp
           </h3>
         </el-col>
         <el-col :span="12" >
@@ -34,7 +30,7 @@
         <NoteList :notes="notes" is-horizontal="true"></NoteList>
       </el-col>
     </el-row> -->
-    <el-main id="main">
+    <el-main id="main" v-loading="isLoading">
     <el-row class="main-section">
       <el-col :span="24">
         <!-- grid view -->

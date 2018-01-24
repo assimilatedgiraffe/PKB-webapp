@@ -1,13 +1,23 @@
 <template lang='html'>
   <div>
-    <el-row>
-      <el-col :span="12">New or returning User? </el-col>
-      <el-col :span="12"><el-button type="primary" @click="logIn">Log in with Google</el-button></el-col>
-    </el-row>
-    <el-row>
-      <el-col :span="12">Just Looking? </el-col>
-      <el-col :span="12"><el-button type="primary" @click="startDemo">Demo mode</el-button></el-col>
-    </el-row>
+    <el-dialog
+      :show-close="false"
+      center
+      :visible="loginVisible"
+      width="40%"
+      >
+    <span slot="title">
+        <p>
+          Welcome to version {{version}} of my Personal Knowledge Base Webapp.
+          <br><br>
+        </p>
+        <el-button type="primary" @click="startDemo">User Guide and Demo</el-button>
+      </span>
+    <span slot="footer">
+      New or returning User?
+      <el-button type="primary" @click="logIn">Log in with Google</el-button>
+    </span>
+  </el-dialog>
   </div>
 </template>
 
@@ -17,17 +27,18 @@ import firebase from 'firebase'
 export default {
   name: 'Login'
 
-  # data: ->
+  data: ->
+    version: "0.1"
 
-  # computed:
+  computed:
+    loginVisible: -> not this.$store.getters.user?
 
   methods:
     logIn: ->
       console.log "logIn"
       provider = new firebase.auth.GoogleAuthProvider()
-      firebase.auth().signInWithPopup(provider).catch (error) =>
-        console.log error
-        this.$notify.error({ title: 'Sign in Error', message: error.message })
+      firebase.auth().signInWithRedirect(provider);
+      this.$store.commit('setLoading', true)
 
     startDemo: ->
       console.log "startDemo"
@@ -39,3 +50,10 @@ export default {
   # mounted: ->
 }
 </script>
+
+<style scoped lang="css">
+p {
+  font-size: 29px;
+  margin: 0;
+}
+</style>

@@ -41,7 +41,7 @@ export default {
         one = this.$store.getters.refListToNotes(this.selectedSiblings)
         two = this.$store.getters.refListToNotes(this.selectedChildren)
         return [zero,one,two]
-      }
+  }
   methods: {
     # onNoteClick: (i,j) ->
     #   this.selectedCol = i

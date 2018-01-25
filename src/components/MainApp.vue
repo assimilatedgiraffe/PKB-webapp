@@ -34,7 +34,7 @@
     <el-row class="main-section">
       <el-col :span="24">
         <!-- grid view -->
-        <NoteGrid></NoteGrid>
+        <NoteGrid ref="NoteGrid"></NoteGrid>
       </el-col>
     </el-row>
   </el-main>
@@ -72,6 +72,10 @@ export default {
       console.log "logOut"
       firebase.auth().signOut()
 
+    documentClick: ->
+      console.log "setFocus"
+      this.$refs.NoteGrid.$el.focus()
+
   watch:
     error: (newError) ->
       if newError != ""
@@ -87,9 +91,13 @@ export default {
       else
         this.$store.dispatch('signOut')
     )
+    document.addEventListener('click', this.documentClick)
 
   mounted: ->
     # this.$store.dispatch('generateTestData')
+
+  destroyed: ->
+    document.removeEventListener('click', this.documentClick)
 }
 </script>
 

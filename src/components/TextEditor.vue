@@ -77,10 +77,20 @@ export default {
 </script>
 
 <style lang="css">
-  .selected {
-    border: 7px solid blue;
+  .el-card {
+    /*background-color: #eef1f6;*/
+    /*margin: 2px;*/
   }
-  .selectedParent {
-    border: 7px solid lightblue;
+  .selected .el-card__body {
+    padding: 16px;
+    border: 4px solid #48a3f5;
+    /*background-color: #fff;*/
+    /*margin: 0;*/
+  }
+  .selectedParent .el-card__body {
+    padding: 17px;
+    border: 3px solid #8cbfec;
+    /*background-color: #f8f8ff;*/
+    /*margin: 0;*/
   }
 </style>

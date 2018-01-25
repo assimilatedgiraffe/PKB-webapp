@@ -21,6 +21,6 @@ export default {
       notes = {}
       for noteRef in refs
         do (noteRef) =>
-          notes[noteRef] = state.notes[noteRef]
+          notes[noteRef] = state.notes[noteRef] if state.notes[noteRef]?
       return notes
 }

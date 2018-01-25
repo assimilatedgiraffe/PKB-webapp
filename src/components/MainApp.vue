@@ -16,7 +16,7 @@
           <el-menu-item index="1" v-if="isDisconnected">
             <i class="el-icon-warning"></i>Offline Mode
           </el-menu-item>
-          <el-menu-item index="2" v-if="isLoading">
+          <el-menu-item index="2" v-if="isBusy">
             <i class="el-icon-loading"></i>
           </el-menu-item>
           <el-menu-item @click="logOut" index="3"> Log out </el-menu-item>
@@ -60,7 +60,8 @@ export default {
   computed:
     loginVisible: -> not this.$store.getters.user?
     isDisconnected: -> not this.$store.getters.isConnected
-    isLoading: -> this.$store.getters.isLoading or this.$store.getters.isBusy
+    isLoading: -> this.$store.getters.isLoading
+    isBusy: -> this.$store.getters.isBusy
     # notes: ->
 
   components: { NoteList, NoteGrid, Login }

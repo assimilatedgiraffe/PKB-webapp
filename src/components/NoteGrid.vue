@@ -29,7 +29,7 @@ export default {
 # TODO: store helper function
   computed: {
     ...mapGetters([
-      'notes', 'isLoading', 'selectedElders', 'selectedSiblings', 'selectedChildren', 'selectedNote'
+      'notes', 'isBusy', 'isLoading', 'selectedElders', 'selectedSiblings', 'selectedChildren', 'selectedNote'
       ])
     colSpan: -> 24 / this.numberOfCols
     cols: ->
@@ -48,6 +48,7 @@ export default {
     #   this.selectedNote = j
 
     keyboardMap: (e) ->
+      if this.isBusy then return
       console.log e.key, e.altKey
       # console.log this
       if this.editMode
@@ -76,7 +77,7 @@ export default {
           when "Delete"
             console.log "Delete"
             noteToDelete = this.$store.getters.selectedNoteRef
-            this.$store.dispatch('deleteNote', noteToDelete)
+            this.$store.dispatch('deleteNote', {noteRef:noteToDelete, j:0})
 
   }
 

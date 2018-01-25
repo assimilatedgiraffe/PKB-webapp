@@ -39,54 +39,64 @@ export default {
       state.fbRef.once('value').then (data) ->
         commit('setNotes', data.val())
         dispatch('loadUI')
-      state.fbRef.on("value", (snapshot) ->
-        if getters.isBusy
-          return
-        commit("setNotes", snapshot.val())
+      state.fbRef.on "value", (snapshot) ->
         # watch for delete from this or other clients
-        if not getters.selectedNote?
-          console.log "no note selected"
-          if getters.isLoading
-            return
-          else if getters.dex[0] > 0
-            commit('moveUp')
-          else if state.selectedParentRef != "rootNode"
-            commit('setSelectedParentRef', getters.selectedParent.parent)
-            commit('moveLeft'))
+        if not snapshot.val()[getters.selectedNoteRef]?
+          if not getters.isLoading #and not getters.isBusy
+            console.log "selected note missing"
+            if getters.dex > 0
+              commit 'setSelectedNoteRef', getters.selectedSiblings[getters.dex - 1]
+            else if getters.selectedParentRef != "rootNode"
+              commit 'setSelectedNoteRef', getters.selectedParentRef
+        commit "setNotes", snapshot.val()
       # watch connection
       connectedRef = firebase.database.ref(".info/connected")
-      connectedRef.on("value", (snap) ->
+      connectedRef.on "value", (snap) ->
         if (snap.val() == true)
           commit("setConnected", true)
         else
-          commit("setConnected", false))
+          commit("setConnected", false)
 
     createNote: ({commit, getters, state}, newNote) ->
       # newNote = {text, parent, [etc]}
       console.log newNote
-      # commit('setBusy', true)
+      commit('setBusy', true)
       state.fbRef.push(newNote)
         .then (data) ->
           siblings = getters.siblings(newNote)
           siblings ?= []
           siblings.push(data.key)
           state.fbRef.child(newNote.parent).child('children').set(siblings)
-          # .then(commit('setBusy', false))
+          .then(commit('setBusy', false))
         .catch (error) ->
           console.log(error)
-          # commit('setBusy', false)
+          commit('setBusy', false)
 
-    deleteNote: ({state, getters, dispatch}, noteRef) ->
+    deleteNote: ({state, getters, dispatch, commit}, {noteRef, j}) ->
+      # j is recursive counter to stop setBusy getting set to false too soon
+      if getters.selectedParentRef == 'rootNode' and getters.dex == 0
+        # this.$notify.error({ title: 'Error', message: 'Cannot delete last note' })
+        return
+
+      commit('setBusy', true)
       note = getters.note(noteRef)
-      if note.children?
-        dispatch('deleteNote', child) for child in note.children
-      parentRef = note.parent
-      siblings = getters.siblings(note).filter (e) -> e != noteRef
-      state.fbRef.child(parentRef).child('children').set(siblings)
+      noteDelete = =>
+        parentRef = note.parent
+        siblings = getters.siblings(note).filter (e) -> e != noteRef
+        state.fbRef.child(noteRef).remove()
         .then () ->
-          state.fbRef.child(noteRef).remove()
+          state.fbRef.child(parentRef).child('children').set(siblings)
+          if j == 0 then commit('setBusy', false)
         .catch (error) ->
           console.log(error)
+          if j == 0 then commit('setBusy', false)
+
+      if note.children?
+        promises = (dispatch('deleteNote', {noteRef:child, j:j+2}) for child in note.children)
+        console.log promises, noteDelete
+        Promise.all(promises).then =>
+          noteDelete()
+      else noteDelete()
 
     setNoteText: ({state}, payload) ->
       # console.log payload
@@ -128,7 +138,7 @@ export default {
         return
       commit('setBusy', true)
       siblings = getters.selectedSiblings
-      dex = getters.dex[0]
+      dex = getters.dex
       switch key
         # shift selected note
           when 'j'
@@ -139,8 +149,8 @@ export default {
                 noteRef: getters.selectedNote.parent
                 children: siblings
                 }).then =>
-                  commit('moveDown')
                   commit('setBusy', false)
+            else commit('setBusy', false)
           when 'k'
             console.log "shift up"
             if dex > 0
@@ -149,8 +159,8 @@ export default {
                 noteRef: getters.selectedNote.parent
                 children: siblings
                 }).then =>
-                  commit('moveUp')
                   commit('setBusy', false)
+            else commit('setBusy', false)
           when 'h'
             console.log "shift left"
             parentRef = getters.selectedNote.parent
@@ -161,10 +171,11 @@ export default {
                 noteRef: selected
                 parentRef: grandParentRef })
               .then =>
-                  commit('setSelectedParentRef', grandParentRef)
-                  commit('moveLeft')
+                  # commit('setSelectedParentRef', grandParentRef)
+                  # commit('moveLeft')
                   commit('setBusy', false)
                   # this.selectedNoteIndexs[0] = this.selectedSiblings.length - 1
+            else commit('setBusy', false)
           when 'l'
             console.log "shift right"
             # make child of note above
@@ -174,9 +185,10 @@ export default {
                 noteRef: getters.selectedNoteRef
                 parentRef: newParentRef})
               .then =>
-                commit('setSelectedParentRef', newParentRef)
-                commit('moveRight')
+                # commit('setSelectedParentRef', newParentRef)
+                # commit('moveRight')
                 commit('setBusy', false)
+            else commit('setBusy', false)
 
 
 }

@@ -49,6 +49,7 @@ import TextEditor from './TextEditor.vue'
 import NoteList from './NoteList.vue'
 import NoteGrid from './NoteGrid.vue'
 import Login from './Login.vue'
+import { mapGetters } from 'vuex'
 
 import firebase from 'firebase'
 
@@ -57,12 +58,12 @@ export default {
 
   # data: ->
 
-  computed:
+  computed: {
+    ...mapGetters ['isLoading', 'isBusy', 'error']
     loginVisible: -> not this.$store.getters.user?
     isDisconnected: -> not this.$store.getters.isConnected
-    isLoading: -> this.$store.getters.isLoading
-    isBusy: -> this.$store.getters.isBusy
     # notes: ->
+  }
 
   components: { NoteList, NoteGrid, Login }
 
@@ -70,6 +71,12 @@ export default {
     logOut: ->
       console.log "logOut"
       firebase.auth().signOut()
+
+  watch:
+    error: (newError) ->
+      if newError != ""
+        this.$message.error(newError)
+        this.$store.commit 'setError', ""
 
   created: ->
     # this.$store.dispatch('loadDatabase')

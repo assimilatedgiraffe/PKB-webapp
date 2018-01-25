@@ -75,7 +75,7 @@ export default {
     deleteNote: ({state, getters, dispatch, commit}, {noteRef, j}) ->
       # j is recursive counter to stop setBusy getting set to false too soon
       if getters.selectedParentRef == 'rootNode' and getters.dex == 0
-        # this.$notify.error({ title: 'Error', message: 'Cannot delete last note' })
+        commit 'setError', 'Error: Cannot delete root note'
         return
 
       commit('setBusy', true)

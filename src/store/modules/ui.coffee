@@ -7,6 +7,7 @@ export default {
     isConnected: true #firebase connection
     isBusy: false #waiting for firebase
     selectedNoteRef: ""
+    error: ""
     # history: [] # refs of selected parents
     # selectedParentRef: ""
     # dex: [0] #selected note indexes, stack from beginning of array using unshift()/shift()
@@ -15,6 +16,7 @@ export default {
     setLoading: (state, payload) -> state.isLoading = payload
     setConnected: (state, payload) -> state.isConnected = payload
     setBusy: (state, payload) -> state.isBusy = payload
+    setError: (state, payload) -> state.error = payload
     setSelectedNoteRef: (state, payload) -> state.selectedNoteRef = payload
     # setSelectedParentRef: (state, payload) -> state.selectedParentRef = payload
     #!! need to use splice on array so vue can detect change !!
@@ -76,6 +78,7 @@ export default {
     isBusy: (state) -> state.isBusy
     isLoading: (state) -> state.isLoading
     isConnected: (state) -> state.isConnected
+    error : (state) -> state.error 
     selectedNoteRef: (state, getters) -> state.selectedNoteRef
     selectedNote: (state, getters) -> getters.note(state.selectedNoteRef)
     selectedParentRef: (state, getters) -> getters.selectedNote?.parent

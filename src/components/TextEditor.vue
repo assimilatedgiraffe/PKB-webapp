@@ -1,7 +1,9 @@
 <template lang="html">
   <div class="">
     <el-card
-      :class="{ selected: isSelected }">
+      :class="{ selected: isSelected, selectedParent: isSelectedParent}"
+      ref="card"
+      :id="this.id" >
       <div
         ref="editorDiv"
         @focus="onFocus"
@@ -31,6 +33,8 @@ export default {
       this.note == this.$store.getters.selectedNote
     # NoteDBkey: -> db.ref('notes').child(this.noteEditor.note['.key'])
     # isSelected: -> this.noteEditor.isSelected
+    isSelectedParent: -> this.note == this.$store.getters.selectedParent
+    id: -> if this.isSelected then "selectedNote" else ""
   }
 
   props: {
@@ -73,7 +77,20 @@ export default {
 </script>
 
 <style lang="css">
-  .selected {
-    border: 7px solid blue;
+  .el-card {
+    /*background-color: #eef1f6;*/
+    /*margin: 2px;*/
+  }
+  .selected .el-card__body {
+    padding: 16px;
+    border: 4px solid #48a3f5;
+    /*background-color: #fff;*/
+    /*margin: 0;*/
+  }
+  .selectedParent .el-card__body {
+    padding: 17px;
+    border: 3px solid #8cbfec;
+    /*background-color: #f8f8ff;*/
+    /*margin: 0;*/
   }
 </style>

@@ -2,13 +2,13 @@ import firebase from '../firebase.js'
 
 export default {
   state:
-    user: null
+    user: {}
     userID: ""
 
   mutations:
     setUser: (state, user) ->
       state.user = user
-      state.userID = user.uid
+      state.userID = user?.uid
 
   actions:
     signIn: ({commit, state, dispatch, rootState}, user) ->

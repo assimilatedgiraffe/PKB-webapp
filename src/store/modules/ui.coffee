@@ -1,24 +1,33 @@
+# import VueScrollTo from 'vue-scrollto'
+import scrollIntoViewIfNeeded from 'scroll-into-view-if-needed'
+
 export default {
   state:
-    isLoading: true
-    # selectedNoteRef: ""
+    isLoading: false
+    isConnected: true #firebase connection
     isBusy: false #waiting for firebase
-    selectedParentRef: ""
-    dex: [0] #selected note indexes, stack from beginning of array using unshift()/shift()
+    selectedNoteRef: ""
+    error: ""
+    # history: [] # refs of selected parents
+    # selectedParentRef: ""
+    # dex: [0] #selected note indexes, stack from beginning of array using unshift()/shift()
 
   mutations:
     setLoading: (state, payload) -> state.isLoading = payload
+    setConnected: (state, payload) -> state.isConnected = payload
     setBusy: (state, payload) -> state.isBusy = payload
-    setSelectedParentRef: (state, payload) -> state.selectedParentRef = payload
+    setError: (state, payload) -> state.error = payload
+    setSelectedNoteRef: (state, payload) -> state.selectedNoteRef = payload
+    # setSelectedParentRef: (state, payload) -> state.selectedParentRef = payload
     #!! need to use splice on array so vue can detect change !!
-    moveDown: (state) -> state.dex.splice(0, 1, state.dex[0] + 1)
-    moveUp: (state) -> state.dex.splice(0, 1, state.dex[0] - 1)
-    moveRight: (state) -> state.dex.unshift(0)
-    moveLeft: (state) -> state.dex.shift()
+    # moveDown: (state) -> state.dex.splice(0, 1, state.dex[0] + 1)
+    # moveUp: (state) -> state.dex.splice(0, 1, state.dex[0] - 1)
+    # historyPop: (state) -> state.history.shift()
+    # historyPush: (state, payload) -> state.history.unshift(payload)
 
   actions:
     loadUI: ({commit, state, getters}) ->
-      commit("setSelectedParentRef", 'rootNode')
+      commit "setSelectedNoteRef", getters.note('rootNode').children[0]
       commit("setLoading", false)
 
     navigate: ({commit, state, getters, dispatch}, key) ->
@@ -28,41 +37,53 @@ export default {
       # vim style navigaion
         when "j"
           console.log "down"
-          if getters.selectedSiblings.length > state.dex[0] + 1
-            commit('moveDown')
+          if getters.selectedSiblings.length > getters.dex + 1
+            commit 'setSelectedNoteRef', getters.selectedSiblings[getters.dex + 1]
           else #create new empty note if none exists
-            commit('setBusy', true)
-            dispatch('createNote', {text:"", parent:getters.selectedNote.parent})
+            dispatch('createNote', {text:"", parent:getters.selectedParentRef})
             .then =>
-              commit('moveDown')
-              commit('setBusy', false)
+              commit 'setSelectedNoteRef', getters.selectedSiblings[getters.dex + 1]
         when 'k'
           console.log "up"
-          if state.dex[0] > 0
-            commit('moveUp')
+          if getters.dex > 0
+            commit 'setSelectedNoteRef', getters.selectedSiblings[getters.dex - 1]
         when 'h'
           console.log "left"
-          if state.selectedParentRef != "rootNode"
-            commit('setSelectedParentRef', getters.selectedParent.parent)
-            commit('moveLeft')
+          if getters.selectedParentRef != "rootNode"
+            commit('setSelectedNoteRef', getters.selectedParentRef)
+            # commit('historyPop')
         when 'l'
           console.log "right"
           if getters.selectedNote.children?
-            commit("setSelectedParentRef", getters.selectedNoteRef)
-            commit('moveRight')
+            commit("setSelectedNoteRef", getters.selectedChildren[0])
+            # commit('moveRight')
           else # create new child note if none exist
-            commit('setBusy', true)
-            dispatch('createNote', {text:"", parent:getters.selectedNoteRef})
+            dispatch('createNote', {text:"", parent:state.selectedNoteRef})
             .then =>
-              commit("setSelectedParentRef", getters.selectedNoteRef)
-              commit('moveRight')
-              commit('setBusy', false)
+              commit("setSelectedNoteRef", getters.selectedChildren[0])
+
+    scrollToSelected: ({state}) ->
+      if state.isLoading then return
+      console.log "scroll to selected"
+      element = document.getElementById("selectedNote")
+      if not element? then return
+      options = {
+        centerIfNeeded: true
+        duration: 300
+        easing: 'easeInOut'
+      }
+      scrollIntoViewIfNeeded(element, options)
 
   getters:
+    isBusy: (state) -> state.isBusy
     isLoading: (state) -> state.isLoading
-    dex: (state) -> state.dex
-    selectedNote: (state, getters) -> getters.note(getters.selectedSiblings[state.dex[0]])
-    selectedNoteRef: (state, getters) -> getters.selectedSiblings[state.dex[0]]
+    isConnected: (state) -> state.isConnected
+    error : (state) -> state.error 
+    selectedNoteRef: (state, getters) -> state.selectedNoteRef
+    selectedNote: (state, getters) -> getters.note(state.selectedNoteRef)
+    selectedParentRef: (state, getters) -> getters.selectedNote?.parent
+    selectedParent: (state, getters) -> getters.note(getters.selectedParentRef)
+    dex: (state, getters) -> getters.selectedSiblings.indexOf(state.selectedNoteRef)
     selectedSiblings: (state, getters) ->
       # siblings = getters.note(state.selectedParentRef)?.children
       siblings = getters.selectedParent?.children
@@ -72,13 +93,10 @@ export default {
       elders = getters.siblings(getters.selectedParent)
       elders ?= []
       return elders
-    selectedParent: (state, getters) -> getters.note(state.selectedParentRef)
     selectedChildren: (state, getters) ->
       children = getters.selectedNote?.children
       if getters.isLoading or not children?
         return []
       else
         return children
-
-
 }

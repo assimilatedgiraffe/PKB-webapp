@@ -29,7 +29,8 @@ export default {
 # TODO: store helper function
   computed: {
     ...mapGetters([
-      'notes', 'isLoading', 'selectedElders', 'selectedSiblings', 'selectedChildren', 'selectedNote'
+      'notes', 'isBusy', 'isLoading', 'isConnected',
+      'selectedElders', 'selectedSiblings', 'selectedChildren', 'selectedNote'
       ])
     colSpan: -> 24 / this.numberOfCols
     cols: ->
@@ -41,13 +42,14 @@ export default {
         one = this.$store.getters.refListToNotes(this.selectedSiblings)
         two = this.$store.getters.refListToNotes(this.selectedChildren)
         return [zero,one,two]
-      }
+  }
   methods: {
     # onNoteClick: (i,j) ->
     #   this.selectedCol = i
     #   this.selectedNote = j
 
     keyboardMap: (e) ->
+      if this.isBusy then return
       console.log e.key, e.altKey
       # console.log this
       if this.editMode
@@ -55,7 +57,7 @@ export default {
         # leave edit mode when done editing note
           when "Escape"
             console.log "Escape"
-            selectedVue = this.$children[1].$children[this.$store.getters.dex[0]]
+            selectedVue = this.$children[1].$children[this.$store.getters.dex]
             selectedVue.editor.set('isReadOnly', true)
             selectedVue.editor.element.blur()
             this.$el.focus()
@@ -65,20 +67,28 @@ export default {
         this.$store.dispatch('shiftNote', e.key)
       else
         this.$store.dispatch('navigate', e.key)
+        return if not this.isConnected
         switch e.key
           # editing and deleting
           when "Enter"
             console.log "Enter"
-            selectedVue = this.$children[1].$children[this.$store.getters.dex[0]]
+            selectedVue = this.$children[1].$children[this.$store.getters.dex]
             selectedVue.editor.set('isReadOnly', false)
             selectedVue.editor.element.focus()
             this.editMode = true
           when "Delete"
             console.log "Delete"
             noteToDelete = this.$store.getters.selectedNoteRef
-            this.$store.dispatch('deleteNote', noteToDelete)
+            this.$store.dispatch('deleteNote', {noteRef:noteToDelete, j:0})
 
   }
+
+  watch:
+    selectedNote: (newId, oldId)->
+      console.log newId, oldId
+      # if newId == "selectedNote"
+      setTimeout (=> this.$store.dispatch('scrollToSelected')) , 20
+
   mounted: ->
     this.$el.focus()
 }

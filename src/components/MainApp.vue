@@ -74,7 +74,7 @@ export default {
 
     setFocus: (e) ->
       console.log "setFocus", e
-      return if e.path.length > 13 
+      return if e.path.length > 13
       this.$refs.NoteGrid.$el.focus()
 
   watch:
@@ -132,7 +132,9 @@ body {
   background-color: lightgrey;
   margin: 0;
 }
-
+.el-main {
+  overflow-y: hidden;
+}
 /*wireframe css*/
 /*.el-col {
   border-style: solid;

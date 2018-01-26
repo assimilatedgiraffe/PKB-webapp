@@ -95,8 +95,8 @@ export default {
 </script>
 
 <style lang="css">
-  .noteEditor-list {
-    /*overflow-y: scroll;*/
+  .note-list {
+    overflow-y: auto;
     /*height: 100%;*/
   }
 </style>

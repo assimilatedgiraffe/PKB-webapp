@@ -59,7 +59,8 @@ export default {
 
     createNote: ({commit, getters, state}, newNote) ->
       # newNote = {text, parent, [etc]}
-      console.log newNote
+      throw 'offline' if getters.isConnected == false
+      console.log "newNote", newNote
       commit('setBusy', true)
       state.fbRef.push(newNote)
         .then (data) ->
@@ -69,7 +70,7 @@ export default {
           state.fbRef.child(newNote.parent).child('children').set(siblings)
           .then(commit('setBusy', false))
         .catch (error) ->
-          console.log(error)
+          console.log error, "cant create note"
           commit('setBusy', false)
 
     deleteNote: ({state, getters, dispatch, commit}, {noteRef, j}) ->
@@ -100,9 +101,11 @@ export default {
 
     setNoteText: ({state}, payload) ->
       # console.log payload
+      throw 'offline' if getters.isConnected == false
       state.fbRef.child(payload.noteRef).child('text').set(payload.text)
 
     setNoteChildren: ({state}, payload) ->
+      throw 'offline' if getters.isConnected == false
       console.log payload
       if payload.children == []
         state.fbRef.child(payload.noteRef).child('children').remove()
@@ -110,6 +113,7 @@ export default {
         state.fbRef.child(payload.noteRef).child('children').set(payload.children)
 
     setNoteParent: ({state, getters, dispatch}, payload) ->
+      throw 'offline' if getters.isConnected == false
       console.log payload
       currentParentRef = getters.note(payload.noteRef).parent
       oldSiblings = getters.note(currentParentRef).children
@@ -134,6 +138,7 @@ export default {
       # .then => commit('setBusy', false)
 
     shiftNote: ({commit, state, getters, dispatch}, key) ->
+      throw 'offline' if getters.isConnected == false
       if getters.isBusy
         return
       commit('setBusy', true)

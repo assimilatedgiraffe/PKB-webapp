@@ -14,7 +14,7 @@
         <el-col :span="12" >
         <el-menu mode="horizontal">
           <el-menu-item index="1" v-if="isDisconnected">
-            <i class="el-icon-warning"></i>Offline Mode
+            <i class="el-icon-warning"></i>Offline Mode - No changes can be made until connected
           </el-menu-item>
           <el-menu-item index="2" v-if="isBusy">
             <i class="el-icon-loading"></i>

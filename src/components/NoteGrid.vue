@@ -29,7 +29,8 @@ export default {
 # TODO: store helper function
   computed: {
     ...mapGetters([
-      'notes', 'isBusy', 'isLoading', 'selectedElders', 'selectedSiblings', 'selectedChildren', 'selectedNote'
+      'notes', 'isBusy', 'isLoading', 'isConnected',
+      'selectedElders', 'selectedSiblings', 'selectedChildren', 'selectedNote'
       ])
     colSpan: -> 24 / this.numberOfCols
     cols: ->
@@ -66,6 +67,7 @@ export default {
         this.$store.dispatch('shiftNote', e.key)
       else
         this.$store.dispatch('navigate', e.key)
+        return if not this.isConnected
         switch e.key
           # editing and deleting
           when "Enter"

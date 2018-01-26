@@ -60,15 +60,15 @@ export default {
     createNote: ({commit, getters, state}, newNote) ->
       # newNote = {text, parent, [etc]}
       throw 'offline' if getters.isConnected == false
+      # commit('setBusy', true)
       console.log "newNote", newNote
-      commit('setBusy', true)
       state.fbRef.push(newNote)
         .then (data) ->
           siblings = getters.siblings(newNote)
           siblings ?= []
           siblings.push(data.key)
           state.fbRef.child(newNote.parent).child('children').set(siblings)
-          .then(commit('setBusy', false))
+          # .then(commit('setBusy', false))
         .catch (error) ->
           console.log error, "cant create note"
           commit('setBusy', false)

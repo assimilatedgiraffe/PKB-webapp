@@ -40,9 +40,12 @@ export default {
           if getters.selectedSiblings.length > getters.dex + 1
             commit 'setSelectedNoteRef', getters.selectedSiblings[getters.dex + 1]
           else #create new empty note if none exists
+            commit('setBusy', true)
             dispatch('createNote', {text:"", parent:getters.selectedParentRef})
             .then =>
               commit 'setSelectedNoteRef', getters.selectedSiblings[getters.dex + 1]
+              commit('setBusy', false)
+
         when 'k'
           console.log "up"
           if getters.dex > 0
@@ -58,9 +61,11 @@ export default {
             commit("setSelectedNoteRef", getters.selectedChildren[0])
             # commit('moveRight')
           else # create new child note if none exist
+            commit('setBusy', true)
             dispatch('createNote', {text:"", parent:state.selectedNoteRef})
             .then =>
               commit("setSelectedNoteRef", getters.selectedChildren[0])
+              commit('setBusy', false)
 
     scrollToSelected: ({state}) ->
       if state.isLoading then return
@@ -78,7 +83,7 @@ export default {
     isBusy: (state) -> state.isBusy
     isLoading: (state) -> state.isLoading
     isConnected: (state) -> state.isConnected
-    error : (state) -> state.error 
+    error : (state) -> state.error
     selectedNoteRef: (state, getters) -> state.selectedNoteRef
     selectedNote: (state, getters) -> getters.note(state.selectedNoteRef)
     selectedParentRef: (state, getters) -> getters.selectedNote?.parent

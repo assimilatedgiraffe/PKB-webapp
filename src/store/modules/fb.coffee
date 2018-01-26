@@ -99,12 +99,12 @@ export default {
           noteDelete()
       else noteDelete()
 
-    setNoteText: ({state}, payload) ->
+    setNoteText: ({state, getters}, payload) ->
       # console.log payload
       throw 'offline' if getters.isConnected == false
       state.fbRef.child(payload.noteRef).child('text').set(payload.text)
 
-    setNoteChildren: ({state}, payload) ->
+    setNoteChildren: ({state, getters}, payload) ->
       throw 'offline' if getters.isConnected == false
       console.log payload
       if payload.children == []

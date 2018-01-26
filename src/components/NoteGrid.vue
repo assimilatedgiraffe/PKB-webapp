@@ -57,7 +57,7 @@ export default {
         # leave edit mode when done editing note
           when "Escape"
             console.log "Escape"
-            selectedVue = this.$children[1].$children[this.$store.getters.dex[0]]
+            selectedVue = this.$children[1].$children[this.$store.getters.dex]
             selectedVue.editor.set('isReadOnly', true)
             selectedVue.editor.element.blur()
             this.$el.focus()
@@ -72,7 +72,7 @@ export default {
           # editing and deleting
           when "Enter"
             console.log "Enter"
-            selectedVue = this.$children[1].$children[this.$store.getters.dex[0]]
+            selectedVue = this.$children[1].$children[this.$store.getters.dex]
             selectedVue.editor.set('isReadOnly', false)
             selectedVue.editor.element.focus()
             this.editMode = true

@@ -30,7 +30,7 @@
         <NoteList :notes="notes" is-horizontal="true"></NoteList>
       </el-col>
     </el-row> -->
-    <el-main id="main" v-loading="isLoading">
+    <el-main id="main" @click.native="setFocus" v-loading="isLoading">
     <el-row class="main-section">
       <el-col :span="24">
         <!-- grid view -->
@@ -72,8 +72,9 @@ export default {
       console.log "logOut"
       firebase.auth().signOut()
 
-    documentClick: ->
-      console.log "setFocus"
+    setFocus: (e) ->
+      console.log "setFocus", e
+      return if e.path.length > 13 
       this.$refs.NoteGrid.$el.focus()
 
   watch:
@@ -91,13 +92,13 @@ export default {
       else
         this.$store.dispatch('signOut')
     )
-    document.addEventListener('click', this.documentClick)
+    # document.addEventListener('click', this.documentClick)
 
   mounted: ->
     # this.$store.dispatch('generateTestData')
 
   destroyed: ->
-    document.removeEventListener('click', this.documentClick)
+    # document.removeEventListener('click', this.documentClick)
 }
 </script>
 

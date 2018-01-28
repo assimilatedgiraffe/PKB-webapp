@@ -8,7 +8,7 @@
         <el-col :span="12" class="title">
           <h3>
             <i class="el-icon-tickets"></i>
-            Personal Knowledge Base Webapp
+            Personal Knowledge Base Web App
           </h3>
         </el-col>
         <el-col :span="12" >

@@ -100,7 +100,7 @@ export default {
       else noteDelete()
 
     setNoteText: ({state, getters}, payload) ->
-      # console.log payload
+      console.log "setNoteText", payload
       throw 'offline' if getters.isConnected == false
       state.fbRef.child(payload.noteRef).child('text').set(payload.text)
 

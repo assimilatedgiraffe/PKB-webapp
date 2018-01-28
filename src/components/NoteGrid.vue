@@ -58,7 +58,6 @@ export default {
           when "Escape"
             console.log "Escape"
             selectedVue = this.$children[1].$children[this.$store.getters.dex]
-            selectedVue.editor.set('isReadOnly', true)
             selectedVue.editor.element.blur()
             this.$el.focus()
             this.editMode = false
@@ -73,8 +72,7 @@ export default {
           when "Enter"
             console.log "Enter"
             selectedVue = this.$children[1].$children[this.$store.getters.dex]
-            selectedVue.editor.set('isReadOnly', false)
-            selectedVue.editor.element.focus()
+            selectedVue.startEdit()
             this.editMode = true
           when "Delete"
             console.log "Delete"

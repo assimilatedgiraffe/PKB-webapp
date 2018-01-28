@@ -146,7 +146,7 @@ export default {
       dex = getters.dex
       switch key
         # shift selected note
-          when 'j'
+          when 'j', "ArrowDown"
             console.log "shift down"
             if siblings.length > dex + 1
               siblings.splice(dex + 1, 0, siblings.splice(dex, 1)[0])
@@ -156,7 +156,7 @@ export default {
                 }).then =>
                   commit('setBusy', false)
             else commit('setBusy', false)
-          when 'k'
+          when 'k', "ArrowUp"
             console.log "shift up"
             if dex > 0
               siblings.splice(dex - 1, 0, siblings.splice(dex, 1)[0])
@@ -166,7 +166,7 @@ export default {
                 }).then =>
                   commit('setBusy', false)
             else commit('setBusy', false)
-          when 'h'
+          when 'h', "ArrowLeft"
             console.log "shift left"
             parentRef = getters.selectedNote.parent
             if parentRef != "rootNode"
@@ -181,7 +181,7 @@ export default {
                   commit('setBusy', false)
                   # this.selectedNoteIndexs[0] = this.selectedSiblings.length - 1
             else commit('setBusy', false)
-          when 'l'
+          when 'l', "ArrowRight"
             console.log "shift right"
             # make child of note above
             if dex > 0

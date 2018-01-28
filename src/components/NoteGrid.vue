@@ -70,7 +70,7 @@ export default {
         return if not this.isConnected
         switch e.key
           # editing and deleting
-          when "Enter"
+          when "Enter", "i", "a"
             console.log "Enter"
             selectedVue = this.$children[1].$children[this.$store.getters.dex]
             selectedVue.startEdit()

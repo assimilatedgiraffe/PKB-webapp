@@ -35,7 +35,7 @@ export default {
         return
       switch key
       # vim style navigaion
-        when "j"
+        when "j", "ArrowDown"
           console.log "down"
           if getters.selectedSiblings.length > getters.dex + 1
             commit 'setSelectedNoteRef', getters.selectedSiblings[getters.dex + 1]
@@ -46,16 +46,16 @@ export default {
               commit 'setSelectedNoteRef', getters.selectedSiblings[getters.dex + 1]
               commit('setBusy', false)
 
-        when 'k'
+        when 'k', "ArrowUp"
           console.log "up"
           if getters.dex > 0
             commit 'setSelectedNoteRef', getters.selectedSiblings[getters.dex - 1]
-        when 'h'
+        when 'h', "ArrowLeft"
           console.log "left"
           if getters.selectedParentRef != "rootNode"
             commit('setSelectedNoteRef', getters.selectedParentRef)
             # commit('historyPop')
-        when 'l'
+        when 'l', "ArrowRight"
           console.log "right"
           if getters.selectedNote.children?
             commit("setSelectedNoteRef", getters.selectedChildren[0])

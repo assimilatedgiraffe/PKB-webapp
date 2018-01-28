@@ -83,6 +83,11 @@ export default {
         this.$message.error(newError)
         this.$store.commit 'setError', ""
 
+    isLoading: (newValue) ->
+      if newValue == false
+        this.$refs.NoteGrid.$el.focus()
+
+
   created: ->
     # this.$store.dispatch('loadDatabase')
     # this.$store.dispatch('watchDatabase')

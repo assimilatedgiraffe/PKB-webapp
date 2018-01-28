@@ -28,7 +28,7 @@ export default {
       .then (data) ->
         if not data.val()?
           console.log "new user"
-          dispatch('loadNewUserNotes').then(dispatch('watchDatabase'))
+          dispatch('loadDemoNotes').then(dispatch('watchDatabase'))
         else
           dispatch('watchDatabase')
       .catch (error) ->

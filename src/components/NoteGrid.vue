@@ -1,5 +1,5 @@
 <template lang="html">
-  <div tabindex="0" @keyup="keyboardMap">
+  <div tabindex="0" @keydown="keyboardMap">
     <el-col  :span="colSpan" v-for="(col, i) in cols" :key="col.id" >
       <div class="note-list" >
           <div v-for="(note,key) in col"
@@ -63,7 +63,8 @@ export default {
             this.editMode = false
 
       else if e.altKey
-        this.$store.dispatch('shiftNote', e.key)
+        if e.key != "Alt"
+          this.$store.dispatch('shiftNote', e.key)
       else
         this.$store.dispatch('navigate', e.key)
         return if not this.isConnected

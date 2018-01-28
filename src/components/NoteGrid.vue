@@ -1,5 +1,5 @@
 <template lang="html">
-  <div tabindex="0" @keydown="keyboardMap">
+  <div tabindex="0" @keyup="keyboardMap">
     <el-col  :span="colSpan" v-for="(col, i) in cols" :key="col.id" >
       <div class="note-list" >
           <div v-for="(note,key) in col"

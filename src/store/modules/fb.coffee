@@ -194,6 +194,9 @@ export default {
                 # commit('moveRight')
                 commit('setBusy', false)
             else commit('setBusy', false)
+          else
+            commit('setBusy', false)
+
 
 
 }

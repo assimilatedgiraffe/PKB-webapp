@@ -34,19 +34,19 @@ export default {
       .then (data) ->
         state.fsRef.doc(key).set(value) for own key, value of data.val()
 
-    loadNewUserNotes: ({state}) ->
-      state.fbRef.push({
-        parent: "rootNode"
-        text: "Welcome to your Personal Knowledge Base"
-        }).then (data) ->
-          state.fbRef.child("rootNode").child("children").set([data.key])
+    # loadNewUserNotes: ({state}) ->
+    #   state.fbRef.push({
+    #     parent: "rootNode"
+    #     text: "Welcome to your Personal Knowledge Base"
+    #     }).then (data) ->
+    #       state.fbRef.child("rootNode").child("children").set([data.key])
 
     loadDatabase: ({commit, state, dispatch}) ->
       commit("setLoading", true)
       #check if new user, no rootNode means new user
-      state.fbRef.child('rootNode').once("value")
-      .then (data) ->
-        if not data.val()?
+      state.fsRef.doc('rootNode').get()
+      .then (doc) ->
+        if not doc.exists
           console.log "new user"
           dispatch('loadDemoNotes').then(dispatch('watchDatabase'))
         else
@@ -56,19 +56,37 @@ export default {
         commit("setLoading", true)
 
     watchDatabase: ({commit, getters, state, dispatch}) ->
-      state.fbRef.once('value').then (data) ->
-        commit('setNotes', data.val())
+      state.fsRef.get().then (snapshot) ->
+        notes = {}
+        snapshot.forEach (doc) ->
+          notes[doc.id] = doc.data()
+        commit('setNotes', notes)
         dispatch('loadUI')
-      state.fbRef.on "value", (snapshot) ->
-        # watch for delete from this or other clients
-        if not snapshot.val()[getters.selectedNoteRef]?
-          if not getters.isLoading #and not getters.isBusy
-            console.log "selected note missing"
-            if getters.dex > 0
-              commit 'setSelectedNoteRef', getters.selectedSiblings[getters.dex - 1]
-            else if getters.selectedParentRef != "rootNode"
-              commit 'setSelectedNoteRef', getters.selectedParentRef
-        commit "setNotes", snapshot.val()
+      state.fsRef.onSnapshot (snapshot) ->
+        snapshot.docChanges.forEach (change) ->
+          if change.type == "added"
+            commit('addLocalNote', {id:change.doc.id, data:change.doc.data()})
+          if change.type == "modified"
+            commit('modifyLocalNote', {id:change.doc.id, data:change.doc.data()})
+          if change.type == "removed"
+             # watch for selected note delete from this or other clients
+            if change.doc.id == getters.selectedNoteRef and not getters.isLoading
+              console.log "selected note missing"
+              if getters.dex > 0
+                commit 'setSelectedNoteRef', getters.selectedSiblings[getters.dex - 1]
+              else if getters.selectedParentRef != "rootNode"
+                commit 'setSelectedNoteRef', getters.selectedParentRef
+            commit('removeLocalNote', change.doc.id)
+      # state.fbRef.on "value", (snapshot) ->
+      #   # watch for delete from this or other clients
+      #   if not snapshot.val()[getters.selectedNoteRef]?
+      #     if not getters.isLoading #and not getters.isBusy
+      #       console.log "selected note missing"
+      #       if getters.dex > 0
+      #         commit 'setSelectedNoteRef', getters.selectedSiblings[getters.dex - 1]
+      #       else if getters.selectedParentRef != "rootNode"
+      #         commit 'setSelectedNoteRef', getters.selectedParentRef
+      #   commit "setNotes", snapshot.val()
       # watch connection
       connectedRef = firebase.database.ref(".info/connected")
       connectedRef.on "value", (snap) ->
@@ -79,19 +97,26 @@ export default {
 
     createNote: ({commit, getters, state}, newNote) ->
       # newNote = {text, parent, [etc]}
-      throw 'offline' if getters.isConnected == false
+      # throw 'offline' if getters.isConnected == false
       # commit('setBusy', true)
       console.log "newNote", newNote
-      state.fbRef.push(newNote)
-        .then (data) ->
-          siblings = getters.siblings(newNote)
-          siblings ?= []
-          siblings.push(data.key)
-          state.fbRef.child(newNote.parent).child('children').set(siblings)
-          # .then(commit('setBusy', false))
-        .catch (error) ->
-          console.log error, "cant create note"
-          commit('setBusy', false)
+      # batch = firebase.firebase.firestore().batch()
+      state.fsRef.add(newNote)
+      .then (doc) ->
+        siblings = getters.siblings(newNote)
+        siblings ?= []
+        siblings.push(doc.id)
+        state.fsRef.doc(newNote.parent).update({children:siblings})
+      # state.fbRef.push(newNote)
+      #   .then (data) ->
+      #     siblings = getters.siblings(newNote)
+      #     siblings ?= []
+      #     siblings.push(data.key)
+      #     state.fbRef.child(newNote.parent).child('children').set(siblings)
+      #     # .then(commit('setBusy', false))
+      #   .catch (error) ->
+      #     console.log error, "cant create note"
+      #     commit('setBusy', false)
 
     deleteNote: ({state, getters, dispatch, commit}, {noteRef, j}) ->
       # j is recursive counter to stop setBusy getting set to false too soon
@@ -121,16 +146,18 @@ export default {
 
     setNoteText: ({state, getters}, payload) ->
       console.log "setNoteText", payload
-      throw 'offline' if getters.isConnected == false
-      state.fbRef.child(payload.noteRef).child('text').set(payload.text)
+      # throw 'offline' if getters.isConnected == false
+      # state.fbRef.child(payload.noteRef).child('text').set(payload.text)
+      state.fsRef.doc(payload.noteRef).update({text:payload.text})
 
     setNoteChildren: ({state, getters}, payload) ->
-      throw 'offline' if getters.isConnected == false
-      console.log payload
-      if payload.children == []
-        state.fbRef.child(payload.noteRef).child('children').remove()
-      else
-        state.fbRef.child(payload.noteRef).child('children').set(payload.children)
+      state.fsRef.doc(payload.noteRef).update({children:payload.children})
+      # throw 'offline' if getters.isConnected == false
+      # console.log payload
+      # if payload.children == []
+        # state.fbRef.child(payload.noteRef).child('children').remove()
+      # else
+        # state.fbRef.child(payload.noteRef).child('children').set(payload.children)
 
     setNoteParent: ({state, getters, dispatch}, payload) ->
       throw 'offline' if getters.isConnected == false
@@ -216,7 +243,6 @@ export default {
             else commit('setBusy', false)
           else
             commit('setBusy', false)
-
 
 
 }

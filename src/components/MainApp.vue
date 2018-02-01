@@ -60,7 +60,7 @@ export default {
 
   computed: {
     ...mapGetters ['isLoading', 'isBusy', 'error']
-    loginVisible: -> not this.$store.getters.user?
+    # loginVisible: -> not this.$store.getters.user?
     isDisconnected: -> not this.$store.getters.isConnected
     # notes: ->
   }

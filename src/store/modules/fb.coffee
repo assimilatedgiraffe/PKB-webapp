@@ -119,30 +119,22 @@ export default {
       #     commit('setBusy', false)
 
     deleteNote: ({state, getters, dispatch, commit}, {noteRef, j}) ->
-      # j is recursive counter to stop setBusy getting set to false too soon
       if getters.selectedParentRef == 'rootNode' and getters.dex == 0
-        commit 'setError', 'Error: Cannot delete root note'
+        commit 'setError', 'Error: Cannot delete first note'
         return
-
       commit('setBusy', true)
-      note = getters.note(noteRef)
-      noteDelete = =>
-        parentRef = note.parent
-        siblings = getters.siblings(note).filter (e) -> e != noteRef
-        state.fbRef.child(noteRef).remove()
-        .then () ->
-          state.fbRef.child(parentRef).child('children').set(siblings)
-          if j == 0 then commit('setBusy', false)
-        .catch (error) ->
-          console.log(error)
-          if j == 0 then commit('setBusy', false)
+      batch = firebase.firebase.firestore().batch()
+      # recursively delete note children
+      noteDelete = (refToDelete) ->
+        note = getters.note(refToDelete)
+        if note.children?
+          noteDelete(child) for child in note.children
+        siblings = getters.siblings(note).filter (e) -> e != refToDelete
+        batch.update(state.fsRef.doc(note.parent), {children:siblings})
+        batch.delete(state.fsRef.doc(refToDelete))
 
-      if note.children?
-        promises = (dispatch('deleteNote', {noteRef:child, j:j+2}) for child in note.children)
-        console.log promises, noteDelete
-        Promise.all(promises).then =>
-          noteDelete()
-      else noteDelete()
+      noteDelete(noteRef)
+      batch.commit().then -> commit('setBusy', false)
 
     setNoteText: ({state, getters}, payload) ->
       console.log "setNoteText", payload
@@ -160,8 +152,9 @@ export default {
         # state.fbRef.child(payload.noteRef).child('children').set(payload.children)
 
     setNoteParent: ({state, getters, dispatch}, payload) ->
-      throw 'offline' if getters.isConnected == false
+      # throw 'offline' if getters.isConnected == false
       console.log payload
+
       currentParentRef = getters.note(payload.noteRef).parent
       oldSiblings = getters.note(currentParentRef).children
 
@@ -173,16 +166,12 @@ export default {
       oldSiblings = oldSiblings.filter((e) -> e != payload.noteRef)
       newParent.children.push(payload.noteRef)
       console.log newParent.children, oldSiblings
-
-      dispatch('setNoteChildren', {
-        noteRef: currentParentRef
-        children: oldSiblings})
-      .then => dispatch('setNoteChildren', {
-        noteRef: newParentRef
-        children: newParent.children})
-      .then =>
-        state.fbRef.child(payload.noteRef).child('parent').set(payload.parentRef)
-      # .then => commit('setBusy', false)
+      
+      batch = firebase.firebase.firestore().batch()
+      batch.update(state.fsRef.doc(currentParentRef), {children:oldSiblings})
+      batch.update(state.fsRef.doc(newParentRef), {children:newParent.children})
+      batch.update(state.fsRef.doc(payload.noteRef), {parent:payload.parentRef})
+      batch.commit()
 
     shiftNote: ({commit, state, getters, dispatch}, key) ->
       throw 'offline' if getters.isConnected == false

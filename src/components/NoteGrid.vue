@@ -58,23 +58,24 @@ export default {
           when "Escape"
             console.log "Escape"
             selectedVue = this.$children[1].$children[this.$store.getters.dex]
-            selectedVue.editor.set('isReadOnly', true)
-            selectedVue.editor.element.blur()
+            # selectedVue.editor.element.blur()
+            selectedVue.endEdit()
             this.$el.focus()
             this.editMode = false
 
       else if e.altKey
-        this.$store.dispatch('shiftNote', e.key)
+        if e.key != "Alt"
+          this.$store.dispatch('shiftNote', e.key)
       else
         this.$store.dispatch('navigate', e.key)
         return if not this.isConnected
         switch e.key
           # editing and deleting
-          when "Enter"
+          when "Enter", "i", "a"
             console.log "Enter"
             selectedVue = this.$children[1].$children[this.$store.getters.dex]
-            selectedVue.editor.set('isReadOnly', false)
-            selectedVue.editor.element.focus()
+            # selectedVue.editor.element.focus()
+            selectedVue.startEdit()
             this.editMode = true
           when "Delete"
             console.log "Delete"
@@ -95,8 +96,8 @@ export default {
 </script>
 
 <style lang="css">
-  .noteEditor-list {
-    overflow-y: scroll;
-    height: 100%;
+  .note-list {
+    overflow-y: auto;
+    /*height: 100%;*/
   }
 </style>

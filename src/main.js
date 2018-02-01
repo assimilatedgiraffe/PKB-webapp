@@ -10,11 +10,16 @@ import App from './App'
 import router from './router'
 import {store} from './store/index.coffee'
 import VueHotkey from 'v-hotkey'
+import VueAnalytics from 'vue-analytics'
 
 Vue.config.productionTip = false
 Vue.use(ElementUI, { locale })
 // Vue.use(VueFire)
 Vue.use(VueHotkey)
+Vue.use(VueAnalytics, {
+  id: 'UA-113150419-2',
+  router
+})
 
 /* eslint-disable no-new */
 new Vue({

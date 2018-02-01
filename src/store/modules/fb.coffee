@@ -28,7 +28,7 @@ export default {
       .then (data) ->
         if not data.val()?
           console.log "new user"
-          dispatch('loadNewUserNotes').then(dispatch('watchDatabase'))
+          dispatch('loadDemoNotes').then(dispatch('watchDatabase'))
         else
           dispatch('watchDatabase')
       .catch (error) ->
@@ -60,15 +60,15 @@ export default {
     createNote: ({commit, getters, state}, newNote) ->
       # newNote = {text, parent, [etc]}
       throw 'offline' if getters.isConnected == false
+      # commit('setBusy', true)
       console.log "newNote", newNote
-      commit('setBusy', true)
       state.fbRef.push(newNote)
         .then (data) ->
           siblings = getters.siblings(newNote)
           siblings ?= []
           siblings.push(data.key)
           state.fbRef.child(newNote.parent).child('children').set(siblings)
-          .then(commit('setBusy', false))
+          # .then(commit('setBusy', false))
         .catch (error) ->
           console.log error, "cant create note"
           commit('setBusy', false)
@@ -100,7 +100,7 @@ export default {
       else noteDelete()
 
     setNoteText: ({state, getters}, payload) ->
-      # console.log payload
+      console.log "setNoteText", payload
       throw 'offline' if getters.isConnected == false
       state.fbRef.child(payload.noteRef).child('text').set(payload.text)
 
@@ -146,7 +146,7 @@ export default {
       dex = getters.dex
       switch key
         # shift selected note
-          when 'j'
+          when 'j', "ArrowDown"
             console.log "shift down"
             if siblings.length > dex + 1
               siblings.splice(dex + 1, 0, siblings.splice(dex, 1)[0])
@@ -156,7 +156,7 @@ export default {
                 }).then =>
                   commit('setBusy', false)
             else commit('setBusy', false)
-          when 'k'
+          when 'k', "ArrowUp"
             console.log "shift up"
             if dex > 0
               siblings.splice(dex - 1, 0, siblings.splice(dex, 1)[0])
@@ -166,7 +166,7 @@ export default {
                 }).then =>
                   commit('setBusy', false)
             else commit('setBusy', false)
-          when 'h'
+          when 'h', "ArrowLeft"
             console.log "shift left"
             parentRef = getters.selectedNote.parent
             if parentRef != "rootNode"
@@ -181,7 +181,7 @@ export default {
                   commit('setBusy', false)
                   # this.selectedNoteIndexs[0] = this.selectedSiblings.length - 1
             else commit('setBusy', false)
-          when 'l'
+          when 'l', "ArrowRight"
             console.log "shift right"
             # make child of note above
             if dex > 0
@@ -194,6 +194,9 @@ export default {
                 # commit('moveRight')
                 commit('setBusy', false)
             else commit('setBusy', false)
+          else
+            commit('setBusy', false)
+
 
 
 }

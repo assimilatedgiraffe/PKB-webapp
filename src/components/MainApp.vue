@@ -8,7 +8,7 @@
         <el-col :span="12" class="title">
           <h3>
             <i class="el-icon-tickets"></i>
-            Personal Knowledge Base Webapp
+            Personal Knowledge Base Web App
           </h3>
         </el-col>
         <el-col :span="12" >
@@ -60,7 +60,7 @@ export default {
 
   computed: {
     ...mapGetters ['isLoading', 'isBusy', 'error']
-    loginVisible: -> not this.$store.getters.user?
+    # loginVisible: -> not this.$store.getters.user?
     isDisconnected: -> not this.$store.getters.isConnected
     # notes: ->
   }
@@ -74,7 +74,7 @@ export default {
 
     setFocus: (e) ->
       console.log "setFocus", e
-      return if e.path.length > 13 
+      return if e.path.length > 13
       this.$refs.NoteGrid.$el.focus()
 
   watch:
@@ -82,6 +82,11 @@ export default {
       if newError != ""
         this.$message.error(newError)
         this.$store.commit 'setError', ""
+
+    isLoading: (newValue) ->
+      if newValue == false
+        this.$refs.NoteGrid.$el.focus()
+
 
   created: ->
     # this.$store.dispatch('loadDatabase')
@@ -132,7 +137,9 @@ body {
   background-color: lightgrey;
   margin: 0;
 }
-
+.el-main {
+  overflow-y: hidden;
+}
 /*wireframe css*/
 /*.el-col {
   border-style: solid;

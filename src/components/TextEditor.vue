@@ -8,8 +8,7 @@
         ref="editorDiv"
         @focus="onFocus"
         @blur="onBlur"
-        :isReadOnly="isReadOnly">
-      </div>
+        v-html="this.text"></div>
     </el-card>
   </div>
 </template>
@@ -39,7 +38,6 @@ export default {
 
   props: {
     note: {type: Object, default: -> {text: ""}}
-    isReadOnly: {default: true}
     noteKey: {default: ""}
   }
 
@@ -55,24 +53,38 @@ export default {
       console.log "focused"
       # this.isReadOnly = false
       # this.isSelected = true
+    startEdit: ->
+      initEditor = (returnedEditor) =>
+        this.editor = returnedEditor
+        # this.editor.setData(this.note.text)
+        # this.editor.set('isReadOnly', this.isReadOnly)
+        this.editor.element.focus()
+
+        # TODO: remove toolbar
+      InlineEditor.create(this.$refs.editorDiv, { toolbar: [] })
+      .then(initEditor)
+      .catch((error) -> console.error(error))
+    endEdit: ->
+      this.$store.dispatch('setNoteText', {
+        noteRef: this.noteKey
+        text: this.editor.getData()
+        })
+      this.editor.destroy()
+
   }
 
   watch: {
-    text: -> this.editor.setData(this.text)
+    # text: -> this.editor.setData(this.text)
     # noteEditor: -> this.isSelected = this.noteEditor.isSelected
   }
 
-  mounted: ->
-    initEditor = (returnedEditor) =>
-      this.editor = returnedEditor
-      this.editor.setData(this.note.text)
-      this.editor.set('isReadOnly', this.isReadOnly)
+  # mounted: ->
 
-      # TODO: remove toolbar
-    InlineEditor.create(this.$refs.editorDiv, { toolbar: [] })
-    .then(initEditor)
-    .catch((error) -> console.error(error))
-
+  destroyed: ->
+    if this.editor?
+      this.editor.destroy()
+        .catch error ->
+          console.log error
 }
 </script>
 

@@ -2,17 +2,20 @@ import firebase from '../firebase.js'
 
 export default {
   state:
-    fbRef: {}
+    fbRef: {} #realtime database
+    fsRef: {} #firestore database
 
   mutations:
     setFbRef: (state, payload) -> state.fbRef = payload
+    setFsRef: (state, payload) -> state.fsRef = payload
 
   actions:
     loadDemoNotes: ({state, commit}) ->
       commit("setLoading", true)
       firebase.database.ref('demoNotes').once('value')
       .then (data) ->
-        state.fbRef.set(data.val())
+        console.log data.val()
+        state.fsRef.doc(key).set(value) for own key, value of data.val()
 
     loadNewUserNotes: ({state}) ->
       state.fbRef.push({

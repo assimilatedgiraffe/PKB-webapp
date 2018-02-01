@@ -19,7 +19,10 @@
           <el-menu-item index="2" v-if="isBusy">
             <i class="el-icon-loading"></i>
           </el-menu-item>
-          <el-menu-item @click="logOut" index="3"> Log out </el-menu-item>
+          <a href="https://github.com/assimilatedgiraffe/PKB-webapp" target="_blank">
+            <el-menu-item index="3"><icon name="github" scale="1.5"></icon>  View on GitHub </el-menu-item>
+          </a>
+          <el-menu-item @click="logOut" index="4"><icon name="sign-out" scale="1.5"></icon> Log out </el-menu-item>
         </el-menu>
         </el-col>
       </el-row>

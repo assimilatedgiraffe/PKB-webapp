@@ -49,7 +49,6 @@ export default {
         noteRef: this.noteKey
         text: this.editor.getData()
         })
-      this.editor.destroy()
     onFocus: ->
       console.log "focused"
       # this.isReadOnly = false
@@ -65,6 +64,12 @@ export default {
       InlineEditor.create(this.$refs.editorDiv, { toolbar: [] })
       .then(initEditor)
       .catch((error) -> console.error(error))
+    endEdit: ->
+      this.$store.dispatch('setNoteText', {
+        noteRef: this.noteKey
+        text: this.editor.getData()
+        })
+      this.editor.destroy()
 
   }
 

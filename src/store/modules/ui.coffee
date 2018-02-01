@@ -44,7 +44,6 @@ export default {
             commit('setBusy', true)
             dispatch('createNote', {text:"", parent:getters.selectedParentRef})
             .then =>
-              commit 'setSelectedNoteRef', getters.selectedSiblings[getters.dex + 1]
               commit('setBusy', false)
 
         when 'k', "ArrowUp"
@@ -59,13 +58,14 @@ export default {
         when 'l', "ArrowRight"
           console.log "right"
           if getters.selectedNote.children?
-            commit("setSelectedNoteRef", getters.selectedChildren[0])
+            commit("setSelectedNoteRef", getters.selectedNote.children[0])
             # commit('moveRight')
           else # create new child note if none exist
             commit('setBusy', true)
             dispatch('createNote', {text:"", parent:state.selectedNoteRef})
             .then =>
-              commit("setSelectedNoteRef", getters.selectedChildren[0])
+              console.log "right set selected"
+              # commit("setSelectedNoteRef", getters.notes[getters.selectedNoteRef].children[0])
               commit('setBusy', false)
 
     scrollToSelected: ({state}) ->
@@ -102,8 +102,6 @@ export default {
       return elders
     selectedChildren: (state, getters) ->
       children = getters.selectedNote?.children
-      if getters.isLoading or not children?
-        return []
-      else
-        return children
+      children ?= []
+      return children
 }

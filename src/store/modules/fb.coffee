@@ -10,11 +10,28 @@ export default {
     setFsRef: (state, payload) -> state.fsRef = payload
 
   actions:
+    initDatabase: ({state, commit, getters}) ->
+      console.log "initDatabase"
+      firebase.firebase.firestore().enablePersistence().then =>
+          # Initialize Cloud Firestore through firebase
+        firestore = firebase.firebase.firestore()
+        commit('setFsRef', firestore.collection("users").doc(getters.userID).collection("notes"))
+      .catch (err) ->
+        if err.code == 'failed-precondition'
+          console.log err
+          #     // Multiple tabs open, persistence can only be enabled
+          #     // in one tab at a a time.
+          #     // ...
+        else if err.code == 'unimplemented'
+          console.log err
+          #     // The current browser does not support all of the
+          #     // features required to enable persistence
+          #     // ...
+
     loadDemoNotes: ({state, commit}) ->
       commit("setLoading", true)
       firebase.database.ref('demoNotes').once('value')
       .then (data) ->
-        console.log data.val()
         state.fsRef.doc(key).set(value) for own key, value of data.val()
 
     loadNewUserNotes: ({state}) ->

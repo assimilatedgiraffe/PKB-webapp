@@ -8,6 +8,7 @@ export default {
     isBusy: false #waiting for firebase
     selectedNoteRef: ""
     error: ""
+    version: "0.1.0"
     # history: [] # refs of selected parents
     # selectedParentRef: ""
     # dex: [0] #selected note indexes, stack from beginning of array using unshift()/shift()
@@ -84,6 +85,7 @@ export default {
     isLoading: (state) -> state.isLoading
     isConnected: (state) -> state.isConnected
     error : (state) -> state.error
+    version : (state) -> state.version
     selectedNoteRef: (state, getters) -> state.selectedNoteRef
     selectedNote: (state, getters) -> getters.note(state.selectedNoteRef)
     selectedParentRef: (state, getters) -> getters.selectedNote?.parent

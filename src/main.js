@@ -11,6 +11,9 @@ import router from './router'
 import {store} from './store/index.coffee'
 import VueHotkey from 'v-hotkey'
 import VueAnalytics from 'vue-analytics'
+import 'vue-awesome/icons/github'
+import 'vue-awesome/icons/sign-out'
+import Icon from 'vue-awesome/components/Icon'
 
 Vue.config.productionTip = false
 Vue.use(ElementUI, { locale })
@@ -20,6 +23,7 @@ Vue.use(VueAnalytics, {
   id: 'UA-113150419-2',
   router
 })
+Vue.component('icon', Icon)
 
 /* eslint-disable no-new */
 new Vue({

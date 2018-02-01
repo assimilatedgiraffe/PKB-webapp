@@ -35,11 +35,11 @@ import firebase from 'firebase'
 export default {
   name: 'Login'
 
-  data: ->
-    version: "0.1"
+  # data: ->
 
   computed:
     loginVisible: -> not this.$store.getters.user?
+    version: -> this.$store.getters.version
 
   methods:
     logIn: ->

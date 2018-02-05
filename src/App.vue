@@ -43,9 +43,12 @@
       <v-spacer></v-spacer>
 
       <v-progress-circular indeterminate v-if="isLoading"></v-progress-circular>
-      <v-alert v-model="isDisconnected" outline type="warning" icon="priority_high" value="true">
+      <v-tooltip bottom max-width="200px">
+        <v-alert v-model="isDisconnected" slot="activator" outline type="warning" icon="priority_high" value="true">
         Offline
-      </v-alert>
+        </v-alert>
+        <span>Looks like you're not connected to the internet. Changes you make while offline will be synced when you reconnect.</span>
+      </v-tooltip>
       <v-btn tag="a" href="https://github.com/assimilatedgiraffe/PKB-webapp" target="_blank">
         View on GitHub
         <v-icon>mdi-github-box</v-icon>
@@ -60,6 +63,14 @@
     </v-toolbar>
     <v-progress-linear color="primary" style="margin:0" indeterminate :active="isBusy"></v-progress-linear>
     <Login></Login>
+    <v-snackbar
+      v-model="snackbar"
+      top
+    >
+    <v-alert outline type="error" value="true">
+      {{error}}
+    </v-alert>
+    </v-snackbar>
     <v-content>
       <router-view/>
     </v-content>
@@ -96,6 +107,7 @@ export default {
     clipped: false
     drawer: false
     fixed: false
+    snackbar: false
     items: [{
       icon: 'bubble_chart'
       title: 'Inspire'
@@ -116,6 +128,16 @@ export default {
     logOut: ->
       console.log "logOut"
       firebase.auth().signOut()
+
+  watch:
+    error: (newError) ->
+      if newError != ""
+        console.log "error", newError, this
+        this.snackbar = true
+        setTimeout(() =>
+          console.log "test"
+          this.$store.commit('setError', "")
+        , 6500)
 }
 </script>
 
@@ -123,5 +145,8 @@ export default {
 <style lang="css">
 *:focus {
   outline: none;
+}
+.alert {
+  padding: 7px;
 }
 </style>

@@ -37,12 +37,6 @@ export default {
       return if e.path.length > 13
       this.$refs.NoteGrid.$el.focus()
 
-  watch:
-    error: (newError) ->
-      if newError != ""
-        this.$message.error(newError)
-        this.$store.commit 'setError', ""
-
     isLoading: (newValue) ->
       if newValue == false
         this.$refs.NoteGrid.$el.focus()

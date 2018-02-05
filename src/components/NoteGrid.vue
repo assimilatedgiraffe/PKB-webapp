@@ -1,7 +1,12 @@
 <template lang="html">
   <div tabindex="0" @keyup="keyboardMap">
-    <el-col  :span="colSpan" v-for="(col, i) in cols" :key="col.id" >
-      <div class="note-list" >
+    <v-container grid-list-lg>
+    <v-layout col>
+      <v-flex sm-4 v-for="(col, i) in cols" :key="col.id" >
+        <!-- <div class="note-list" > -->
+        <v-container grid-list-lg>
+          <v-layout row wrap>
+            <v-flex xs12>
           <div v-for="(note,key) in col"
             :key="note.id">
             <TextEditor
@@ -10,8 +15,12 @@
               <!-- @click.native="onNoteClick(i,j)"> -->
             </TextEditor>
           </div>
-      </div>
-    </el-col>
+        </v-flex>
+        </v-layout>
+        </v-container>
+      </v-flex>
+    </v-layout>
+  </v-container>
   </div>
 </template>
 

@@ -1,15 +1,15 @@
 <template lang="html">
   <div class="">
-    <el-card
+    <v-card
       :class="{ selected: isSelected, selectedParent: isSelectedParent}"
       ref="card"
       :id="this.id" >
-      <div
+      <v-card-text
         ref="editorDiv"
         @focus="onFocus"
         @blur="onBlur"
-        v-html="this.text"></div>
-    </el-card>
+        v-html="this.text"></v-card-text>
+    </v-card>
   </div>
 </template>
 

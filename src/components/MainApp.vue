@@ -1,48 +1,10 @@
 <template lang="html">
   <!-- <div id="main-app"> -->
-  <el-container>
-    <Login></Login>
-    <el-header>
-      <!-- menu -->
-      <el-row type="flex" class="header" justify="end">
-        <el-col :span="12" class="title">
-          <h3>
-            <i class="el-icon-tickets"></i>
-            Personal Knowledge Base Web App
-          </h3>
-        </el-col>
-        <el-col :span="12" >
-        <el-menu mode="horizontal">
-          <el-menu-item index="1" v-if="isDisconnected">
-            <i class="el-icon-warning"></i>Offline Mode - No changes can be made until connected
-          </el-menu-item>
-          <el-menu-item index="2" v-if="isBusy">
-            <i class="el-icon-loading"></i>
-          </el-menu-item>
-          <a href="https://github.com/assimilatedgiraffe/PKB-webapp" target="_blank">
-            <el-menu-item index="3"><icon name="github" scale="1.5"></icon>  View on GitHub </el-menu-item>
-          </a>
-          <el-menu-item @click="logOut" index="4"><icon name="sign-out" scale="1.5"></icon> Log out </el-menu-item>
-        </el-menu>
-        </el-col>
-      </el-row>
-    </el-header>
-    <!-- <el-row class="header">
-      <el-col :span="24">
-        history/breadcrumbs for subjects; recents
-        <NoteList :notes="notes" is-horizontal="true"></NoteList>
-      </el-col>
-    </el-row> -->
-    <el-main id="main" @click.native="setFocus" v-loading="isLoading">
-    <el-row class="main-section">
-      <el-col :span="24">
+  <v-container @click.native="setFocus">
+    <v-progress-linear indeterminate :active="isLoading"></v-progress-linear>
         <!-- grid view -->
         <NoteGrid ref="NoteGrid"></NoteGrid>
-      </el-col>
-    </el-row>
-  </el-main>
-  <!-- <el-footer>Footer</el-footer> -->
-  </el-container>
+  </v-container>
 </template>
 
 
@@ -71,10 +33,6 @@ export default {
   components: { NoteList, NoteGrid, Login }
 
   methods:
-    logOut: ->
-      console.log "logOut"
-      firebase.auth().signOut()
-
     setFocus: (e) ->
       console.log "setFocus", e
       return if e.path.length > 13

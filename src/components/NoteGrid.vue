@@ -68,7 +68,6 @@ export default {
           this.$store.dispatch('shiftNote', e.key)
       else
         this.$store.dispatch('navigate', e.key)
-        return if not this.isConnected
         switch e.key
           # editing and deleting
           when "Enter", "i", "a"

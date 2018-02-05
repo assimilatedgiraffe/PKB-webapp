@@ -18,6 +18,7 @@ export store = new Vuex.Store(
     ui
   }
 
+  # strict: process.env.NODE_ENV != 'production'
   # state:
 
 

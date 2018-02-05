@@ -14,7 +14,6 @@ export default {
     signIn: ({commit, state, dispatch, rootState}, user) ->
       console.log user
       commit('setUser', user)
-      commit('setFbRef', firebase.database.ref('users/'+state.userID+'/notes'))
       dispatch('initDatabase')
       .then ->
         #check if anonymous (demo mode)

@@ -54,13 +54,23 @@ export default {
         commit('setNotes', notes)
         dispatch('loadUI')
       state.fsRef.onSnapshot (snapshot) ->
+        # if snapshot.metadata.fromCache
         snapshot.docChanges.forEach (change) ->
+          # console.log "fb change", change
           if change.type == "added"
+            if getters.isLoading then return
+            #new note, update parent here because fb promises dont return while offline
+            # and to prevent 'setBusy' being called twice
+            siblings = getters.siblings(change.doc.data())
+            siblings ?= []
+            siblings.push(change.doc.id)
+            state.fsRef.doc(change.doc.data().parent).update({children:siblings})
             commit('addLocalNote', {id:change.doc.id, data:change.doc.data()})
             commit 'setSelectedNoteRef', change.doc.id
+
           if change.type == "modified"
-            console.log "modify note", change
             commit('modifyLocalNote', {id:change.doc.id, data:change.doc.data()})
+
           if change.type == "removed"
              # watch for selected note delete from this or other clients
             if change.doc.id == getters.selectedNoteRef and not getters.isLoading
@@ -70,6 +80,12 @@ export default {
               else if getters.selectedParentRef != "rootNode"
                 commit 'setSelectedNoteRef', getters.selectedParentRef
             commit('removeLocalNote', change.doc.id)
+
+        # set busy to false after data received back from firebase to prevent
+        # unstable state. ignore new notes (type == "added") as modified change is
+        # called when parent is updated to include new note in its children list
+        if snapshot.docChanges[0].type != "added" then commit 'setBusy', false
+
       # watch connection
       connectedRef = firebase.database.ref(".info/connected")
       connectedRef.on "value", (snap) ->
@@ -80,15 +96,9 @@ export default {
 
     createNote: ({commit, getters, state}, newNote) ->
       # newNote = {text, parent, [etc]}
-      # throw 'offline' if getters.isConnected == false
-      # commit('setBusy', true)
+      commit('setBusy', true)
       console.log "newNote", newNote
       state.fsRef.add(newNote)
-      .then (doc) ->
-        siblings = getters.siblings(newNote)
-        siblings ?= []
-        siblings.push(doc.id)
-        state.fsRef.doc(newNote.parent).update({children:siblings})
 
     deleteNote: ({state, getters, dispatch, commit}, {noteRef, j}) ->
       if getters.selectedParentRef == 'rootNode' and getters.dex == 0
@@ -106,19 +116,18 @@ export default {
         batch.delete(state.fsRef.doc(refToDelete))
 
       noteDelete(noteRef)
-      batch.commit().then -> commit('setBusy', false)
+      batch.commit()
 
     setNoteText: ({state, getters}, payload) ->
       console.log "setNoteText", payload
-      # throw 'offline' if getters.isConnected == false
       state.fsRef.doc(payload.noteRef).update({text:payload.text})
 
-    setNoteChildren: ({state, getters}, payload) ->
-      # throw 'offline' if getters.isConnected == false
+    setNoteChildren: ({commit, state, getters}, payload) ->
+      commit 'setBusy', true
       state.fsRef.doc(payload.noteRef).update({children:payload.children})
 
-    setNoteParent: ({state, getters, dispatch}, payload) ->
-      # throw 'offline' if getters.isConnected == false
+    setNoteParent: ({commit, state, getters, dispatch}, payload) ->
+      commit 'setBusy', true
       console.log payload
 
       currentParentRef = getters.note(payload.noteRef).parent
@@ -140,59 +149,46 @@ export default {
       batch.commit()
 
     shiftNote: ({commit, state, getters, dispatch}, key) ->
-      # throw 'offline' if getters.isConnected == false
-      if getters.isBusy
-        return
-      commit('setBusy', true)
       siblings = getters.selectedSiblings
       dex = getters.dex
       switch key
         # shift selected note
-          when 'j', "ArrowDown"
-            console.log "shift down"
-            if siblings.length > dex + 1
-              siblings.splice(dex + 1, 0, siblings.splice(dex, 1)[0])
-              dispatch('setNoteChildren', {
-                noteRef: getters.selectedNote.parent
-                children: siblings
-                }).then =>
-                  commit('setBusy', false)
-            else commit('setBusy', false)
-          when 'k', "ArrowUp"
-            console.log "shift up"
-            if dex > 0
-              siblings.splice(dex - 1, 0, siblings.splice(dex, 1)[0])
-              dispatch('setNoteChildren', {
-                noteRef: getters.selectedNote.parent
-                children: siblings
-                }).then =>
-                  commit('setBusy', false)
-            else commit('setBusy', false)
-          when 'h', "ArrowLeft"
-            console.log "shift left"
-            parentRef = getters.selectedNote.parent
-            if parentRef != "rootNode"
-              grandParentRef = getters.selectedParent.parent
-              selected = getters.selectedNoteRef
-              dispatch('setNoteParent', {
-                noteRef: selected
-                parentRef: grandParentRef })
-              .then =>
-                  commit('setBusy', false)
-            else commit('setBusy', false)
-          when 'l', "ArrowRight"
-            console.log "shift right"
-            # make child of note above
-            if dex > 0
-              newParentRef = siblings[dex - 1]
-              dispatch('setNoteParent', {
-                noteRef: getters.selectedNoteRef
-                parentRef: newParentRef})
-              .then =>
-                commit('setBusy', false)
-            else commit('setBusy', false)
-          else
-            commit('setBusy', false)
+        when 'j', "ArrowDown"
+          console.log "shift down"
+          if siblings.length > dex + 1
+            siblings.splice(dex + 1, 0, siblings.splice(dex, 1)[0])
+            dispatch('setNoteChildren', {
+              noteRef: getters.selectedNote.parent
+              children: siblings
+              })
+
+        when 'k', "ArrowUp"
+          console.log "shift up"
+          if dex > 0
+            siblings.splice(dex - 1, 0, siblings.splice(dex, 1)[0])
+            dispatch('setNoteChildren', {
+              noteRef: getters.selectedNote.parent
+              children: siblings
+              })
+
+        when 'h', "ArrowLeft"
+          console.log "shift left"
+          parentRef = getters.selectedNote.parent
+          if parentRef != "rootNode"
+            grandParentRef = getters.selectedParent.parent
+            selected = getters.selectedNoteRef
+            dispatch('setNoteParent', {
+              noteRef: selected
+              parentRef: grandParentRef })
+
+        when 'l', "ArrowRight"
+          console.log "shift right"
+          # make child of note above
+          if dex > 0
+            newParentRef = siblings[dex - 1]
+            dispatch('setNoteParent', {
+              noteRef: getters.selectedNoteRef
+              parentRef: newParentRef})
 
 
 }

@@ -5,7 +5,7 @@ export default {
   state:
     isLoading: false
     isConnected: true #firebase connection
-    isBusy: false #waiting for firebase
+    isBusy: false #waiting for firebase, set by watching firebase changes as promises dont return while offline
     selectedNoteRef: ""
     error: ""
     version: "0.1.0"
@@ -32,8 +32,6 @@ export default {
       commit("setLoading", false)
 
     navigate: ({commit, state, getters, dispatch}, key) ->
-      if state.isBusy
-        return
       switch key
       # vim style navigaion
         when "j", "ArrowDown"
@@ -41,10 +39,7 @@ export default {
           if getters.selectedSiblings.length > getters.dex + 1
             commit 'setSelectedNoteRef', getters.selectedSiblings[getters.dex + 1]
           else #create new empty note if none exists
-            commit('setBusy', true)
             dispatch('createNote', {text:"", parent:getters.selectedParentRef})
-            .then =>
-              commit('setBusy', false)
 
         when 'k', "ArrowUp"
           console.log "up"
@@ -57,16 +52,11 @@ export default {
             # commit('historyPop')
         when 'l', "ArrowRight"
           console.log "right"
-          if getters.selectedNote.children?
-            commit("setSelectedNoteRef", getters.selectedNote.children[0])
-            # commit('moveRight')
-          else # create new child note if none exist
-            commit('setBusy', true)
+           # create new child note if none exist
+          if not getters.selectedNote.children? or getters.selectedNote.children.length == 0
             dispatch('createNote', {text:"", parent:state.selectedNoteRef})
-            .then =>
-              console.log "right set selected"
-              # commit("setSelectedNoteRef", getters.notes[getters.selectedNoteRef].children[0])
-              commit('setBusy', false)
+          else
+            commit("setSelectedNoteRef", getters.selectedNote.children[0])
 
     scrollToSelected: ({state}) ->
       if state.isLoading then return

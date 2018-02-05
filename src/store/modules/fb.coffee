@@ -1,4 +1,5 @@
 import firebase from '../firebase.js'
+import uuidv1 from 'uuid/v1'
 
 export default {
   state:
@@ -10,21 +11,26 @@ export default {
   actions:
     initDatabase: ({state, commit, getters}) ->
       console.log "initDatabase"
-      firebase.firebase.firestore().enablePersistence().then =>
-          # Initialize Cloud Firestore through firebase
+      setFirestoreReference = =>
         firestore = firebase.firebase.firestore()
         commit('setFsRef', firestore.collection("users").doc(getters.userID).collection("notes"))
+
+      firebase.firebase.firestore().enablePersistence().then =>
+          # Initialize Cloud Firestore through firebase
+          setFirestoreReference()
       .catch (err) ->
         if err.code == 'failed-precondition'
           console.log err
           #     // Multiple tabs open, persistence can only be enabled
           #     // in one tab at a a time.
           #     // ...
+          setFirestoreReference()
         else if err.code == 'unimplemented'
           console.log err
           #     // The current browser does not support all of the
           #     // features required to enable persistence
           #     // ...
+          setFirestoreReference()
 
     loadDemoNotes: ({state, commit}) ->
       commit("setLoading", true)
@@ -47,26 +53,14 @@ export default {
         commit("setLoading", true)
 
     watchDatabase: ({commit, getters, state, dispatch}) ->
-      state.fsRef.get().then (snapshot) ->
-        notes = {}
-        snapshot.forEach (doc) ->
-          notes[doc.id] = doc.data()
-        commit('setNotes', notes)
-        dispatch('loadUI')
       state.fsRef.onSnapshot (snapshot) ->
         # if snapshot.metadata.fromCache
         snapshot.docChanges.forEach (change) ->
           # console.log "fb change", change
           if change.type == "added"
-            if getters.isLoading then return
-            #new note, update parent here because fb promises dont return while offline
-            # and to prevent 'setBusy' being called twice
-            siblings = getters.siblings(change.doc.data())
-            siblings ?= []
-            siblings.push(change.doc.id)
-            state.fsRef.doc(change.doc.data().parent).update({children:siblings})
+            # if getters.isLoading then return
             commit('addLocalNote', {id:change.doc.id, data:change.doc.data()})
-            commit 'setSelectedNoteRef', change.doc.id
+            if change.doc.id == "rootNode" then dispatch('loadUI')
 
           if change.type == "modified"
             commit('modifyLocalNote', {id:change.doc.id, data:change.doc.data()})
@@ -75,16 +69,12 @@ export default {
              # watch for selected note delete from this or other clients
             if change.doc.id == getters.selectedNoteRef and not getters.isLoading
               console.log "selected note missing"
-              if getters.dex > 0
-                commit 'setSelectedNoteRef', getters.selectedSiblings[getters.dex - 1]
-              else if getters.selectedParentRef != "rootNode"
-                commit 'setSelectedNoteRef', getters.selectedParentRef
+              commit "setSelectedNoteRef", getters.note('rootNode').children[0]
             commit('removeLocalNote', change.doc.id)
 
         # set busy to false after data received back from firebase to prevent
-        # unstable state. ignore new notes (type == "added") as modified change is
-        # called when parent is updated to include new note in its children list
-        if snapshot.docChanges[0].type != "added" then commit 'setBusy', false
+        # unstable state.
+        commit 'setBusy', false
 
       # watch connection
       connectedRef = firebase.database.ref(".info/connected")
@@ -96,14 +86,26 @@ export default {
 
     createNote: ({commit, getters, state}, newNote) ->
       # newNote = {text, parent, [etc]}
+      # console.log "newNote", newNote
       commit('setBusy', true)
-      console.log "newNote", newNote
-      state.fsRef.add(newNote)
+      newRef = uuidv1() # set uids manually as firestore.add() doesn't work with batch
+      batch = firebase.firebase.firestore().batch()
+      batch.set(state.fsRef.doc(newRef), newNote)
+
+      siblings = getters.note(newNote.parent).children
+      siblings ?= []
+      siblings.push(newRef)
+      batch.update(state.fsRef.doc(newNote.parent), {children:siblings})
+
+      batch.commit()
+      commit('addLocalNote', {id:newRef, data:newNote})
+      commit 'setSelectedNoteRef', newRef
 
     deleteNote: ({state, getters, dispatch, commit}, {noteRef, j}) ->
       if getters.selectedParentRef == 'rootNode' and getters.dex == 0
         commit 'setError', 'Error: Cannot delete first note'
         return
+        
       commit('setBusy', true)
       batch = firebase.firebase.firestore().batch()
       # recursively delete note children
@@ -114,9 +116,14 @@ export default {
         siblings = getters.siblings(note).filter (e) -> e != refToDelete
         batch.update(state.fsRef.doc(note.parent), {children:siblings})
         batch.delete(state.fsRef.doc(refToDelete))
-
       noteDelete(noteRef)
+
       batch.commit()
+      # set selected
+      if getters.dex > 0
+        commit 'setSelectedNoteRef', getters.selectedSiblings[getters.dex - 1]
+      else if getters.selectedParentRef != "rootNode"
+        commit 'setSelectedNoteRef', getters.selectedParentRef
 
     setNoteText: ({state, getters}, payload) ->
       console.log "setNoteText", payload

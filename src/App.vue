@@ -1,5 +1,5 @@
 <template>
-  <v-app :dark="darkTheme">
+  <v-app :dark="darkTheme" v-scroll="onScroll">
     <v-navigation-drawer
       persistent
       :mini-variant="miniVariant"
@@ -27,6 +27,7 @@
     <v-toolbar
       app
       :clipped-left="clipped"
+      color="primary"
     >
       <v-toolbar-side-icon @click.stop="drawer = !drawer"></v-toolbar-side-icon>
       <v-btn icon @click.stop="miniVariant = !miniVariant">
@@ -64,6 +65,20 @@
       <v-btn icon @click.stop="rightDrawer = !rightDrawer">
         <v-icon>menu</v-icon>
       </v-btn>
+    </v-toolbar>
+    <v-toolbar flat dense v-if="breadcrumbsFixed">
+    </v-toolbar>
+    <v-toolbar flat dense :fixed="breadcrumbsFixed">
+      <v-breadcrumbs>
+      <v-icon slot="divider">chevron_right</v-icon>
+      <v-breadcrumbs-item
+      v-for="item in breadcrumbs"
+      :key="item.text"
+      v-html="item.text"
+      >
+       <!-- {{ item.text }} -->
+      </v-breadcrumbs-item>
+    </v-breadcrumbs>
     </v-toolbar>
     <v-progress-linear color="primary" style="margin:0" indeterminate :active="isBusy"></v-progress-linear>
     <Login></Login>
@@ -112,6 +127,7 @@ export default {
     drawer: false
     fixed: false
     snackbar: false
+    breadcrumbsFixed: false
     items: [{
       icon: 'bubble_chart'
       title: 'Inspire'
@@ -126,6 +142,17 @@ export default {
   computed: {
     ...mapGetters ['isLoading', 'isBusy', 'error', 'darkTheme']
     isDisconnected: -> not this.$store.getters.isConnected
+    breadcrumbs: ->
+      breadcrumbs = []
+      selected = this.$store.getters.selectedNote
+      while selected?.parent?
+        # hey, at least I didn't use regex
+        hack = selected.text.split('<', 3)
+        awfulHack = '<' + hack[1] + '<' + hack[2]
+        breadcrumbs.unshift({text:awfulHack})
+        selected = this.$store.getters.note(selected.parent)
+        # break if selected.parent == "rootNode"
+      return breadcrumbs
   }
 
   methods:
@@ -133,6 +160,9 @@ export default {
       console.log "logOut"
       firebase.auth().signOut()
     toggleTheme: -> this.$store.commit('toggleTheme')
+    onScroll: (e) ->
+      offsetTop = window.pageYOffset or document.documentElement.scrollTop
+      this.breadcrumbsFixed = if offsetTop > 68 then true else false
 
   watch:
     error: (newError) ->

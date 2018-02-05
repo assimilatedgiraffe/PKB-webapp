@@ -69,6 +69,7 @@ export default {
         centerIfNeeded: true
         duration: 300
         easing: 'easeInOut'
+        # offset has known bugs, due to be fixed in 2.0.0
       }
       scrollIntoViewIfNeeded(element, options)
 

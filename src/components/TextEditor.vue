@@ -2,10 +2,10 @@
   <div class="">
     <v-card
       :class="{ selected: isSelected,
+        'blue-grey darken-4': darkTheme,
         'elevation-15 ': isSelected,
         'elevation-4 ': isSelectedParent,
         selectedParent: isSelectedParent}"
-      class="blue-grey darken-4 "
       ref="card"
       :id="this.id"
       hover
@@ -31,6 +31,7 @@ export default {
 
   computed: {
     # note: -> this.noteEditor.note
+    darkTheme: -> this.$store.getters.darkTheme
     text: -> this.note.text
     height: -> 10
     isSelected: ->

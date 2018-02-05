@@ -1,5 +1,5 @@
 <template>
-  <v-app dark>
+  <v-app :dark="darkTheme">
     <v-navigation-drawer
       persistent
       :mini-variant="miniVariant"
@@ -49,6 +49,10 @@
         </v-alert>
         <span>Looks like you're not connected to the internet. Changes you make while offline will be synced when you reconnect.</span>
       </v-tooltip>
+      <v-btn @click.stop="toggleTheme">
+        theme
+        <v-icon>mdi-theme-light-dark</v-icon>
+      </v-btn>
       <v-btn tag="a" href="https://github.com/assimilatedgiraffe/PKB-webapp" target="_blank">
         View on GitHub
         <v-icon>mdi-github-box</v-icon>
@@ -120,7 +124,7 @@ export default {
   components: {Login}
 
   computed: {
-    ...mapGetters ['isLoading', 'isBusy', 'error']
+    ...mapGetters ['isLoading', 'isBusy', 'error', 'darkTheme']
     isDisconnected: -> not this.$store.getters.isConnected
   }
 
@@ -128,6 +132,7 @@ export default {
     logOut: ->
       console.log "logOut"
       firebase.auth().signOut()
+    toggleTheme: -> this.$store.commit('toggleTheme')
 
   watch:
     error: (newError) ->

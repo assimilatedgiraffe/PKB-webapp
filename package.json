@@ -1,6 +1,6 @@
 {
   "name": "pkb-webapp",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "description": "A Vue.js project",
   "author": "Benjamin Fleming <assimilatedgiraffe@gmail.com>",
   "private": true,
@@ -20,6 +20,7 @@
     "firebase": "^4.5.1",
     "scroll-into-view-if-needed": "^1.4.0",
     "uglify-es": "^3.3.8",
+    "uuid": "^3.2.1",
     "v-hotkey": "^0.2.0",
     "vue": "^2.4.2",
     "vue-analytics": "^5.8.0",

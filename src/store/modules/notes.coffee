@@ -1,3 +1,5 @@
+import Vue from 'vue'
+
 export default {
   state:
     notes: {}
@@ -9,6 +11,9 @@ export default {
 
   mutations:
     setNotes: (state, payload) -> state.notes = payload
+    addLocalNote: (state, payload) -> Vue.set(state.notes, payload.id, payload.data)
+    modifyLocalNote: (state, payload) ->  Vue.set(state.notes, payload.id, payload.data)
+    removeLocalNote: (state, payload) -> delete state.notes[payload]
 
   getters:
     notes: (state) -> state.notes

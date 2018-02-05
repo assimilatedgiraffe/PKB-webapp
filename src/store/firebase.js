@@ -1,6 +1,7 @@
-import Firebase from 'firebase'
+const firebase = require("firebase");
+require("firebase/firestore");
 
-const firebaseApp = Firebase.initializeApp({
+const firebaseApp = firebase.initializeApp({
   apiKey: 'AIzaSyDK2lBDUcFJ3lh9z5-ybxlHnxtU9rRGHN8',
   authDomain: 'pkb-app.firebaseapp.com',
   databaseURL: 'https://pkb-app.firebaseio.com',
@@ -11,5 +12,6 @@ const firebaseApp = Firebase.initializeApp({
 
 export default {
   database: firebaseApp.database(),
-  auth: firebaseApp.auth()
+  auth: firebaseApp.auth(),
+  firebase: firebase
 }

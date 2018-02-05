@@ -1,7 +1,6 @@
 <template lang="html">
   <!-- <div id="main-app"> -->
   <v-container @click.native="setFocus">
-    <v-progress-linear indeterminate :active="isLoading"></v-progress-linear>
         <!-- grid view -->
         <NoteGrid ref="NoteGrid"></NoteGrid>
   </v-container>

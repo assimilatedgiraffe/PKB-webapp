@@ -42,10 +42,10 @@
 
       <v-spacer></v-spacer>
 
-      <v-alert color="warning" icon="priority_high" value="true">
+      <v-progress-circular indeterminate v-if="isLoading"></v-progress-circular>
+      <v-alert v-model="isDisconnected" outline type="warning" icon="priority_high" value="true">
         Offline
       </v-alert>
-      <v-progress-circular indeterminate :active="isBusy"></v-progress-circular>
       <v-btn tag="a" href="https://github.com/assimilatedgiraffe/PKB-webapp" target="_blank">
         View on GitHub
         <v-icon>mdi-github-box</v-icon>
@@ -58,6 +58,7 @@
         <v-icon>menu</v-icon>
       </v-btn>
     </v-toolbar>
+    <v-progress-linear color="primary" style="margin:0" indeterminate :active="isBusy"></v-progress-linear>
     <Login></Login>
     <v-content>
       <router-view/>
@@ -108,6 +109,7 @@ export default {
 
   computed: {
     ...mapGetters ['isLoading', 'isBusy', 'error']
+    isDisconnected: -> not this.$store.getters.isConnected
   }
 
   methods:
@@ -116,3 +118,10 @@ export default {
       firebase.auth().signOut()
 }
 </script>
+
+
+<style lang="css">
+*:focus {
+  outline: none;
+}
+</style>

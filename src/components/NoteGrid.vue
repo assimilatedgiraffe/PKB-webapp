@@ -1,12 +1,13 @@
 <template lang="html">
   <div tabindex="0" @keyup="keyboardMap">
-    <v-container grid-list-lg>
-    <v-layout col>
-      <v-flex sm-4 v-for="(col, i) in cols" :key="col.id" >
+    <v-container fluid >
+    <v-layout row justify-start align-start fill-height align-content-start>
+      <v-flex xs4 v-for="(col, i) in cols" :key="col.id" >
         <!-- <div class="note-list" > -->
-        <v-container grid-list-lg>
-          <v-layout row wrap>
-            <v-flex xs12>
+        <!-- <v-container grid-list-lg> -->
+          <!-- <v-layout row wrap> -->
+          <v-flex column >
+              <draggable v-model="col1" :options="{group:'notes'}">
           <div v-for="(note,key) in col"
             :key="note.id">
             <TextEditor
@@ -15,9 +16,10 @@
               <!-- @click.native="onNoteClick(i,j)"> -->
             </TextEditor>
           </div>
-        </v-flex>
-        </v-layout>
-        </v-container>
+        </draggable>
+      </v-flex>
+        <!-- </v-layout> -->
+        <!-- </v-container> -->
       </v-flex>
     </v-layout>
   </v-container>
@@ -27,6 +29,7 @@
 <script lang="coffee">
 import TextEditor from './TextEditor.vue'
 import { mapGetters } from 'vuex'
+import draggable from 'vuedraggable'
 
 export default {
   data: -> {
@@ -34,7 +37,7 @@ export default {
     editMode: false
   }
 
-  components: {TextEditor}
+  components: {TextEditor, draggable}
 # TODO: store helper function
   computed: {
     ...mapGetters([
@@ -42,6 +45,9 @@ export default {
       'selectedElders', 'selectedSiblings', 'selectedChildren', 'selectedNote'
       ])
     colSpan: -> 24 / this.numberOfCols
+    col1:
+      get: -> this.selectedSiblings
+      set: (value) -> return
     cols: ->
       if this.isLoading
         #Still loading notes from firebase

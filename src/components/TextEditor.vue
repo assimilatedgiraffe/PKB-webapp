@@ -1,7 +1,18 @@
 <template lang="html">
   <div class="">
       <v-layout>
-        <v-flex sm-12>
+        <v-flex row sm-12>
+          <!-- <v-tooltip
+          @mouseenter="active=true"
+          @mouseleave="active=false"
+          color="transparent"
+          debounce="3000"
+          close-delay="1200"
+          transtition="zoom-transition"
+          nudge-up="500"
+          min-width="200"
+          left> -->
+          <v-icon class="handle">mdi-drag</v-icon>
     <v-card
       :class="{ selected: isSelected,
       'secondary': true,
@@ -13,6 +24,8 @@
       hover
       @mouseenter="active=true"
       @mouseleave="active=false"
+      @click.native="onClick"
+      slot="activator"
       >
         <v-card-text
         ref="editorDiv"
@@ -67,6 +80,7 @@
           <v-icon>close</v-icon>
         </v-btn>
       </v-card>
+    <!-- </v-tooltip> -->
       </v-flex>
     </v-layout>
 
@@ -76,6 +90,8 @@
 <script lang="coffee">
 import InlineEditor from '@ckeditor/ckeditor5-build-inline'
 # import {db} from '../firebase'
+import { mapGetters } from 'vuex'
+import { mapActions } from 'vuex'
 
 export default {
   data: -> {
@@ -86,16 +102,16 @@ export default {
   }
 
   computed: {
+    ...mapGetters ['darkTheme', 'selectedNote', 'selectedParent']
     # note: -> this.noteEditor.note
-    darkTheme: -> this.$store.getters.darkTheme
     text: -> this.note.text
     isSelected: ->
       # console.log this.noteKey
       # console.log this.$store.getters.selectedNote
-      this.note == this.$store.getters.selectedNote
+      this.note == this.selectedNote
     # NoteDBkey: -> db.ref('notes').child(this.noteEditor.note['.key'])
     # isSelected: -> this.noteEditor.isSelected
-    isSelectedParent: -> this.note == this.$store.getters.selectedParent
+    isSelectedParent: -> this.note == this.selectedParent
     id: -> if this.isSelected then "selectedNote" else ""
   }
 
@@ -105,17 +121,17 @@ export default {
   }
 
   methods: {
+    ...mapActions ['setNoteText']
     onBlur: ->
       console.log "blurred"
       # this.isSelected = false
-      this.$store.dispatch('setNoteText', {
-        noteRef: this.noteKey
-        text: this.editor.getData()
-        })
+      this.setNoteText {noteRef: this.noteKey, text: this.editor.getData()}
     onFocus: ->
       console.log "focused"
       # this.isReadOnly = false
       # this.isSelected = true
+    onClick: ->
+      this.$store.commit 'setSelectedNoteRef', this.noteKey
     startEdit: ->
       initEditor = (returnedEditor) =>
         this.editor = returnedEditor
@@ -128,10 +144,7 @@ export default {
       .then(initEditor)
       .catch((error) -> console.error(error))
     endEdit: ->
-      this.$store.dispatch('setNoteText', {
-        noteRef: this.noteKey
-        text: this.editor.getData()
-        })
+      this.setNoteText {noteRef: this.noteKey, text: this.editor.getData()}
       this.editor.destroy()
 
   }

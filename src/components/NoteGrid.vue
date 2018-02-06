@@ -8,7 +8,7 @@
           <!-- <v-layout row wrap> -->
           <v-container grid-list-xl>
           <v-flex column >
-          <draggable :list="Object.keys(col)" :options="{group:'notes'}" @change="onDrag($event, i)">
+          <draggable :list="Object.keys(col)" :options="{group:'notes', delay:0, handle:'.handle'}" @change="onDrag($event, i)">
           <div v-for="(note,key) in col"
             :key="note.id">
             <TextEditor
@@ -72,9 +72,6 @@ export default {
         return [zero,one,two]
   }
   methods: {
-    # onNoteClick: (i,j) ->
-    #   this.selectedCol = i
-    #   this.selectedNote = j
     onDrag: (evt, col) ->
       console.log evt, col
       if evt.moved

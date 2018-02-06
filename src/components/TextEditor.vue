@@ -2,7 +2,7 @@
   <div class="">
     <v-card
       :class="{ selected: isSelected,
-        'blue-grey darken-4': darkTheme,
+        'secondary': true,
         'elevation-15 ': isSelected,
         'elevation-4 ': isSelectedParent,
         selectedParent: isSelectedParent}"

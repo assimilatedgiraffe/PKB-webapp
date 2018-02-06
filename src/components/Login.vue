@@ -1,20 +1,23 @@
 <template lang='html'>
   <div>
-    <v-dialog v-model="loginVisible" persistent max-width="590">
-      <v-card>
+    <v-dialog v-model="loginVisible" persistent max-width="450">
+      <v-card light>
         <v-card-title class="headline">
           Welcome to version {{version}} of my Personal Knowledge Base Web App.
         </v-card-title>
         <v-card-text>
-          NOTE: This early prototype is keyboard controlled/desktop only!
+          <p>
+            NOTE: This early prototype is keyboard controlled/desktop only!
+          </p>
+          <br/>
+            Click below for demo (no need to log in):
+          <br/>
           <v-spacer></v-spacer>
-          Click below for demo (no need to log in):
+          <v-btn color="primary" large @click.native="startDemo"> Demo and User Guide </v-btn>
+          <v-spacer></v-spacer>
+          Existing user?
+          <v-btn @click="logIn" color="grey darken-2" flat small>Log in with Google</v-btn>
         </v-card-text>
-        <v-card-actions>
-          <v-btn color="green darken-1" flat @click.native="startDemo"> Demo and User Guide </v-btn>
-          <v-spacer></v-spacer>
-          <span @click="logIn" style="text-decoration: underline;">Log in with Google</span>
-        </v-card-actions>
       </v-card>
     </v-dialog>
   </div>

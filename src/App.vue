@@ -1,44 +1,10 @@
 <template>
   <v-app :dark="darkTheme" v-scroll="onScroll">
-    <v-navigation-drawer
-      persistent
-      :mini-variant="miniVariant"
-      :clipped="clipped"
-      v-model="drawer"
-      enable-resize-watcher
-      fixed
-      app
-    >
-      <v-list>
-        <v-list-tile
-          value="true"
-          v-for="(item, i) in items"
-          :key="i"
-        >
-          <v-list-tile-action>
-            <v-icon v-html="item.icon"></v-icon>
-          </v-list-tile-action>
-          <v-list-tile-content>
-            <v-list-tile-title v-text="item.title"></v-list-tile-title>
-          </v-list-tile-content>
-        </v-list-tile>
-      </v-list>
-    </v-navigation-drawer>
     <v-toolbar
       app
-      :clipped-left="clipped"
       color="primary"
     >
-      <v-toolbar-side-icon @click.stop="drawer = !drawer"></v-toolbar-side-icon>
-      <v-btn icon @click.stop="miniVariant = !miniVariant">
-        <v-icon v-html="miniVariant ? 'chevron_right' : 'chevron_left'"></v-icon>
-      </v-btn>
-      <v-btn icon @click.stop="clipped = !clipped">
-        <v-icon>web</v-icon>
-      </v-btn>
-      <v-btn icon @click.stop="fixed = !fixed">
-        <v-icon>remove</v-icon>
-      </v-btn>
+      <v-icon large>mdi-note-text</v-icon>
       <v-toolbar-title v-text="title"></v-toolbar-title>
 
       <v-spacer></v-spacer>
@@ -62,10 +28,11 @@
         Log out
         <v-icon>exit_to_app</v-icon>
       </v-btn>
-      <v-btn icon @click.stop="rightDrawer = !rightDrawer">
+      <!-- <v-btn icon @click.stop="rightDrawer = !rightDrawer">
         <v-icon>menu</v-icon>
-      </v-btn>
+      </v-btn> -->
     </v-toolbar>
+
     <v-toolbar flat dense v-if="breadcrumbsFixed">
     </v-toolbar>
     <v-toolbar flat dense :fixed="breadcrumbsFixed">
@@ -80,6 +47,7 @@
       </v-breadcrumbs-item>
     </v-breadcrumbs>
     </v-toolbar>
+
     <v-progress-linear color="primary" style="margin:0" indeterminate :active="isBusy"></v-progress-linear>
     <Login></Login>
     <v-snackbar
@@ -90,26 +58,28 @@
       {{error}}
     </v-alert>
     </v-snackbar>
+
     <v-content>
       <router-view/>
     </v-content>
-    <v-navigation-drawer
+
+    <!-- <v-navigation-drawer
       temporary
-      :right="right"
+      right
       v-model="rightDrawer"
       fixed
       app
     >
       <v-list>
-        <v-list-tile @click="right = !right">
+        <v-list-tile @click="rightDrawer = false" >
           <v-list-tile-action>
             <v-icon>compare_arrows</v-icon>
           </v-list-tile-action>
-          <v-list-tile-title>Switch drawer (click me)</v-list-tile-title>
+          <v-list-tile-title>Close</v-list-tile-title>
         </v-list-tile>
       </v-list>
-    </v-navigation-drawer>
-    <v-footer :fixed="fixed" app>
+    </v-navigation-drawer> -->
+    <v-footer app>
       <span>&copy; 2017</span>
     </v-footer>
   </v-app>
@@ -123,17 +93,8 @@ import Login from './components/Login.vue'
 export default {
   name: 'App'
   data: -> {
-    clipped: false
-    drawer: false
-    fixed: false
     snackbar: false
     breadcrumbsFixed: false
-    items: [{
-      icon: 'bubble_chart'
-      title: 'Inspire'
-    }]
-    miniVariant: false
-    right: true
     rightDrawer: false
     title: 'Personal Knowledge Base Web App'
   }
@@ -173,6 +134,9 @@ export default {
           console.log "test"
           this.$store.commit('setError', "")
         , 6500)
+    darkTheme: (newVal) ->
+      this.$vuetify.theme.primary =  if newVal then '#00695C' else '#26A69A'
+      this.$vuetify.theme.secondary =  if newVal then '#263238' else '#ECEFF1'
 }
 </script>
 

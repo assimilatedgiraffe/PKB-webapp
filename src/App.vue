@@ -140,6 +140,16 @@ export default {
     darkTheme: (newVal) ->
       this.$vuetify.theme.primary =  if newVal then '#00695C' else '#26A69A'
       this.$vuetify.theme.secondary =  if newVal then '#263238' else '#ECEFF1'
+
+  created: ->
+    # this.$store.dispatch('loadDatabase')
+    # this.$store.dispatch('watchDatabase')
+    firebase.auth().onAuthStateChanged((user) =>
+      if user
+        this.$store.dispatch('signIn', user)
+      else
+        this.$store.dispatch('signOut')
+    )
 }
 </script>
 

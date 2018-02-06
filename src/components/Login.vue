@@ -13,10 +13,15 @@
             Click below for demo (no need to log in):
           <br/>
           <v-spacer></v-spacer>
+          <br/>
           <v-btn color="primary" large @click.native="startDemo"> Demo and User Guide </v-btn>
           <v-spacer></v-spacer>
-          Existing user?
-          <v-btn @click="logIn" color="grey darken-2" flat small>Log in with Google</v-btn>
+            <small>
+              <em>
+                Existing user?
+                <v-btn @click="logIn" color="grey darken-2" round flat small>Log in with Google</v-btn>
+              </em>
+            </small>
         </v-card-text>
       </v-card>
     </v-dialog>

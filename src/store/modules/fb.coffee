@@ -101,8 +101,12 @@ export default {
       commit('addLocalNote', {id:newRef, data:newNote})
       commit 'setSelectedNoteRef', newRef
 
-    deleteNote: ({state, getters, dispatch, commit}, {noteRef, j}) ->
-      if getters.selectedParentRef == 'rootNode' and getters.dex == 0
+    deleteNote: ({state, getters, dispatch, commit}, noteRef) ->
+      console.log "deleteNote", noteRef
+      siblings = getters.siblingsByRef(noteRef)
+      dex = siblings.indexOf(noteRef)
+      parent = getters.note(noteRef).parent
+      if parent == 'rootNode' and dex == 0
         commit 'setError', 'Error: Cannot delete first note'
         return
 
@@ -113,17 +117,18 @@ export default {
         note = getters.note(refToDelete)
         if note.children?
           noteDelete(child) for child in note.children
-        siblings = getters.siblings(note).filter (e) -> e != refToDelete
-        batch.update(state.fsRef.doc(note.parent), {children:siblings})
+        theseSiblings = getters.siblings(note).filter (e) -> e != refToDelete
+        batch.update(state.fsRef.doc(note.parent), {children:theseSiblings})
         batch.delete(state.fsRef.doc(refToDelete))
       noteDelete(noteRef)
 
       batch.commit()
-      # set selected
-      if getters.dex > 0
-        commit 'setSelectedNoteRef', getters.selectedSiblings[getters.dex - 1]
-      else if getters.selectedParentRef != "rootNode"
-        commit 'setSelectedNoteRef', getters.selectedParentRef
+      if noteRef == selectedNote
+        # set selected
+        if dex > 0
+          commit 'setSelectedNoteRef', siblings[dex - 1]
+        else if parent != "rootNode"
+          commit 'setSelectedNoteRef', parent
 
     setNoteText: ({state, getters}, payload) ->
       console.log "setNoteText", payload

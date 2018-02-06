@@ -20,7 +20,7 @@ export default {
     note: (state) -> (ref) -> state.notes[ref]
     rootNode: (state, getters) -> getters.note('rootNode')
     siblings: (state) -> (note) -> state.notes[note?.parent]?.children
-    siblingsByRef: (state) -> (ref) -> state.notes[getters.note(ref)?.parent]?.children
+    siblingsByRef: (state, getters) -> (ref) -> state.notes[getters.note(ref)?.parent]?.children
     # return dict of {ref: note object} from list of refs
     refListToNotes: (state) -> (refs) ->
       return {} if !refs

@@ -75,6 +75,7 @@
           top right
           fab
           v-show="active"
+          @click.stop="deleteNote(noteKey)"
           >
           <v-icon>mdi-delete-forever</v-icon>
           <v-icon>close</v-icon>
@@ -121,7 +122,7 @@ export default {
   }
 
   methods: {
-    ...mapActions ['setNoteText']
+    ...mapActions ['setNoteText', 'deleteNote']
     onBlur: ->
       console.log "blurred"
       # this.isSelected = false

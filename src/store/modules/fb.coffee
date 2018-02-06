@@ -105,7 +105,7 @@ export default {
       if getters.selectedParentRef == 'rootNode' and getters.dex == 0
         commit 'setError', 'Error: Cannot delete first note'
         return
-        
+
       commit('setBusy', true)
       batch = firebase.firebase.firestore().batch()
       # recursively delete note children
@@ -134,8 +134,10 @@ export default {
       state.fsRef.doc(payload.noteRef).update({children:payload.children})
 
     setNoteParent: ({commit, state, getters, dispatch}, payload) ->
-      commit 'setBusy', true
       console.log payload
+      #cant set note to be it's own child!
+      if payload.noteRef == payload.parentRef then return
+      commit 'setBusy', true
 
       currentParentRef = getters.note(payload.noteRef).parent
       oldSiblings = getters.note(currentParentRef).children
@@ -146,7 +148,8 @@ export default {
 
       console.log newParent.children, oldSiblings
       oldSiblings = oldSiblings.filter((e) -> e != payload.noteRef)
-      newParent.children.push(payload.noteRef)
+      payload.index ?= 0
+      newParent.children.splice(payload.index, 0, payload.noteRef)
       console.log newParent.children, oldSiblings
 
       batch = firebase.firebase.firestore().batch()

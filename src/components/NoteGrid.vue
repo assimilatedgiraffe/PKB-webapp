@@ -7,7 +7,7 @@
         <!-- <v-container grid-list-lg> -->
           <!-- <v-layout row wrap> -->
           <v-flex column >
-              <draggable v-model="col1" :options="{group:'notes'}">
+          <draggable :list="Object.keys(col)" :options="{group:'notes'}" @change="onDrag($event, i)">
           <div v-for="(note,key) in col"
             :key="note.id">
             <TextEditor
@@ -35,13 +35,14 @@ export default {
   data: -> {
     numberOfCols: 3
     editMode: false
+    list: [1,2,3,4]
   }
 
   components: {TextEditor, draggable}
 # TODO: store helper function
   computed: {
     ...mapGetters([
-      'notes', 'isBusy', 'isLoading', 'isConnected',
+      'notes', 'isBusy', 'isLoading', 'isConnected', 'siblings'
       'selectedElders', 'selectedSiblings', 'selectedChildren', 'selectedNote'
       ])
     colSpan: -> 24 / this.numberOfCols
@@ -62,6 +63,24 @@ export default {
     # onNoteClick: (i,j) ->
     #   this.selectedCol = i
     #   this.selectedNote = j
+    onDrag: (evt, col) ->
+      console.log evt, col
+      if evt.moved
+        console.log "dragMove"
+        note = this.notes[evt.moved.element]
+        siblings = this.siblings(note)
+        spliced = siblings.splice(evt.moved.oldIndex, 1)[0]
+        siblings.splice(evt.moved.newIndex, 0, spliced)
+        this.$store.dispatch 'setNoteChildren', { noteRef: note.parent, children: siblings }
+
+      else if evt.added
+        console.log "dragAdded"
+        parent = this.cols[col][Object.keys(this.cols[col])[0]].parent
+        console.log parent
+        this.$store.dispatch 'setNoteParent', {
+          noteRef: evt.added.element
+          parentRef: parent
+          index: evt.added.newIndex}
 
     keyboardMap: (e) ->
       if this.isBusy then return

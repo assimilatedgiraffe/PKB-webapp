@@ -9,6 +9,7 @@ export default {
     selectedNoteRef: ""
     error: ""
     version: "0.1.0"
+    darkTheme: true
     # history: [] # refs of selected parents
     # selectedParentRef: ""
     # dex: [0] #selected note indexes, stack from beginning of array using unshift()/shift()
@@ -19,6 +20,7 @@ export default {
     setBusy: (state, payload) -> state.isBusy = payload
     setError: (state, payload) -> state.error = payload
     setSelectedNoteRef: (state, payload) -> state.selectedNoteRef = payload
+    toggleTheme: (state) -> state.darkTheme = !state.darkTheme
     # setSelectedParentRef: (state, payload) -> state.selectedParentRef = payload
     #!! need to use splice on array so vue can detect change !!
     # moveDown: (state) -> state.dex.splice(0, 1, state.dex[0] + 1)
@@ -67,6 +69,7 @@ export default {
         centerIfNeeded: true
         duration: 300
         easing: 'easeInOut'
+        # offset has known bugs, due to be fixed in 2.0.0
       }
       scrollIntoViewIfNeeded(element, options)
 
@@ -76,6 +79,7 @@ export default {
     isConnected: (state) -> state.isConnected
     error : (state) -> state.error
     version : (state) -> state.version
+    darkTheme : (state) -> state.darkTheme
     selectedNoteRef: (state, getters) -> state.selectedNoteRef
     selectedNote: (state, getters) -> getters.note(state.selectedNoteRef)
     selectedParentRef: (state, getters) -> getters.selectedNote?.parent

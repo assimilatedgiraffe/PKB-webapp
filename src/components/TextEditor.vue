@@ -1,15 +1,21 @@
 <template lang="html">
   <div class="">
-    <el-card
-      :class="{ selected: isSelected, selectedParent: isSelectedParent}"
+    <v-card
+      :class="{ selected: isSelected,
+        'secondary': true,
+        'elevation-15 ': isSelected,
+        'elevation-4 ': isSelectedParent,
+        selectedParent: isSelectedParent}"
       ref="card"
-      :id="this.id" >
-      <div
+      :id="this.id"
+      hover
+      >
+      <v-card-text
         ref="editorDiv"
         @focus="onFocus"
         @blur="onBlur"
-        v-html="this.text"></div>
-    </el-card>
+        v-html="this.text"></v-card-text>
+    </v-card>
   </div>
 </template>
 
@@ -25,7 +31,9 @@ export default {
 
   computed: {
     # note: -> this.noteEditor.note
+    darkTheme: -> this.$store.getters.darkTheme
     text: -> this.note.text
+    height: -> 10
     isSelected: ->
       # console.log this.noteKey
       # console.log this.$store.getters.selectedNote
@@ -89,19 +97,19 @@ export default {
 </script>
 
 <style lang="css">
-  .el-card {
+  .card {
     /*background-color: #eef1f6;*/
-    /*margin: 2px;*/
+    margin: 9px;
   }
-  .selected .el-card__body {
-    padding: 16px;
-    border: 4px solid #48a3f5;
+  .selected .card__text {
+    /*padding: 16px;*/
+    /*border: 4px solid #48a3f5;*/
     /*background-color: #fff;*/
     /*margin: 0;*/
   }
-  .selectedParent .el-card__body {
-    padding: 17px;
-    border: 3px solid #8cbfec;
+  .selectedParent .card__text {
+    /*padding: 17px;*/
+    /*border: 3px solid #8cbfec;*/
     /*background-color: #f8f8ff;*/
     /*margin: 0;*/
   }

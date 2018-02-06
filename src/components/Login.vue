@@ -1,31 +1,30 @@
 <template lang='html'>
   <div>
-    <el-dialog
-      :show-close="false"
-      center
-      :visible="loginVisible"
-      width="40%"
-      >
-    <span slot="title">
-      <h1>
-        Welcome to version {{version}} of my Personal Knowledge Base Web App.
-        <br><br>
-      </h1>
-      <h3>
-        NOTE: This early prototype is keyboard controlled/desktop only!
-        <br><br>
-        Click below for demo (no need to log in):
-        <br><br>
-        <br><br>
-        <el-button type="primary" @click="startDemo">Demo and User Guide </el-button>
-      </h3>
-      </span>
-    <span slot="footer" class="footer">
-      New or returning User?
-      <!-- <el-button type="info" size="mini" round @click="logIn">Log in with Google</el-button> -->
-      <span @click="logIn" style="text-decoration: underline;">Log in with Google</span>
-    </span>
-  </el-dialog>
+    <v-dialog v-model="loginVisible" persistent max-width="450">
+      <v-card light>
+        <v-card-title class="headline">
+          Welcome to version {{version}} of my Personal Knowledge Base Web App.
+        </v-card-title>
+        <v-card-text>
+          <p>
+            NOTE: This early prototype is keyboard controlled/desktop only!
+          </p>
+          <br/>
+            Click below for demo (no need to log in):
+          <br/>
+          <v-spacer></v-spacer>
+          <br/>
+          <v-btn color="primary" large @click.native="startDemo"> Demo and User Guide </v-btn>
+          <v-spacer></v-spacer>
+            <small>
+              <em>
+                Existing user?
+                <v-btn @click="logIn" color="grey darken-2" round flat small>Log in with Google</v-btn>
+              </em>
+            </small>
+        </v-card-text>
+      </v-card>
+    </v-dialog>
   </div>
 </template>
 
@@ -40,6 +39,7 @@ export default {
   computed:
     loginVisible: -> not this.$store.getters.user?
     version: -> this.$store.getters.version
+    loginVisible: -> not this.$store.getters.user?
 
   methods:
     logIn: ->

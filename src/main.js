@@ -6,6 +6,7 @@ import 'vuetify/dist/vuetify.min.css'
 import 'mdi/css/materialdesignicons.min.css'
 import {store} from './store/index.coffee'
 import VueAnalytics from 'vue-analytics'
+require('offline-plugin/runtime').install();
 
 Vue.use(VueAnalytics, {
   id: 'UA-113150419-2',

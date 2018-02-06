@@ -11,8 +11,10 @@ const CopyWebpackPlugin = require('copy-webpack-plugin')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const ExtractTextPlugin = require('extract-text-webpack-plugin')
 const OptimizeCSSPlugin = require('optimize-css-assets-webpack-plugin')
-const SWPrecacheWebpackPlugin = require('sw-precache-webpack-plugin')
+// const SWPrecacheWebpackPlugin = require('sw-precache-webpack-plugin')
 const loadMinified = require('./load-minified')
+const UglifyJSPlugin = require('uglifyjs-webpack-plugin')
+var OfflinePlugin = require('offline-plugin');
 
 const env = config.build.env
 
@@ -33,6 +35,21 @@ const webpackConfig = merge(baseWebpackConfig, {
     // http://vuejs.github.io/vue-loader/en/workflow/production.html
     new webpack.DefinePlugin({
       'process.env': env
+    }),
+    new UglifyJSPlugin({
+      uglifyOptions: {
+        parallel: {
+          cache: true,
+          workers: true
+        },
+        compress: {
+          warnings: false,
+        },
+        output: {
+          comments: false
+        }
+      },
+      sourceMap: true
     }),
     // new webpack.optimize.UglifyJsPlugin({
     //   compress: {
@@ -99,13 +116,14 @@ const webpackConfig = merge(baseWebpackConfig, {
       }
     ]),
     // service worker caching
-    new SWPrecacheWebpackPlugin({
-      cacheId: 'pkb-pwa',
-      filename: 'service-worker.js',
-      staticFileGlobs: ['dist/**/*.{js,html,css}'],
-      minify: true,
-      stripPrefix: 'dist/'
-    })
+    new OfflinePlugin()
+    // new SWPrecacheWebpackPlugin({
+    //   cacheId: 'pkb-app',
+    //   filename: 'service-worker.js',
+    //   staticFileGlobs: ['dist/**/*.{js,html,css}'],
+    //   minify: true,
+    //   stripPrefix: 'dist/'
+    // })
   ]
 })
 

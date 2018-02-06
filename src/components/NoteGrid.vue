@@ -6,6 +6,7 @@
         <!-- <div class="note-list" > -->
         <!-- <v-container grid-list-lg> -->
           <!-- <v-layout row wrap> -->
+          <v-container grid-list-xl>
           <v-flex column >
           <draggable :list="Object.keys(col)" :options="{group:'notes'}" @change="onDrag($event, i)">
           <div v-for="(note,key) in col"
@@ -17,7 +18,18 @@
             </TextEditor>
           </div>
         </draggable>
-      </v-flex>
+        <v-flex class="text-xs-center">
+      <v-btn
+        dark
+        block
+        flat
+        color="primary"
+      >
+        <v-icon>add</v-icon>
+      </v-btn>
+    </v-flex>
+    </v-flex>
+  </v-container>
         <!-- </v-layout> -->
         <!-- </v-container> -->
       </v-flex>
@@ -128,9 +140,8 @@ export default {
 }
 </script>
 
-<style lang="css">
-  .note-list {
-    overflow-y: auto;
-    /*height: 100%;*/
-  }
+<style scoped lang="css">
+.grid-list-xl {
+  padding: 9px;
+}
 </style>

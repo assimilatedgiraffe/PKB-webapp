@@ -16,16 +16,19 @@
         </v-alert>
         <span>Looks like you're not connected to the internet. Changes you make while offline will be synced when you reconnect.</span>
       </v-tooltip>
-      <v-btn @click.stop="toggleTheme">
-        theme
-        <v-icon>mdi-theme-light-dark</v-icon>
+      <v-btn icon large @click.stop="toggleTheme">
+        <v-icon v-if="darkTheme">mdi-white-balance-sunny</v-icon>
+        <v-icon v-if="!darkTheme">mdi-weather-night</v-icon>
       </v-btn>
-      <v-btn tag="a" href="https://github.com/assimilatedgiraffe/PKB-webapp" target="_blank">
-        View on GitHub
+      <!-- <v-tooltip bottom max-width="200px"> -->
+      <v-btn icon large tag="a" href="https://github.com/assimilatedgiraffe/PKB-webapp" target="_blank">
         <v-icon>mdi-github-box</v-icon>
       </v-btn>
-      <v-btn @click.stop="logOut">
-        Log out
+      <!-- <span>
+        View Code on GitHub
+      </span>
+      </v-tooltip> -->
+      <v-btn icon large @click.stop="logOut">
         <v-icon>exit_to_app</v-icon>
       </v-btn>
       <!-- <v-btn icon @click.stop="rightDrawer = !rightDrawer">
@@ -79,9 +82,9 @@
         </v-list-tile>
       </v-list>
     </v-navigation-drawer> -->
-    <v-footer app>
+    <!-- <v-footer app>
       <span>&copy; 2017</span>
-    </v-footer>
+    </v-footer> -->
   </v-app>
 </template>
 

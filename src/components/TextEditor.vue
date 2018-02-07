@@ -30,7 +30,7 @@
         <v-card-text
         ref="editorDiv"
         @focus="onFocus"
-        @blur="onBlur"
+        @blur="onBlur($event)"
         v-html="this.text">
         </v-card-text>
         <v-card-actions v-show="false">
@@ -64,6 +64,7 @@
       bottom left
       color="primary"
       v-show="active"
+      @click.stop="startEdit()"
     >
       <v-icon>edit</v-icon>
     </v-btn>
@@ -123,16 +124,18 @@ export default {
 
   methods: {
     ...mapActions ['setNoteText', 'deleteNote']
-    onBlur: ->
-      console.log "blurred"
-      # this.isSelected = false
+    onBlur: (e) ->
+      console.log "blurred", e
+      if e.relatedTarget?
+        #blur from mouse, typically to another part of app
+        this.endEdit()
+      #blur from keyboard, typlically alt-tab, commit note text anyway, but don't end edit
       this.setNoteText {noteRef: this.noteKey, text: this.editor.getData()}
-    onFocus: ->
-      console.log "focused"
-      # this.isReadOnly = false
-      # this.isSelected = true
-    onClick: ->
-      this.$store.commit 'setSelectedNoteRef', this.noteKey
+
+    onFocus: -> console.log "focused"
+
+    onClick: -> this.$store.commit 'setSelectedNoteRef', this.noteKey
+
     startEdit: ->
       initEditor = (returnedEditor) =>
         this.editor = returnedEditor
@@ -166,6 +169,9 @@ export default {
 </script>
 
 <style lang="css">
+  .ck-balloon-panel {
+    visibility: hidden ;
+  }
   .card {
     /*background-color: #eef1f6;*/
     /*margin: 9px;*/

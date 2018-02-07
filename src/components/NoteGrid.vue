@@ -8,8 +8,13 @@
           <!-- <v-layout row wrap> -->
           <v-container grid-list-xl>
           <v-flex column >
-          <draggable :list="Object.keys(col)" :options="{group:'notes', delay:0, handle:'.handle'}" @change="onDrag($event, i)">
+          <draggable :list="Object.keys(col)" :options="{
+            group:'notes',
+            delay:0,
+            draggable:'.dragItem',
+            handle:'.handle'}" @change="onDrag($event, i)">
           <div v-for="(note,key) in col"
+            class="dragItem"
             :key="note.id">
             <TextEditor
               :note="note"
@@ -17,16 +22,17 @@
               <!-- @click.native="onNoteClick(i,j)"> -->
             </TextEditor>
           </div>
+          <v-btn
+          dark
+          block
+          flat
+          slot="footer"
+          color="primary"
+          >
+          <v-icon>add</v-icon>
+        </v-btn>
         </draggable>
         <v-flex class="text-xs-center">
-      <v-btn
-        dark
-        block
-        flat
-        color="primary"
-      >
-        <v-icon>add</v-icon>
-      </v-btn>
     </v-flex>
     </v-flex>
   </v-container>
@@ -114,7 +120,7 @@ export default {
         switch e.key
           # editing and deleting
           when "Enter", "i", "a"
-            console.log "Enter"
+            console.log "Enter", this
             selectedVue = this.$children[1].$children[this.$store.getters.dex]
             # selectedVue.editor.element.focus()
             selectedVue.startEdit()
@@ -140,5 +146,9 @@ export default {
 <style scoped lang="css">
 .grid-list-xl {
   padding: 9px;
+}
+draggable {
+  height: 90px;
+  display: block;
 }
 </style>

@@ -28,6 +28,8 @@
           flat
           slot="footer"
           color="primary"
+          v-if="i > 0"
+          @click="newNote(i)"
           >
           <v-icon>add</v-icon>
         </v-btn>
@@ -47,6 +49,7 @@
 <script lang="coffee">
 import TextEditor from './TextEditor.vue'
 import { mapGetters } from 'vuex'
+import { mapActions } from 'vuex'
 import draggable from 'vuedraggable'
 
 export default {
@@ -60,8 +63,8 @@ export default {
 # TODO: store helper function
   computed: {
     ...mapGetters([
-      'notes', 'isBusy', 'isLoading', 'isConnected', 'siblings'
-      'selectedElders', 'selectedSiblings', 'selectedChildren', 'selectedNote'
+      'notes', 'isBusy', 'isLoading', 'isConnected', 'siblings', 'selectedParentRef'
+      'selectedElders', 'selectedSiblings', 'selectedChildren', 'selectedNote', 'selectedNoteRef'
       ])
     colSpan: -> 24 / this.numberOfCols
     col1:
@@ -78,6 +81,15 @@ export default {
         return [zero,one,two]
   }
   methods: {
+    ...mapActions(['createNote'])
+    newNote: (i) ->
+      if i == 1
+        #new sibling note
+        this.createNote {text:"", parent:this.selectedParentRef}
+      if i == 2
+        #new child note
+        this.createNote {text:"", parent:this.selectedNoteRef}
+
     onDrag: (evt, col) ->
       console.log evt, col
       if evt.moved

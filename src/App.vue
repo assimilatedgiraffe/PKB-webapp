@@ -43,7 +43,7 @@
       <v-icon slot="divider">chevron_right</v-icon>
       <v-breadcrumbs-item
       v-for="item in breadcrumbs"
-      :key="item.text"
+      :key="item.id"
       v-html="item.text"
       >
        <!-- {{ item.text }} -->

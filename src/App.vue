@@ -16,18 +16,20 @@
         </v-alert>
         <span>Looks like you're not connected to the internet. Changes you make while offline will be synced when you reconnect.</span>
       </v-tooltip>
-      <v-btn icon large @click.stop="toggleTheme">
+
+      <v-tooltip bottom light max-width="200px" color="secondary" >
+      <v-btn icon large slot="activator" @click.stop="toggleTheme">
         <v-icon v-if="darkTheme">mdi-white-balance-sunny</v-icon>
         <v-icon v-if="!darkTheme">mdi-weather-night</v-icon>
       </v-btn>
-      <!-- <v-tooltip bottom max-width="200px"> -->
-      <v-btn icon large tag="a" href="https://github.com/assimilatedgiraffe/PKB-webapp" target="_blank">
+      <span> {{ darkTheme ? 'Day Theme' : 'Night Theme' }} </span> </v-tooltip>
+
+      <v-tooltip bottom max-width="200px" color="secondary" >
+      <v-btn icon large tag="a" slot="activator" href="https://github.com/assimilatedgiraffe/PKB-webapp" target="_blank">
         <v-icon>mdi-github-box</v-icon>
       </v-btn>
-      <!-- <span>
-        View Code on GitHub
-      </span>
-      </v-tooltip> -->
+      <span> View Code on GitHub </span> </v-tooltip>
+
       <v-btn icon large @click.stop="logOut">
         <v-icon>exit_to_app</v-icon>
       </v-btn>
@@ -161,6 +163,6 @@ export default {
 .breadcrumbs-bar {
   position: sticky;
   top: 0;
-  z-index: 100;
+  z-index: 7;
 }
 </style>

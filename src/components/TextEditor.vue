@@ -33,28 +33,7 @@
         v-html="this.text">
         </v-card-text>
         <v-icon class="handle" v-show="active">mdi-drag</v-icon>
-        <v-card-actions v-if="false">
-          <v-btn
-          <v-divider></v-divider>
-          fab
-          dark
-          flat
-          small
-          color="green"
-          v-show="isSelected"
-          >
-          <v-icon>edit</v-icon>
-        </v-btn>
-      <v-btn
-        fab
-        dark
-        flat
-        small
-        v-show="isSelected"
-      >
-        <v-icon>edit</v-icon>
-      </v-btn>
-    </v-card-actions>
+
     <v-btn
       fab
       dark
@@ -69,6 +48,7 @@
     >
       <v-icon>mdi-lead-pencil</v-icon>
     </v-btn>
+
           <v-btn
           color="red darken-4"
           small
@@ -83,7 +63,6 @@
           <v-icon>close</v-icon>
         </v-btn>
       </v-card>
-    <!-- </v-tooltip> -->
       </v-flex>
     </v-layout>
 
@@ -172,6 +151,7 @@ export default {
 </script>
 
 <style lang="css">
+/*drag handle*/
 .handle {
   position: absolute;
   left: 0;
@@ -180,6 +160,12 @@ export default {
   z-index: 88;
   cursor: move;
 }
+/*remove weird bell shape on delete button*/
+.card>:last-child {
+    border-bottom-left-radius: 50%;
+    border-bottom-right-radius: 50%;
+}
+/*hide editor toolbar*/
   .ck-balloon-panel {
     visibility: hidden ;
   }

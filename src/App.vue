@@ -36,9 +36,7 @@
       </v-btn> -->
     </v-toolbar>
 
-    <v-toolbar flat dense v-if="breadcrumbsFixed">
-    </v-toolbar>
-    <v-toolbar flat dense :fixed="breadcrumbsFixed">
+    <v-toolbar flat dense class="breadcrumbs-bar">
       <v-breadcrumbs>
       <v-icon slot="divider">chevron_right</v-icon>
       <v-breadcrumbs-item
@@ -97,7 +95,6 @@ export default {
   name: 'App'
   data: -> {
     snackbar: false
-    breadcrumbsFixed: false
     rightDrawer: false
     title: 'Personal Knowledge Base Web App'
   }
@@ -160,5 +157,10 @@ export default {
 }
 .alert {
   padding: 7px;
+}
+.breadcrumbs-bar {
+  position: sticky;
+  top: 0;
+  z-index: 100;
 }
 </style>

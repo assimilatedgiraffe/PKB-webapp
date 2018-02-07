@@ -10,6 +10,7 @@ export default {
     error: ""
     version: "0.1.0"
     darkTheme: true
+    keyboardMode: true
     # history: [] # refs of selected parents
     # selectedParentRef: ""
     # dex: [0] #selected note indexes, stack from beginning of array using unshift()/shift()
@@ -19,6 +20,7 @@ export default {
     setConnected: (state, payload) -> state.isConnected = payload
     setBusy: (state, payload) -> state.isBusy = payload
     setError: (state, payload) -> state.error = payload
+    setKeyboardMode: (state, payload) -> state.keyboardMode = payload
     setSelectedNoteRef: (state, payload) -> state.selectedNoteRef = payload
     toggleTheme: (state) -> state.darkTheme = !state.darkTheme
     # setSelectedParentRef: (state, payload) -> state.selectedParentRef = payload
@@ -80,6 +82,8 @@ export default {
     error : (state) -> state.error
     version : (state) -> state.version
     darkTheme : (state) -> state.darkTheme
+    keyboardMode : (state) -> state.keyboardMode
+
     selectedNoteRef: (state, getters) -> state.selectedNoteRef
     selectedNote: (state, getters) -> getters.note(state.selectedNoteRef)
     selectedParentRef: (state, getters) -> getters.selectedNote?.parent

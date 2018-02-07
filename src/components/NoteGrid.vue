@@ -56,14 +56,14 @@ export default {
   data: -> {
     numberOfCols: 3
     editMode: false
-    list: [1,2,3,4]
+    keyboardMode: true
   }
 
   components: {TextEditor, draggable}
 # TODO: store helper function
   computed: {
     ...mapGetters([
-      'notes', 'isBusy', 'isLoading', 'isConnected', 'siblings', 'selectedParentRef'
+      'notes', 'isBusy', 'isLoading', 'isConnected', 'siblings', 'selectedParentRef',
       'selectedElders', 'selectedSiblings', 'selectedChildren', 'selectedNote', 'selectedNoteRef'
       ])
     colSpan: -> 24 / this.numberOfCols
@@ -112,6 +112,7 @@ export default {
     keyboardMap: (e) ->
       if this.isBusy then return
       console.log e.key, e.altKey
+      this.$store.commit 'setKeyboardMode', true
       # console.log this
       if this.editMode
         switch e.key

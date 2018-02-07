@@ -1,7 +1,7 @@
 <template lang="html">
   <div class="">
       <v-layout>
-        <v-flex row sm-12>
+        <v-flex style="position:relative; top:0;" row sm-12>
           <!-- <v-tooltip
           @mouseenter="active=true"
           @mouseleave="active=false"
@@ -12,11 +12,10 @@
           nudge-up="500"
           min-width="200"
           left> -->
-          <v-icon class="handle">mdi-drag</v-icon>
     <v-card
       :class="{ selected: isSelected,
       'secondary': true,
-      'elevation-15 ': isSelected,
+      'elevation-19 ': isSelected,
       'elevation-4 ': isSelectedParent,
       selectedParent: isSelectedParent}"
       ref="card"
@@ -33,15 +32,16 @@
         @blur="onBlur($event)"
         v-html="this.text">
         </v-card-text>
-        <v-card-actions v-show="false">
-          <v-divider></v-divider>
+        <v-icon class="handle" v-show="active">mdi-drag</v-icon>
+        <v-card-actions v-if="false">
           <v-btn
+          <v-divider></v-divider>
           fab
           dark
           flat
           small
           color="green"
-          v-show="active"
+          v-show="isSelected"
           >
           <v-icon>edit</v-icon>
         </v-btn>
@@ -50,7 +50,7 @@
         dark
         flat
         small
-        v-show="active"
+        v-show="isSelected"
       >
         <v-icon>edit</v-icon>
       </v-btn>
@@ -59,22 +59,23 @@
       fab
       dark
       small
-      flat
       absolute
+      depressed
       bottom left
       color="primary"
-      v-show="active"
+      v-show="isSelected && !keyboardMode"
+      class='elevation-19'
       @click.stop="startEdit()"
     >
-      <v-icon>edit</v-icon>
+      <v-icon>mdi-lead-pencil</v-icon>
     </v-btn>
           <v-btn
           color="red darken-4"
           small
           absolute
           flat
-          top right
           fab
+          style="top:0; right:0;"
           v-show="active"
           @click.stop="deleteNote(noteKey)"
           >
@@ -104,7 +105,7 @@ export default {
   }
 
   computed: {
-    ...mapGetters ['darkTheme', 'selectedNote', 'selectedParent']
+    ...mapGetters ['darkTheme', 'selectedNote', 'selectedParent', 'keyboardMode']
     # note: -> this.noteEditor.note
     text: -> this.note.text
     isSelected: ->
@@ -134,7 +135,9 @@ export default {
 
     onFocus: -> console.log "focused"
 
-    onClick: -> this.$store.commit 'setSelectedNoteRef', this.noteKey
+    onClick: ->
+      this.$store.commit 'setSelectedNoteRef', this.noteKey
+      this.$store.commit 'setKeyboardMode', false
 
     startEdit: ->
       initEditor = (returnedEditor) =>
@@ -169,12 +172,24 @@ export default {
 </script>
 
 <style lang="css">
+.handle {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  z-index: 88;
+  cursor: move;
+}
   .ck-balloon-panel {
     visibility: hidden ;
   }
   .card {
     /*background-color: #eef1f6;*/
     /*margin: 9px;*/
+  }
+  .card__text {
+    padding-left: 25px;
+    padding-bottom: 25px;
   }
   .selected .card__text {
     /*padding: 16px;*/

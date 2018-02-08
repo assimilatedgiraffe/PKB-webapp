@@ -1,31 +1,21 @@
 <template lang="html">
   <div class="">
-      <v-layout>
-        <v-flex style="position:relative; top:0;" row sm-12>
-          <!-- <v-tooltip
+    <v-layout>
+      <v-flex style="position:relative; top:0;" row sm-12>
+        <v-card
+        :class="{ selected: isSelected,
+          'secondary': true,
+          'elevation-19 ': isSelected,
+          'elevation-4 ': isSelectedParent,
+          selectedParent: isSelectedParent}"
+          ref="card"
+          :id="this.id"
+          hover
           @mouseenter="active=true"
           @mouseleave="active=false"
-          color="transparent"
-          debounce="3000"
-          close-delay="1200"
-          transtition="zoom-transition"
-          nudge-up="500"
-          min-width="200"
-          left> -->
-    <v-card
-      :class="{ selected: isSelected,
-      'secondary': true,
-      'elevation-19 ': isSelected,
-      'elevation-4 ': isSelectedParent,
-      selectedParent: isSelectedParent}"
-      ref="card"
-      :id="this.id"
-      hover
-      @mouseenter="active=true"
-      @mouseleave="active=false"
-      @click.native="onClick"
-      slot="activator"
-      >
+          @click.native="onClick"
+          slot="activator"
+          >
         <v-card-text
         ref="editorDiv"
         @focus="onFocus"
@@ -33,39 +23,32 @@
         v-html="this.text">
         </v-card-text>
         <v-icon class="handle" v-show="active">mdi-drag</v-icon>
-
-    <v-btn
-      fab
-      dark
-      small
-      absolute
-      depressed
-      bottom left
-      color="primary"
-      v-show="isSelected && !keyboardMode"
-      class='elevation-19'
-      @click.stop="startEdit()"
-    >
-      <v-icon>mdi-lead-pencil</v-icon>
-    </v-btn>
-
-          <v-btn
-          color="red darken-4"
-          small
-          absolute
-          flat
-          fab
+        <v-btn fab dark small absolute depressed bottom left color="primary"
+        v-show="isSelected && !keyboardMode"
+        class='elevation-19'
+        @click.stop="startEdit()" >
+          <v-icon>mdi-lead-pencil</v-icon>
+        </v-btn>
+        <v-btn color="red darken-4" small absolute flat fab ref="fab"
           style="top:0; right:0;"
           v-show="active"
-          @click.stop="deleteNote(noteKey)"
-          >
+          @click.stop="showDeleteConfirm=!showDeleteConfirm" >
           <v-icon>mdi-delete-forever</v-icon>
-          <v-icon>close</v-icon>
         </v-btn>
+        <v-tooltip left :activator="el" v-model="showDeleteConfirm"
+          content-class="tooltip-opaque"
+          color="primary" >
+          <v-btn color="red darken-4" depressed small
+          @click.stop="deleteNote(noteKey); showDeleteConfirm=false" >
+            Delete
+          </v-btn>
+          <v-btn outline small @click.stop="showDeleteConfirm=false" >
+            Cancel
+          </v-btn>
+        </v-tooltip>
       </v-card>
-      </v-flex>
-    </v-layout>
-
+    </v-flex>
+  </v-layout>
 </div>
 </template>
 
@@ -80,6 +63,8 @@ export default {
     editor: {}
     active: false
     fab: false
+    showDeleteConfirm: false
+    el: null
     # isSelected: false
   }
 
@@ -140,7 +125,8 @@ export default {
     # noteEditor: -> this.isSelected = this.noteEditor.isSelected
   }
 
-  # mounted: ->
+  mounted: ->
+    this.el = this.$refs.fab.$el
 
   destroyed: ->
     if this.editor?
@@ -151,6 +137,9 @@ export default {
 </script>
 
 <style lang="css">
+.tooltip-opaque {
+  position:absolute; top:0; left: 0; opacity:1 !important;
+}
 /*drag handle*/
 .handle {
   position: absolute;

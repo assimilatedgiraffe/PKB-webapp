@@ -54,7 +54,7 @@
     </v-toolbar>
 
     <v-progress-linear color="primary" style="margin:0" indeterminate :active="isBusy"></v-progress-linear>
-    
+
     <Login></Login>
 
     <v-snackbar color="error" v-model="snackbar" top >
@@ -81,9 +81,16 @@
         </v-list-tile>
       </v-list>
     </v-navigation-drawer> -->
-    <!-- <v-footer app>
-      <span>&copy; 2017</span>
-    </v-footer> -->
+    <v-footer app fixed style="min-height:28px">
+      <v-flex d-inline-flex align-center justify-end >
+      <!-- <span>&copy; 2017 </span> -->
+      <a href="https://assimilatedgiraffe.github.io/" target="_blank" style="flex: none">
+        <v-avatar size="20px">
+        <img src="https://github.com/assimilatedgiraffe.png?size=20" class="" alt="face" >
+        </v-avatar>
+      </a>
+      </v-flex>
+    </v-footer>
   </v-app>
 </template>
 

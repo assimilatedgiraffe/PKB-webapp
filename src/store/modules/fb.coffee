@@ -122,13 +122,13 @@ export default {
         batch.delete(state.fsRef.doc(refToDelete))
       noteDelete(noteRef)
 
-      batch.commit()
-      if noteRef == selectedNote
+      if noteRef == getters.selectedNoteRef
         # set selected
         if dex > 0
           commit 'setSelectedNoteRef', siblings[dex - 1]
         else if parent != "rootNode"
           commit 'setSelectedNoteRef', parent
+      batch.commit()
 
     setNoteText: ({state, getters}, payload) ->
       console.log "setNoteText", payload

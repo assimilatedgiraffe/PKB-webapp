@@ -130,7 +130,7 @@ export default {
             when "Delete"
               console.log "Delete"
               noteToDelete = this.$store.getters.selectedNoteRef
-              this.$store.dispatch('deleteNote', {noteRef:noteToDelete, j:0})
+              this.$store.dispatch('deleteNote', noteToDelete)
 
   }
 

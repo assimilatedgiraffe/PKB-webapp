@@ -22,19 +22,23 @@
         @blur="onBlur($event)"
         v-html="this.text">
         </v-card-text>
+
         <v-icon class="handle" v-show="active">mdi-drag</v-icon>
+
         <v-btn fab dark small absolute depressed bottom left color="primary"
         v-show="isSelected && !keyboardMode"
         class='elevation-19'
         @click.stop="startEdit()" >
           <v-icon>mdi-lead-pencil</v-icon>
         </v-btn>
+
         <v-btn color="red darken-4" small absolute flat fab ref="fab"
           style="top:0; right:0;"
           v-show="active"
           @click.stop="showDeleteConfirm=!showDeleteConfirm" >
           <v-icon>mdi-delete-forever</v-icon>
         </v-btn>
+
         <v-tooltip left :activator="el" v-model="showDeleteConfirm"
           content-class="tooltip-opaque"
           color="primary" >
@@ -104,6 +108,7 @@ export default {
       this.$store.commit 'setKeyboardMode', false
 
     startEdit: ->
+      this.$store.commit 'setEditMode', true
       initEditor = (returnedEditor) =>
         this.editor = returnedEditor
         # this.editor.setData(this.note.text)
@@ -115,6 +120,7 @@ export default {
       .then(initEditor)
       .catch((error) -> console.error(error))
     endEdit: ->
+      this.$store.commit 'setEditMode', false
       this.setNoteText {noteRef: this.noteKey, text: this.editor.getData()}
       this.editor.destroy()
 

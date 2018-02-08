@@ -8,7 +8,7 @@
           <!-- <v-layout row wrap> -->
           <v-container grid-list-xl>
           <v-flex column >
-          <draggable :list="Object.keys(col)" :options="{
+          <draggable :list="Object.keys(col)" ref="cols" :options="{
             group:'notes',
             delay:0,
             draggable:'.dragItem',
@@ -17,25 +17,18 @@
             class="dragItem"
             :key="note.id">
             <TextEditor
+              ref="noteVues"
               :note="note"
               :noteKey="key">
               <!-- @click.native="onNoteClick(i,j)"> -->
             </TextEditor>
           </div>
-          <v-btn
-          dark
-          block
-          flat
-          slot="footer"
-          color="primary"
-          v-if="i > 0"
-          @click="newNote(i)"
-          >
-          <v-icon>add</v-icon>
-        </v-btn>
+          <v-btn dark block flat slot="footer" color="primary" v-if="i > 0" @click="newNote(i)" >
+            <v-icon>add</v-icon>
+          </v-btn>
         </draggable>
         <v-flex class="text-xs-center">
-    </v-flex>
+        </v-flex>
     </v-flex>
   </v-container>
         <!-- </v-layout> -->
@@ -55,15 +48,13 @@ import draggable from 'vuedraggable'
 export default {
   data: -> {
     numberOfCols: 3
-    editMode: false
-    keyboardMode: true
   }
 
   components: {TextEditor, draggable}
 # TODO: store helper function
   computed: {
     ...mapGetters([
-      'notes', 'isBusy', 'isLoading', 'isConnected', 'siblings', 'selectedParentRef',
+      'notes', 'isBusy', 'isLoading', 'isConnected', 'siblings', 'selectedParentRef', 'editMode'
       'selectedElders', 'selectedSiblings', 'selectedChildren', 'selectedNote', 'selectedNoteRef'
       ])
     colSpan: -> 24 / this.numberOfCols
@@ -119,11 +110,10 @@ export default {
         # leave edit mode when done editing note
           when "Escape"
             console.log "Escape"
-            selectedVue = this.$children[1].$children[this.$store.getters.dex]
+            selectedVue = this.$refs.noteVues.filter (x) -> x.isSelected == true
             # selectedVue.editor.element.blur()
-            selectedVue.endEdit()
+            selectedVue[0].endEdit()
             this.$el.focus()
-            this.editMode = false
 
       else if e.altKey
         if e.key != "Alt"
@@ -134,10 +124,8 @@ export default {
           # editing and deleting
           when "Enter", "i", "a"
             console.log "Enter", this
-            selectedVue = this.$children[1].$children[this.$store.getters.dex]
-            # selectedVue.editor.element.focus()
-            selectedVue.startEdit()
-            this.editMode = true
+            selectedVue = this.$refs.noteVues.filter (x) -> x.isSelected == true
+            selectedVue[0].startEdit()
           when "Delete"
             console.log "Delete"
             noteToDelete = this.$store.getters.selectedNoteRef

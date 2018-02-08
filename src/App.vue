@@ -54,14 +54,11 @@
     </v-toolbar>
 
     <v-progress-linear color="primary" style="margin:0" indeterminate :active="isBusy"></v-progress-linear>
+    
     <Login></Login>
-    <v-snackbar
-      v-model="snackbar"
-      top
-    >
-    <v-alert outline type="error" value="true">
-      {{error}}
-    </v-alert>
+
+    <v-snackbar color="error" v-model="snackbar" top >
+      <v-icon>error</v-icon>{{error}}
     </v-snackbar>
 
     <v-content>

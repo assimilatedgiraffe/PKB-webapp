@@ -103,7 +103,6 @@ export default {
     keyboardMap: (e) ->
       if this.isBusy then return
       console.log e.key, e.altKey
-      this.$store.commit 'setKeyboardMode', true
       # console.log this
       if this.editMode
         switch e.key
@@ -115,21 +114,23 @@ export default {
             selectedVue[0].endEdit()
             this.$el.focus()
 
-      else if e.altKey
-        if e.key != "Alt"
-          this.$store.dispatch('shiftNote', e.key)
       else
-        this.$store.dispatch('navigate', e.key)
-        switch e.key
-          # editing and deleting
-          when "Enter", "i", "a"
-            console.log "Enter", this
-            selectedVue = this.$refs.noteVues.filter (x) -> x.isSelected == true
-            selectedVue[0].startEdit()
-          when "Delete"
-            console.log "Delete"
-            noteToDelete = this.$store.getters.selectedNoteRef
-            this.$store.dispatch('deleteNote', {noteRef:noteToDelete, j:0})
+        this.$store.commit 'setKeyboardMode', true
+        if e.altKey
+          if e.key != "Alt"
+            this.$store.dispatch('shiftNote', e.key)
+        else
+          this.$store.dispatch('navigate', e.key)
+          switch e.key
+            # editing and deleting
+            when "Enter", "i", "a"
+              console.log "Enter", this
+              selectedVue = this.$refs.noteVues.filter (x) -> x.isSelected == true
+              selectedVue[0].startEdit()
+            when "Delete"
+              console.log "Delete"
+              noteToDelete = this.$store.getters.selectedNoteRef
+              this.$store.dispatch('deleteNote', {noteRef:noteToDelete, j:0})
 
   }
 

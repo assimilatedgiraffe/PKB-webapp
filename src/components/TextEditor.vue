@@ -23,18 +23,24 @@
         v-html="this.text">
         </v-card-text>
 
-        <v-icon class="handle" v-show="active">mdi-drag</v-icon>
+        <v-icon class="handle" v-show="active && !editMode">mdi-drag</v-icon>
 
         <v-btn fab dark small absolute depressed bottom left color="primary"
-        v-show="isSelected && !keyboardMode"
+        v-show="isSelected && !keyboardMode && !editMode"
         class='elevation-19'
         @click.stop="startEdit()" >
           <v-icon>mdi-lead-pencil</v-icon>
         </v-btn>
+        <v-btn fab dark small absolute depressed bottom left color="primary"
+        v-show="isSelected && !keyboardMode && editMode"
+        class='elevation-19'
+        @click.stop="endEdit()" >
+          <v-icon>check</v-icon>
+        </v-btn>
 
         <v-btn color="red darken-4" small absolute flat fab ref="fab"
           style="top:0; right:0;"
-          v-show="active"
+          v-show="active && !editMode"
           @click.stop="showDeleteConfirm=!showDeleteConfirm" >
           <v-icon>mdi-delete-forever</v-icon>
         </v-btn>
@@ -73,7 +79,7 @@ export default {
   }
 
   computed: {
-    ...mapGetters ['darkTheme', 'selectedNote', 'selectedParent', 'keyboardMode']
+    ...mapGetters ['darkTheme', 'selectedNote', 'selectedParent', 'keyboardMode', 'editMode']
     # note: -> this.noteEditor.note
     text: -> this.note.text
     isSelected: ->
@@ -108,6 +114,7 @@ export default {
       this.$store.commit 'setKeyboardMode', false
 
     startEdit: ->
+      console.log "startEdit"
       this.$store.commit 'setEditMode', true
       initEditor = (returnedEditor) =>
         this.editor = returnedEditor
@@ -119,7 +126,9 @@ export default {
       InlineEditor.create(this.$refs.editorDiv, { toolbar: [] })
       .then(initEditor)
       .catch((error) -> console.error(error))
+
     endEdit: ->
+      console.log "endEdit"
       this.$store.commit 'setEditMode', false
       this.setNoteText {noteRef: this.noteKey, text: this.editor.getData()}
       this.editor.destroy()

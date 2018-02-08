@@ -17,22 +17,24 @@
         <span>Looks like you're not connected to the internet. Changes you make while offline will be synced when you reconnect.</span>
       </v-tooltip>
 
-      <v-tooltip bottom light max-width="200px" color="secondary" >
+      <v-tooltip bottom dark max-width="200px" color="blue-grey darken-4" >
       <v-btn icon large slot="activator" @click.stop="toggleTheme">
         <v-icon v-if="darkTheme">mdi-white-balance-sunny</v-icon>
         <v-icon v-if="!darkTheme">mdi-weather-night</v-icon>
       </v-btn>
       <span> {{ darkTheme ? 'Day Theme' : 'Night Theme' }} </span> </v-tooltip>
 
-      <v-tooltip bottom max-width="200px" color="secondary" >
+      <v-tooltip bottom max-width="200px" color="blue-grey darken-4" >
       <v-btn icon large tag="a" slot="activator" href="https://github.com/assimilatedgiraffe/PKB-webapp" target="_blank">
         <v-icon>mdi-github-box</v-icon>
       </v-btn>
       <span> View Code on GitHub </span> </v-tooltip>
 
-      <v-btn icon large @click.stop="logOut">
+      <v-tooltip bottom max-width="200px" color="blue-grey darken-4" >
+      <v-btn icon large slot="activator" @click.stop="logOut">
         <v-icon>exit_to_app</v-icon>
       </v-btn>
+      <span> Log Out </span> </v-tooltip>
       <!-- <v-btn icon @click.stop="rightDrawer = !rightDrawer">
         <v-icon>menu</v-icon>
       </v-btn> -->
@@ -137,8 +139,9 @@ export default {
           this.$store.commit('setError', "")
         , 6500)
     darkTheme: (newVal) ->
-      this.$vuetify.theme.primary =  if newVal then '#00695C' else '#26A69A'
-      this.$vuetify.theme.secondary =  if newVal then '#263238' else '#ECEFF1'
+      this.$vuetify.theme.primary =  if newVal then '#00695C' else '#4db6ac'
+      this.$vuetify.theme.secondary =  if newVal then '#263238' else '#eceff1'
+      this.$vuetify.theme.error =  if newVal then '#b71c1c' else '#ef5350'
 
   created: ->
     # this.$store.dispatch('loadDatabase')

@@ -38,7 +38,7 @@
           <v-icon>check</v-icon>
         </v-btn>
 
-        <v-btn color="red darken-4" small absolute flat fab ref="fab"
+        <v-btn color="error" small absolute flat fab ref="fab"
           style="top:0; right:0;"
           v-show="active && !editMode"
           @click.stop="showDeleteConfirm=!showDeleteConfirm" >
@@ -48,7 +48,7 @@
         <v-tooltip left :activator="el" v-model="showDeleteConfirm"
           content-class="tooltip-opaque"
           color="primary" >
-          <v-btn color="red darken-4" depressed small
+          <v-btn color="error" depressed small
           @click.stop="deleteNote(noteKey); showDeleteConfirm=false" >
             Delete
           </v-btn>

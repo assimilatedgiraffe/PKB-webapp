@@ -101,11 +101,15 @@ export default {
       commit('addLocalNote', {id:newRef, data:newNote})
       commit 'setSelectedNoteRef', newRef
 
-    deleteNote: ({state, getters, dispatch, commit}, {noteRef, j}) ->
-      if getters.selectedParentRef == 'rootNode' and getters.dex == 0
+    deleteNote: ({state, getters, dispatch, commit}, noteRef) ->
+      console.log "deleteNote", noteRef
+      siblings = getters.siblingsByRef(noteRef)
+      dex = siblings.indexOf(noteRef)
+      parent = getters.note(noteRef).parent
+      if parent == 'rootNode' and dex == 0
         commit 'setError', 'Error: Cannot delete first note'
         return
-        
+
       commit('setBusy', true)
       batch = firebase.firebase.firestore().batch()
       # recursively delete note children
@@ -113,17 +117,18 @@ export default {
         note = getters.note(refToDelete)
         if note.children?
           noteDelete(child) for child in note.children
-        siblings = getters.siblings(note).filter (e) -> e != refToDelete
-        batch.update(state.fsRef.doc(note.parent), {children:siblings})
+        theseSiblings = getters.siblings(note).filter (e) -> e != refToDelete
+        batch.update(state.fsRef.doc(note.parent), {children:theseSiblings})
         batch.delete(state.fsRef.doc(refToDelete))
       noteDelete(noteRef)
 
+      if noteRef == getters.selectedNoteRef
+        # set selected
+        if dex > 0
+          commit 'setSelectedNoteRef', siblings[dex - 1]
+        else if parent != "rootNode"
+          commit 'setSelectedNoteRef', parent
       batch.commit()
-      # set selected
-      if getters.dex > 0
-        commit 'setSelectedNoteRef', getters.selectedSiblings[getters.dex - 1]
-      else if getters.selectedParentRef != "rootNode"
-        commit 'setSelectedNoteRef', getters.selectedParentRef
 
     setNoteText: ({state, getters}, payload) ->
       console.log "setNoteText", payload
@@ -134,8 +139,10 @@ export default {
       state.fsRef.doc(payload.noteRef).update({children:payload.children})
 
     setNoteParent: ({commit, state, getters, dispatch}, payload) ->
-      commit 'setBusy', true
       console.log payload
+      #cant set note to be it's own child!
+      if payload.noteRef == payload.parentRef then return
+      commit 'setBusy', true
 
       currentParentRef = getters.note(payload.noteRef).parent
       oldSiblings = getters.note(currentParentRef).children
@@ -146,7 +153,8 @@ export default {
 
       console.log newParent.children, oldSiblings
       oldSiblings = oldSiblings.filter((e) -> e != payload.noteRef)
-      newParent.children.push(payload.noteRef)
+      payload.index ?= 0
+      newParent.children.splice(payload.index, 0, payload.noteRef)
       console.log newParent.children, oldSiblings
 
       batch = firebase.firebase.firestore().batch()

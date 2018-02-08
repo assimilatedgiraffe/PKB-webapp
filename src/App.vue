@@ -16,18 +16,20 @@
         </v-alert>
         <span>Looks like you're not connected to the internet. Changes you make while offline will be synced when you reconnect.</span>
       </v-tooltip>
-      <v-btn icon large @click.stop="toggleTheme">
+
+      <v-tooltip bottom light max-width="200px" color="secondary" >
+      <v-btn icon large slot="activator" @click.stop="toggleTheme">
         <v-icon v-if="darkTheme">mdi-white-balance-sunny</v-icon>
         <v-icon v-if="!darkTheme">mdi-weather-night</v-icon>
       </v-btn>
-      <!-- <v-tooltip bottom max-width="200px"> -->
-      <v-btn icon large tag="a" href="https://github.com/assimilatedgiraffe/PKB-webapp" target="_blank">
+      <span> {{ darkTheme ? 'Day Theme' : 'Night Theme' }} </span> </v-tooltip>
+
+      <v-tooltip bottom max-width="200px" color="secondary" >
+      <v-btn icon large tag="a" slot="activator" href="https://github.com/assimilatedgiraffe/PKB-webapp" target="_blank">
         <v-icon>mdi-github-box</v-icon>
       </v-btn>
-      <!-- <span>
-        View Code on GitHub
-      </span>
-      </v-tooltip> -->
+      <span> View Code on GitHub </span> </v-tooltip>
+
       <v-btn icon large @click.stop="logOut">
         <v-icon>exit_to_app</v-icon>
       </v-btn>
@@ -36,14 +38,12 @@
       </v-btn> -->
     </v-toolbar>
 
-    <v-toolbar flat dense v-if="breadcrumbsFixed">
-    </v-toolbar>
-    <v-toolbar flat dense :fixed="breadcrumbsFixed">
+    <v-toolbar flat dense class="breadcrumbs-bar">
       <v-breadcrumbs>
       <v-icon slot="divider">chevron_right</v-icon>
       <v-breadcrumbs-item
       v-for="item in breadcrumbs"
-      :key="item.text"
+      :key="item.id"
       v-html="item.text"
       >
        <!-- {{ item.text }} -->
@@ -97,7 +97,6 @@ export default {
   name: 'App'
   data: -> {
     snackbar: false
-    breadcrumbsFixed: false
     rightDrawer: false
     title: 'Personal Knowledge Base Web App'
   }
@@ -160,5 +159,10 @@ export default {
 }
 .alert {
   padding: 7px;
+}
+.breadcrumbs-bar {
+  position: sticky;
+  top: 0;
+  z-index: 7;
 }
 </style>

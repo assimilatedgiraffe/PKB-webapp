@@ -96,6 +96,10 @@
 
 <script lang="coffee">
 import firebase from 'firebase'
+import fbconfig from './store/fbconfig.js'
+# Required for side-effects
+require("firebase/firestore")
+
 import { mapGetters } from 'vuex'
 import Login from './components/Login.vue'
 
@@ -145,8 +149,11 @@ export default {
       this.$vuetify.theme.error =  if newVal then '#b71c1c' else '#ef5350'
 
   created: ->
-    # this.$store.dispatch('loadDatabase')
-    # this.$store.dispatch('watchDatabase')
+    if (process.env.NODE_ENV == 'production')
+      firebase.initializeApp(fbconfig.prod)
+    else
+      firebase.initializeApp(fbconfig.dev)
+      
     firebase.auth().onAuthStateChanged((user) =>
       if user
         this.$store.dispatch('signIn', user)

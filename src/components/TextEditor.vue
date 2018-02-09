@@ -64,7 +64,6 @@
 
 <script lang="coffee">
 import InlineEditor from '@ckeditor/ckeditor5-build-inline'
-# import {db} from '../firebase'
 import { mapGetters } from 'vuex'
 import { mapActions } from 'vuex'
 

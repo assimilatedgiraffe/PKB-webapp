@@ -8,7 +8,7 @@ export default {
     isBusy: false #waiting for firebase, set by watching firebase changes as promises dont return while offline
     selectedNoteRef: ""
     error: ""
-    version: "0.1.0"
+    version: "0.2.0"
     darkTheme: true
     keyboardMode: true
     editMode: false

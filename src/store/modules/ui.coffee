@@ -5,7 +5,7 @@ export default {
   state:
     isLoading: false
     isConnected: true #firebase connection
-    isBusy: false #waiting for firebase, set by watching firebase changes as promises dont return while offline
+    isBusy: false #waiting for firebase, set by watching firebase changes as promises don’t return while offline
     selectedNoteRef: ""
     error: ""
     version: "0.2.0"
@@ -39,7 +39,7 @@ export default {
 
     navigate: ({commit, state, getters, dispatch}, key) ->
       switch key
-      # vim style navigaion
+      # vim style navigation
         when "j", "ArrowDown"
           console.log "down"
           if getters.selectedSiblings.length > getters.dex + 1

@@ -1,18 +1,18 @@
 # Personal Knowledge Base Web App
 
-Note taking web app built with vue.js and firebase.
+##### Note taking web app built with Vue.js and Firebase.
 
 Developed to overcome the limitations of regular note taking software as none of the many options available had all of the the specific features I wanted.
 
 The basic structure is something like a cross between regular note taking software like Evernote and a mind map, where notes are organised in a tree structure and any note can have an unlimited number of child notes.
 
-The app is intended for daily use and was therefore designed to be as asthetically pleasing as possible.
+The app is intended for daily use and was therefore designed to be as aesthetically pleasing as possible.
 
 
 <!-- ? screenshot/gif -->
 
 ### [Live Demo](//pkb-pwa.firebaseapp.com/)
-[origional prototype](//pkb-app.firebaseapp.com/#/)
+[original prototype](//pkb-app.firebaseapp.com/#/)
 
 ## Features
 * Google authentication
@@ -22,7 +22,7 @@ The app is intended for daily use and was therefore designed to be as asthetical
   * Service worker
   * Full offline functionality
 * Full keyboard control with vim style keyboard navigation
-* Mouse / touchscreen support
+* Mouse / touch-screen support
 * Changes automatically saved to the cloud and updated across devices
 
 ## Built With
@@ -36,7 +36,7 @@ The app is intended for daily use and was therefore designed to be as asthetical
 * Better mobile support
 * Search function
 * Spaced repetition function for memorising notes
-* Faster loadtime to improve Progressive Web App Lighthouse score
+* Faster load time to improve Progressive Web App Lighthouse score
 
 
 <!-- ## Build Setup -->

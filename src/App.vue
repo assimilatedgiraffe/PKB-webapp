@@ -17,22 +17,24 @@
         <span>Looks like you're not connected to the internet. Changes you make while offline will be synced when you reconnect.</span>
       </v-tooltip>
 
-      <v-tooltip bottom light max-width="200px" color="secondary" >
+      <v-tooltip bottom dark max-width="200px" color="blue-grey darken-4" >
       <v-btn icon large slot="activator" @click.stop="toggleTheme">
         <v-icon v-if="darkTheme">mdi-white-balance-sunny</v-icon>
         <v-icon v-if="!darkTheme">mdi-weather-night</v-icon>
       </v-btn>
       <span> {{ darkTheme ? 'Day Theme' : 'Night Theme' }} </span> </v-tooltip>
 
-      <v-tooltip bottom max-width="200px" color="secondary" >
+      <v-tooltip bottom max-width="200px" color="blue-grey darken-4" >
       <v-btn icon large tag="a" slot="activator" href="https://github.com/assimilatedgiraffe/PKB-webapp" target="_blank">
         <v-icon>mdi-github-box</v-icon>
       </v-btn>
       <span> View Code on GitHub </span> </v-tooltip>
 
-      <v-btn icon large @click.stop="logOut">
+      <v-tooltip bottom max-width="200px" color="blue-grey darken-4" >
+      <v-btn icon large slot="activator" @click.stop="logOut">
         <v-icon>exit_to_app</v-icon>
       </v-btn>
+      <span> Log Out </span> </v-tooltip>
       <!-- <v-btn icon @click.stop="rightDrawer = !rightDrawer">
         <v-icon>menu</v-icon>
       </v-btn> -->
@@ -52,14 +54,11 @@
     </v-toolbar>
 
     <v-progress-linear color="primary" style="margin:0" indeterminate :active="isBusy"></v-progress-linear>
+
     <Login></Login>
-    <v-snackbar
-      v-model="snackbar"
-      top
-    >
-    <v-alert outline type="error" value="true">
-      {{error}}
-    </v-alert>
+
+    <v-snackbar color="error" v-model="snackbar" top >
+      <v-icon>error</v-icon>{{error}}
     </v-snackbar>
 
     <v-content>
@@ -82,9 +81,16 @@
         </v-list-tile>
       </v-list>
     </v-navigation-drawer> -->
-    <!-- <v-footer app>
-      <span>&copy; 2017</span>
-    </v-footer> -->
+    <v-footer app fixed style="min-height:28px">
+      <v-flex d-inline-flex align-center justify-end >
+      <!-- <span>&copy; 2017 </span> -->
+      <a href="https://assimilatedgiraffe.github.io/" target="_blank" style="flex: none">
+        <v-avatar size="20px">
+        <img src="https://github.com/assimilatedgiraffe.png?size=20" class="" alt="face" >
+        </v-avatar>
+      </a>
+      </v-flex>
+    </v-footer>
   </v-app>
 </template>
 
@@ -137,8 +143,9 @@ export default {
           this.$store.commit('setError', "")
         , 6500)
     darkTheme: (newVal) ->
-      this.$vuetify.theme.primary =  if newVal then '#00695C' else '#26A69A'
-      this.$vuetify.theme.secondary =  if newVal then '#263238' else '#ECEFF1'
+      this.$vuetify.theme.primary =  if newVal then '#00695C' else '#4db6ac'
+      this.$vuetify.theme.secondary =  if newVal then '#263238' else '#eceff1'
+      this.$vuetify.theme.error =  if newVal then '#b71c1c' else '#ef5350'
 
   created: ->
     # this.$store.dispatch('loadDatabase')

@@ -5,7 +5,7 @@ export default {
   state:
     isLoading: false
     isConnected: true #firebase connection
-    isBusy: true #waiting for firebase, set by watching firebase changes as promises dont return while offline
+    isBusy: false #waiting for firebase, set by watching firebase changes as promises dont return while offline
     selectedNoteRef: ""
     error: ""
     version: "0.1.0"

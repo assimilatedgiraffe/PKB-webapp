@@ -15,10 +15,11 @@ export default {
         firestore = firebase.firebase.firestore()
         commit('setFsRef', firestore.collection("users").doc(getters.userID).collection("notes"))
 
-      firebase.firebase.firestore().enablePersistence().then =>
+      try
+        firebase.firebase.firestore().enablePersistence().then =>
           # Initialize Cloud Firestore through firebase
           setFirestoreReference()
-      .catch (err) ->
+      catch err
         if err.code == 'failed-precondition'
           console.log err
           #     // Multiple tabs open, persistence can only be enabled

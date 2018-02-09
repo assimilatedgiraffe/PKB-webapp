@@ -1,5 +1,5 @@
 <template>
-  <v-app :dark="darkTheme" v-scroll="onScroll">
+  <v-app :dark="darkTheme">
     <v-toolbar
       app
       color="primary"
@@ -129,9 +129,6 @@ export default {
       console.log "logOut"
       firebase.auth().signOut()
     toggleTheme: -> this.$store.commit('toggleTheme')
-    onScroll: (e) ->
-      offsetTop = window.pageYOffset or document.documentElement.scrollTop
-      this.breadcrumbsFixed = if offsetTop > 68 then true else false
 
   watch:
     error: (newError) ->

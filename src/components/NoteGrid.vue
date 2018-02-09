@@ -1,5 +1,5 @@
 <template lang="html">
-  <div tabindex="0" @keyup="keyboardMap">
+  <div tabindex="0" @keydown="keyboardMap">
     <v-container fluid >
     <v-layout row justify-start align-start fill-height align-content-start>
       <v-flex xs4 v-for="(col, i) in cols" :key="col.id" >
@@ -118,6 +118,7 @@ export default {
         this.$store.commit 'setKeyboardMode', true
         if e.altKey
           if e.key != "Alt"
+            e.preventDefault()
             this.$store.dispatch('shiftNote', e.key)
         else
           this.$store.dispatch('navigate', e.key)

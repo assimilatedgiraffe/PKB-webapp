@@ -150,7 +150,7 @@ export default {
 }
 </script>
 
-<style lang="css">
+<style scoped lang="css">
 .tooltip-opaque {
   position:absolute; top:0; left: 0; opacity:1 !important;
 }
@@ -160,7 +160,7 @@ export default {
   left: 0;
   top: 0;
   bottom: 0;
-  z-index: 88;
+  z-index: 6;
   cursor: move;
 }
 /*remove weird bell shape on delete button*/

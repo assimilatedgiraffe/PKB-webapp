@@ -34,15 +34,15 @@ export default {
 
     loadDemoNotes: ({state, commit}) ->
       commit("setLoading", true)
-      firebase.firestore().collection('demoNotes').get()
+      firebase.firestore().collection("users").doc('O83CrN1KSldsHmoGhXLmxN6Hznb2').collection("notes").get()
       .then (snapshot) ->
         snapshot.forEach (doc) ->
           state.fsRef.doc(doc.id).set(doc.data())
       ###
-      firebase transfer script
-      # firebase.database().ref('demoNotes').once('value')
-      # .then (data) ->
-        # firebase.firestore().collection('demoNotes').doc(key).set(value) for own key, value of data.val()
+      # firebase transfer script
+      firebase.database().ref('demoNotes').once('value')
+      .then (data) ->
+        firebase.firestore().collection("users").doc('O83CrN1KSldsHmoGhXLmxN6Hznb2').collection("notes").doc(key).set(value) for own key, value of data.val()
       ###
 
     loadDatabase: ({commit, state, dispatch}) ->

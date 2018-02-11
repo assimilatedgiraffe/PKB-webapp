@@ -149,11 +149,11 @@ export default {
       this.$vuetify.theme.error =  if newVal then '#b71c1c' else '#ef5350'
 
   created: ->
-    if (process.env.NODE_ENV == 'production')
-      firebase.initializeApp(fbconfig.prod)
-    else
+    if (process.env.NODE_ENV != 'production')
       firebase.initializeApp(fbconfig.dev)
-      
+    else
+      firebase.initializeApp(fbconfig.prod)
+
     firebase.auth().onAuthStateChanged((user) =>
       if user
         this.$store.dispatch('signIn', user)

@@ -53,7 +53,7 @@
     </v-breadcrumbs>
     </v-toolbar>
 
-    <v-progress-linear color="primary" style="margin:0" indeterminate :active="isBusy"></v-progress-linear>
+    <v-progress-linear color="primary" style="margin:0" indeterminate :active="isBusy || isLoading"></v-progress-linear>
 
     <Login></Login>
 

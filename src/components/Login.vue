@@ -3,11 +3,12 @@
     <v-dialog v-model="loginVisible" persistent max-width="450">
       <v-card light>
         <v-card-title class="headline">
-          Welcome to version {{version}} of my Personal Knowledge Base Web App.
+          Personal Knowledge Base Web App
+          Version {{version}}
         </v-card-title>
         <v-card-text>
           <p>
-            NOTE: This early prototype is keyboard controlled/desktop only!
+            NOTE: this early version is optimised for desktop, viewing in landscape is recommended for mobile
           </p>
           <br/>
             Click below for demo (no need to log in):

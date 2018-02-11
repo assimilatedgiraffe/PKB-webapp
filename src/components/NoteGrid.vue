@@ -140,6 +140,9 @@ export default {
       console.log newId, oldId
       # if newId == "selectedNote"
       setTimeout (=> this.$store.dispatch('scrollToSelected')) , 20
+    isLoading: (newValue) ->
+      if newValue == false
+        this.$el.focus() 
 
   mounted: ->
     this.$el.focus()

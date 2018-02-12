@@ -121,6 +121,8 @@ export default {
             e.preventDefault()
             this.$store.dispatch('shiftNote', e.key)
         else
+          if e.key.substr(0,5) == "Arrow"
+            e.preventDefault()
           this.$store.dispatch('navigate', e.key)
           switch e.key
             # editing and deleting
@@ -150,7 +152,7 @@ export default {
 </script>
 
 <style scoped lang="css">
-.grid-list-xl {
+.container.grid-list-xl {
   padding: 9px;
 }
 draggable {

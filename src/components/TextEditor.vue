@@ -168,17 +168,13 @@ export default {
     border-bottom-left-radius: 50%;
     border-bottom-right-radius: 50%;
 }
-/*hide editor toolbar*/
-  .ck-balloon-panel {
-    visibility: hidden ;
-  }
+
   .card {
     /*background-color: #eef1f6;*/
     /*margin: 9px;*/
   }
   .card__text {
-    padding-left: 25px;
-    padding-bottom: 25px;
+    padding: 16px 16px 25px 25px;
   }
   .selected .card__text {
     /*padding: 16px;*/
@@ -191,5 +187,13 @@ export default {
     /*border: 3px solid #8cbfec;*/
     /*background-color: #f8f8ff;*/
     /*margin: 0;*/
+  }
+</style>
+
+<style>
+/*unscoped*/
+  /*hide editor toolbar*/
+  .ck-balloon-panel {
+    display: none !important;
   }
 </style>

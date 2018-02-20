@@ -5,10 +5,13 @@ export default {
   state:
     isLoading: false
     isConnected: true #firebase connection
-    isBusy: false #waiting for firebase
+    isBusy: false #waiting for firebase, set by watching firebase changes as promises don’t return while offline
     selectedNoteRef: ""
     error: ""
-    version: "0.1.0"
+    version: "0.2.0"
+    darkTheme: true
+    keyboardMode: true
+    editMode: false
     # history: [] # refs of selected parents
     # selectedParentRef: ""
     # dex: [0] #selected note indexes, stack from beginning of array using unshift()/shift()
@@ -18,7 +21,10 @@ export default {
     setConnected: (state, payload) -> state.isConnected = payload
     setBusy: (state, payload) -> state.isBusy = payload
     setError: (state, payload) -> state.error = payload
+    setKeyboardMode: (state, payload) -> state.keyboardMode = payload
+    setEditMode: (state, payload) -> state.editMode = payload
     setSelectedNoteRef: (state, payload) -> state.selectedNoteRef = payload
+    toggleTheme: (state) -> state.darkTheme = !state.darkTheme
     # setSelectedParentRef: (state, payload) -> state.selectedParentRef = payload
     #!! need to use splice on array so vue can detect change !!
     # moveDown: (state) -> state.dex.splice(0, 1, state.dex[0] + 1)
@@ -32,20 +38,14 @@ export default {
       commit("setLoading", false)
 
     navigate: ({commit, state, getters, dispatch}, key) ->
-      if state.isBusy
-        return
       switch key
-      # vim style navigaion
+      # vim style navigation
         when "j", "ArrowDown"
           console.log "down"
           if getters.selectedSiblings.length > getters.dex + 1
             commit 'setSelectedNoteRef', getters.selectedSiblings[getters.dex + 1]
           else #create new empty note if none exists
-            commit('setBusy', true)
             dispatch('createNote', {text:"", parent:getters.selectedParentRef})
-            .then =>
-              commit 'setSelectedNoteRef', getters.selectedSiblings[getters.dex + 1]
-              commit('setBusy', false)
 
         when 'k', "ArrowUp"
           console.log "up"
@@ -58,15 +58,11 @@ export default {
             # commit('historyPop')
         when 'l', "ArrowRight"
           console.log "right"
-          if getters.selectedNote.children?
-            commit("setSelectedNoteRef", getters.selectedChildren[0])
-            # commit('moveRight')
-          else # create new child note if none exist
-            commit('setBusy', true)
+           # create new child note if none exist
+          if not getters.selectedNote.children? or getters.selectedNote.children.length == 0
             dispatch('createNote', {text:"", parent:state.selectedNoteRef})
-            .then =>
-              commit("setSelectedNoteRef", getters.selectedChildren[0])
-              commit('setBusy', false)
+          else
+            commit("setSelectedNoteRef", getters.selectedNote.children[0])
 
     scrollToSelected: ({state}) ->
       if state.isLoading then return
@@ -77,6 +73,7 @@ export default {
         centerIfNeeded: true
         duration: 300
         easing: 'easeInOut'
+        # offset has known bugs, due to be fixed in 2.0.0
       }
       scrollIntoViewIfNeeded(element, options)
 
@@ -86,6 +83,10 @@ export default {
     isConnected: (state) -> state.isConnected
     error : (state) -> state.error
     version : (state) -> state.version
+    darkTheme : (state) -> state.darkTheme
+    keyboardMode : (state) -> state.keyboardMode
+    editMode : (state) -> state.editMode
+
     selectedNoteRef: (state, getters) -> state.selectedNoteRef
     selectedNote: (state, getters) -> getters.note(state.selectedNoteRef)
     selectedParentRef: (state, getters) -> getters.selectedNote?.parent
@@ -102,8 +103,6 @@ export default {
       return elders
     selectedChildren: (state, getters) ->
       children = getters.selectedNote?.children
-      if getters.isLoading or not children?
-        return []
-      else
-        return children
+      children ?= []
+      return children
 }

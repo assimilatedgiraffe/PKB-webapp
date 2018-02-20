@@ -1,4 +1,5 @@
 'use strict'
+
 require('./check-versions')()
 
 const config = require('../config')
@@ -11,9 +12,7 @@ const path = require('path')
 const express = require('express')
 const webpack = require('webpack')
 const proxyMiddleware = require('http-proxy-middleware')
-const webpackConfig = (process.env.NODE_ENV === 'testing' || process.env.NODE_ENV === 'production')
-  ? require('./webpack.prod.conf')
-  : require('./webpack.dev.conf')
+const webpackConfig = require('./webpack.dev.conf')
 
 // default port where dev server listens for incoming traffic
 const port = process.env.PORT || config.dev.port
@@ -32,12 +31,9 @@ const devMiddleware = require('webpack-dev-middleware')(compiler, {
 })
 
 const hotMiddleware = require('webpack-hot-middleware')(compiler, {
-  log: false,
-  heartbeat: 2000
+  log: false
 })
 // force page reload when html-webpack-plugin template changes
-// currently disabled until this is resolved:
-// https://github.com/jantimon/html-webpack-plugin/issues/680
 // compiler.plugin('compilation', function (compilation) {
 //   compilation.plugin('html-webpack-plugin-after-emit', function (data, cb) {
 //     hotMiddleware.publish({ action: 'reload' })
@@ -51,7 +47,7 @@ app.use(hotMiddleware)
 
 // proxy api requests
 Object.keys(proxyTable).forEach(function (context) {
-  const options = proxyTable[context]
+  let options = proxyTable[context]
   if (typeof options === 'string') {
     options = { target: options }
   }
@@ -70,34 +66,22 @@ app.use(staticPath, express.static('./static'))
 
 const uri = 'http://localhost:' + port
 
-var _resolve
-var _reject
-var readyPromise = new Promise((resolve, reject) => {
+let _resolve
+const readyPromise = new Promise(resolve => {
   _resolve = resolve
-  _reject = reject
 })
-
-var server
-var portfinder = require('portfinder')
-portfinder.basePort = port
 
 console.log('> Starting dev server...')
 devMiddleware.waitUntilValid(() => {
-  portfinder.getPort((err, port) => {
-    if (err) {
-      _reject(err)
-    }
-    process.env.PORT = port
-    var uri = 'http://localhost:' + port
-    console.log('> Listening at ' + uri + '\n')
-    // when env is testing, don't need open it
-    if (autoOpenBrowser && process.env.NODE_ENV !== 'testing') {
-      opn(uri)
-    }
-    server = app.listen(port)
-    _resolve()
-  })
+  console.log('> Listening at ' + uri + '\n')
+  // when env is testing, don't need open it
+  if (autoOpenBrowser && process.env.NODE_ENV !== 'testing') {
+    opn(uri)
+  }
+  _resolve()
 })
+
+const server = app.listen(port)
 
 module.exports = {
   ready: readyPromise,

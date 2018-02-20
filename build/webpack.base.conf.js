@@ -1,4 +1,5 @@
 'use strict'
+
 const path = require('path')
 const utils = require('./utils')
 const config = require('../config')
@@ -22,30 +23,12 @@ module.exports = {
   resolve: {
     extensions: ['.js', '.vue', '.json'],
     alias: {
-      'vue$': 'vue/dist/vue.esm.js',
-      '@': resolve('src'),
+      '@': resolve('src')
     }
   },
   module: {
     rules: [
-      // {
-      //   test: /\.(js|vue)$/,
-      //   loader: 'eslint-loader',
-      //   enforce: 'pre',
-      //   include: [resolve('src'), resolve('test')],
-      //   options: {
-      //     formatter: require('eslint-friendly-formatter')
-      //   }
-      // {
-      //   test: /\.coffee$/,
-      //   loader: 'coffee-loader',
-      //       options: {
-      //         transpile: {
-      //           presets: ['env']
-      //         }
-      //       }
-      // },
-          {
+      {
         test: /\.vue$/,
         loader: 'vue-loader',
         options: vueLoaderConfig
@@ -79,7 +62,7 @@ module.exports = {
           name: utils.assetsPath('fonts/[name].[hash:7].[ext]')
         }
       },
-  {
+      {
         test: /\.coffee$/,
         loader: 'coffee-loader',
         exclude: /node_modules/

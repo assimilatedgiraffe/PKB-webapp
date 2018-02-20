@@ -17,3 +17,6 @@ selenium-debug.log
 *.sln
 
 src/components/testAuth\.js
+.firebaserc
+firebase.json
+src/store/fbconfig.js

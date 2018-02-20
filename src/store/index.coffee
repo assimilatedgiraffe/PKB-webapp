@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
-import firebase from './firebase.js'
+import firebase from 'firebase'
 
 import user from './modules/user.coffee'
 import ui from './modules/ui.coffee'

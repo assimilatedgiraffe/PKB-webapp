@@ -1,5 +1,5 @@
 <template lang="html">
-  <div tabindex="0" @keyup="keyboardMap">
+  <div tabindex="0" @keydown="keyboardMap">
     <v-container fluid >
     <v-layout row justify-start align-start fill-height align-content-start>
       <v-flex xs4 v-for="(col, i) in cols" :key="col.id" >
@@ -118,8 +118,11 @@ export default {
         this.$store.commit 'setKeyboardMode', true
         if e.altKey
           if e.key != "Alt"
+            e.preventDefault()
             this.$store.dispatch('shiftNote', e.key)
         else
+          if e.key.substr(0,5) == "Arrow"
+            e.preventDefault()
           this.$store.dispatch('navigate', e.key)
           switch e.key
             # editing and deleting
@@ -139,6 +142,9 @@ export default {
       console.log newId, oldId
       # if newId == "selectedNote"
       setTimeout (=> this.$store.dispatch('scrollToSelected')) , 20
+    isLoading: (newValue) ->
+      if newValue == false
+        this.$el.focus() 
 
   mounted: ->
     this.$el.focus()
@@ -146,7 +152,7 @@ export default {
 </script>
 
 <style scoped lang="css">
-.grid-list-xl {
+.container.grid-list-xl {
   padding: 9px;
 }
 draggable {

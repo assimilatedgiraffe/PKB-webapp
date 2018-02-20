@@ -1,5 +1,5 @@
 <template>
-  <v-app :dark="darkTheme" v-scroll="onScroll">
+  <v-app :dark="darkTheme">
     <v-toolbar
       app
       color="primary"
@@ -53,7 +53,7 @@
     </v-breadcrumbs>
     </v-toolbar>
 
-    <v-progress-linear color="primary" style="margin:0" indeterminate :active="isBusy"></v-progress-linear>
+    <v-progress-linear color="primary" style="margin:0" indeterminate :active="isBusy || isLoading"></v-progress-linear>
 
     <Login></Login>
 
@@ -96,6 +96,10 @@
 
 <script lang="coffee">
 import firebase from 'firebase'
+import fbconfig from './store/fbconfig.js'
+# Required for side-effects
+require("firebase/firestore")
+
 import { mapGetters } from 'vuex'
 import Login from './components/Login.vue'
 
@@ -129,9 +133,6 @@ export default {
       console.log "logOut"
       firebase.auth().signOut()
     toggleTheme: -> this.$store.commit('toggleTheme')
-    onScroll: (e) ->
-      offsetTop = window.pageYOffset or document.documentElement.scrollTop
-      this.breadcrumbsFixed = if offsetTop > 68 then true else false
 
   watch:
     error: (newError) ->
@@ -148,8 +149,11 @@ export default {
       this.$vuetify.theme.error =  if newVal then '#b71c1c' else '#ef5350'
 
   created: ->
-    # this.$store.dispatch('loadDatabase')
-    # this.$store.dispatch('watchDatabase')
+    if (process.env.NODE_ENV != 'production')
+      firebase.initializeApp(fbconfig.dev)
+    else
+      firebase.initializeApp(fbconfig.prod)
+
     firebase.auth().onAuthStateChanged((user) =>
       if user
         this.$store.dispatch('signIn', user)
@@ -160,7 +164,7 @@ export default {
 </script>
 
 
-<style lang="css">
+<style scoped lang="css">
 *:focus {
   outline: none;
 }

@@ -64,7 +64,6 @@
 
 <script lang="coffee">
 import InlineEditor from '@ckeditor/ckeditor5-build-inline'
-# import {db} from '../firebase'
 import { mapGetters } from 'vuex'
 import { mapActions } from 'vuex'
 
@@ -151,7 +150,7 @@ export default {
 }
 </script>
 
-<style lang="css">
+<style scoped lang="css">
 .tooltip-opaque {
   position:absolute; top:0; left: 0; opacity:1 !important;
 }
@@ -161,7 +160,7 @@ export default {
   left: 0;
   top: 0;
   bottom: 0;
-  z-index: 88;
+  z-index: 6;
   cursor: move;
 }
 /*remove weird bell shape on delete button*/
@@ -169,17 +168,13 @@ export default {
     border-bottom-left-radius: 50%;
     border-bottom-right-radius: 50%;
 }
-/*hide editor toolbar*/
-  .ck-balloon-panel {
-    visibility: hidden ;
-  }
+
   .card {
     /*background-color: #eef1f6;*/
     /*margin: 9px;*/
   }
   .card__text {
-    padding-left: 25px;
-    padding-bottom: 25px;
+    padding: 16px 16px 25px 25px;
   }
   .selected .card__text {
     /*padding: 16px;*/
@@ -192,5 +187,13 @@ export default {
     /*border: 3px solid #8cbfec;*/
     /*background-color: #f8f8ff;*/
     /*margin: 0;*/
+  }
+</style>
+
+<style>
+/*unscoped*/
+  /*hide editor toolbar*/
+  .ck-balloon-panel {
+    display: none !important;
   }
 </style>

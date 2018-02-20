@@ -1,4 +1,4 @@
-import firebase from '../firebase.js'
+import firebase from 'firebase'
 import uuidv1 from 'uuid/v1'
 
 export default {
@@ -12,32 +12,38 @@ export default {
     initDatabase: ({state, commit, getters}) ->
       console.log "initDatabase"
       setFirestoreReference = =>
-        firestore = firebase.firebase.firestore()
+        firestore = firebase.firestore()
         commit('setFsRef', firestore.collection("users").doc(getters.userID).collection("notes"))
 
       try
-        firebase.firebase.firestore().enablePersistence().then =>
+        firebase.firestore().enablePersistence().then =>
           # Initialize Cloud Firestore through firebase
           setFirestoreReference()
       catch err
+        setFirestoreReference()
         if err.code == 'failed-precondition'
           console.log err
           #     // Multiple tabs open, persistence can only be enabled
           #     // in one tab at a a time.
           #     // ...
-          setFirestoreReference()
         else if err.code == 'unimplemented'
           console.log err
           #     // The current browser does not support all of the
           #     // features required to enable persistence
           #     // ...
-          setFirestoreReference()
 
     loadDemoNotes: ({state, commit}) ->
       commit("setLoading", true)
-      firebase.database.ref('demoNotes').once('value')
+      firebase.firestore().collection("users").doc('O83CrN1KSldsHmoGhXLmxN6Hznb2').collection("notes").get()
+      .then (snapshot) ->
+        snapshot.forEach (doc) ->
+          state.fsRef.doc(doc.id).set(doc.data())
+      ###
+      # firebase transfer script
+      firebase.database().ref('demoNotes').once('value')
       .then (data) ->
-        state.fsRef.doc(key).set(value) for own key, value of data.val()
+        firebase.firestore().collection("users").doc('O83CrN1KSldsHmoGhXLmxN6Hznb2').collection("notes").doc(key).set(value) for own key, value of data.val()
+      ###
 
     loadDatabase: ({commit, state, dispatch}) ->
       commit("setLoading", true)
@@ -78,7 +84,7 @@ export default {
         commit 'setBusy', false
 
       # watch connection
-      connectedRef = firebase.database.ref(".info/connected")
+      connectedRef = firebase.database().ref(".info/connected")
       connectedRef.on "value", (snap) ->
         if (snap.val() == true)
           commit("setConnected", true)
@@ -90,7 +96,7 @@ export default {
       # console.log "newNote", newNote
       commit('setBusy', true)
       newRef = uuidv1() # set uids manually as firestore.add() doesn't work with batch
-      batch = firebase.firebase.firestore().batch()
+      batch = firebase.firestore().batch()
       batch.set(state.fsRef.doc(newRef), newNote)
 
       siblings = getters.note(newNote.parent).children
@@ -112,7 +118,7 @@ export default {
         return
 
       commit('setBusy', true)
-      batch = firebase.firebase.firestore().batch()
+      batch = firebase.firestore().batch()
       # recursively delete note children
       noteDelete = (refToDelete) ->
         note = getters.note(refToDelete)
@@ -158,7 +164,7 @@ export default {
       newParent.children.splice(payload.index, 0, payload.noteRef)
       console.log newParent.children, oldSiblings
 
-      batch = firebase.firebase.firestore().batch()
+      batch = firebase.firestore().batch()
       batch.update(state.fsRef.doc(currentParentRef), {children:oldSiblings})
       batch.update(state.fsRef.doc(newParentRef), {children:newParent.children})
       batch.update(state.fsRef.doc(payload.noteRef), {parent:payload.parentRef})

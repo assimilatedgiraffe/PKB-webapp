@@ -40,6 +40,10 @@
       </v-btn> -->
     </v-toolbar>
 
+      <v-alert v-if="$vuetify.breakpoint.xsOnly" outline type="warning" icon="priority_high" value="true">
+         NOTE: ** this early version is optimised for desktop, viewing in landscape is recommended for mobile **
+      </v-alert>
+
     <v-toolbar flat dense class="breadcrumbs-bar">
       <v-breadcrumbs>
       <v-icon slot="divider">chevron_right</v-icon>
